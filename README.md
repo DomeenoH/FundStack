@@ -1,5 +1,7 @@
 # Hexo-Donate v2.0 - Modern Donation System
 
+  [English](README.md) | [简体中文](README_CN.md)
+
 A complete rewrite of the Hexo-Donate project with modern web technologies, security best practices, and an enhanced user experience.
 
 ## Features
