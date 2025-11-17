@@ -72,7 +72,7 @@ export default function DonationForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.errors || [data.error || 'Submission failed']);
+        setError(data.errors || [data.error || '提交失败']);
       } else {
         setSuccess(true);
         setForm({
@@ -87,7 +87,7 @@ export default function DonationForm() {
       }
     } catch (err) {
       console.error('[v0] Donation form error:', err);
-      setError(['Network error. Please try again.']);
+      setError(['网络错误。请重试。']);
     } finally {
       setLoading(false);
     }
@@ -97,16 +97,16 @@ export default function DonationForm() {
     <div className="w-full max-w-md mx-auto p-6">
       <Card className="p-6 space-y-6">
         <div>
-          <h2 className="text-2xl font-bold mb-2">Support Us</h2>
+          <h2 className="text-2xl font-bold mb-2">支持我们</h2>
           <p className="text-sm text-gray-600">
-            Your donation helps us maintain and improve our services
+            您的捐赠帮助我们维护和改进我们的服务
           </p>
         </div>
 
         {success && (
           <Alert className="bg-green-50 border-green-200">
             <AlertDescription className="text-green-800">
-              Thank you for your donation! It has been added to the donation list and is pending confirmation.
+              感谢您的捐赠！它已添加到捐赠列表中，等待确认。
             </AlertDescription>
           </Alert>
         )}
@@ -126,20 +126,20 @@ export default function DonationForm() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-2">
-              Name <span className="text-red-500">*</span>
+              姓名 <span className="text-red-500">*</span>
             </label>
             <Input
               name="user_name"
               value={form.user_name}
               onChange={handleChange}
-              placeholder="Your name"
+              placeholder="您的名字"
               maxLength={50}
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Email</label>
+            <label className="block text-sm font-medium mb-2">邮箱</label>
             <Input
               name="user_email"
               type="email"
@@ -150,7 +150,7 @@ export default function DonationForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Website</label>
+            <label className="block text-sm font-medium mb-2">网站</label>
             <Input
               name="user_url"
               type="url"
@@ -162,7 +162,7 @@ export default function DonationForm() {
 
           <div>
             <label className="block text-sm font-medium mb-2">
-              Amount (¥) <span className="text-red-500">*</span>
+              金额（¥） <span className="text-red-500">*</span>
             </label>
             <Input
               name="amount"
@@ -175,33 +175,33 @@ export default function DonationForm() {
               step="0.01"
               required
             />
-            <p className="text-xs text-gray-500 mt-1">Between 0.01 and 99999.99</p>
+            <p className="text-xs text-gray-500 mt-1">金额范围：0.01 - 99999.99</p>
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-2">
-              Payment Method <span className="text-red-500">*</span>
+              支付方式 <span className="text-red-500">*</span>
             </label>
             <Select value={form.payment_method} onValueChange={handleSelectChange}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="wechat">WeChat Pay</SelectItem>
-                <SelectItem value="alipay">Alipay</SelectItem>
-                <SelectItem value="qq">QQ Pay</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="wechat">微信支付</SelectItem>
+                <SelectItem value="alipay">支付宝</SelectItem>
+                <SelectItem value="qq">QQ支付</SelectItem>
+                <SelectItem value="other">其他</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Message</label>
+            <label className="block text-sm font-medium mb-2">留言</label>
             <Textarea
               name="user_message"
               value={form.user_message}
               onChange={handleChange}
-              placeholder="Leave a message (optional)"
+              placeholder="留下您的留言（可选）"
               maxLength={500}
               rows={3}
             />
@@ -218,16 +218,16 @@ export default function DonationForm() {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Submitting...
+                提交中...
               </>
             ) : (
-              'Submit Donation'
+              '提交捐赠'
             )}
           </Button>
         </form>
 
         <p className="text-xs text-gray-500 text-center">
-          Your data will be processed securely and only used for donation purposes.
+          您的数据将被安全处理，仅用于捐赠目的。
         </p>
       </Card>
     </div>

@@ -23,6 +23,20 @@ export async function getDonations(status?: string) {
   }
 }
 
+export async function getConfirmedDonations() {
+  try {
+    const data = await sql`
+      SELECT * FROM donations 
+      WHERE status = 'confirmed'
+      ORDER BY created_at DESC
+    `;
+    return data;
+  } catch (error) {
+    console.error('[v0] Database error in getConfirmedDonations:', error);
+    return [];
+  }
+}
+
 export async function createDonation(donation: {
   user_name: string;
   user_email?: string;

@@ -8,18 +8,18 @@ interface Donation {
   id: number;
   user_name: string;
   user_url?: string;
-  amount: number;
+  amount: number | string;
   payment_method: string;
   user_message?: string;
   created_at: string;
-  status: string; // 添加状态字段
+  status: string;
 }
 
 interface Stats {
   total_donors: number;
-  total_amount: number;
-  confirmed_amount: number;
-  average_donation: number;
+  total_amount: number | string;
+  confirmed_amount: number | string;
+  average_donation: number | string;
 }
 
 const PAYMENT_METHOD_COLORS = {
@@ -30,10 +30,10 @@ const PAYMENT_METHOD_COLORS = {
 };
 
 const PAYMENT_METHOD_LABELS = {
-  wechat: 'WeChat',
-  alipay: 'Alipay',
-  qq: 'QQ Pay',
-  other: 'Other',
+  wechat: '微信',
+  alipay: '支付宝',
+  qq: 'QQ支付',
+  other: '其他',
 };
 
 const STATUS_BADGE_STYLES = {
@@ -43,9 +43,9 @@ const STATUS_BADGE_STYLES = {
 };
 
 const STATUS_LABELS = {
-  pending: 'Pending',
-  confirmed: 'Confirmed',
-  rejected: 'Rejected',
+  pending: '待处理',
+  confirmed: '已确认',
+  rejected: '已拒绝',
 };
 
 export default function DonationList() {
@@ -80,6 +80,11 @@ export default function DonationList() {
     fetchData();
   }, []);
 
+  const formatAmount = (amount: number | string): string => {
+    const num = typeof amount === 'string' ? parseFloat(amount) : amount;
+    return isNaN(num) ? '0.00' : num.toFixed(2);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -93,21 +98,21 @@ export default function DonationList() {
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="p-4">
-            <p className="text-sm text-gray-600">Total Donors</p>
+            <p className="text-sm text-gray-600">捐赠者总数</p>
             <p className="text-3xl font-bold">{stats.total_donors}</p>
           </Card>
           <Card className="p-4">
-            <p className="text-sm text-gray-600">Total Amount</p>
-            <p className="text-3xl font-bold">¥{stats.total_amount.toFixed(2)}</p>
+            <p className="text-sm text-gray-600">总金额</p>
+            <p className="text-3xl font-bold">¥{formatAmount(stats.total_amount)}</p>
           </Card>
           <Card className="p-4">
-            <p className="text-sm text-gray-600">Confirmed</p>
-            <p className="text-3xl font-bold">¥{stats.confirmed_amount.toFixed(2)}</p>
+            <p className="text-sm text-gray-600">已确认</p>
+            <p className="text-3xl font-bold">¥{formatAmount(stats.confirmed_amount)}</p>
           </Card>
           <Card className="p-4">
-            <p className="text-sm text-gray-600">Avg Donation</p>
+            <p className="text-sm text-gray-600">平均捐赠</p>
             <p className="text-3xl font-bold">
-              ¥{(stats.average_donation || 0).toFixed(2)}
+              ¥{formatAmount(stats.average_donation || 0)}
             </p>
           </Card>
         </div>
@@ -117,19 +122,19 @@ export default function DonationList() {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 border-b">
             <tr>
-              <th className="px-4 py-3 text-left font-medium">Donor</th>
-              <th className="px-4 py-3 text-left font-medium">Method</th>
-              <th className="px-4 py-3 text-right font-medium">Amount</th>
-              <th className="px-4 py-3 text-left font-medium">Message</th>
-              <th className="px-4 py-3 text-left font-medium">Status</th>
-              <th className="px-4 py-3 text-left font-medium">Date</th>
+              <th className="px-4 py-3 text-left font-medium">捐赠者</th>
+              <th className="px-4 py-3 text-left font-medium">方式</th>
+              <th className="px-4 py-3 text-right font-medium">金额</th>
+              <th className="px-4 py-3 text-left font-medium">留言</th>
+              <th className="px-4 py-3 text-left font-medium">状态</th>
+              <th className="px-4 py-3 text-left font-medium">日期</th>
             </tr>
           </thead>
           <tbody className="divide-y">
             {donations.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
-                  No donations yet. Be the first to support us!
+                  暂无捐赠。成为第一个支持我们的人吧！
                 </td>
               </tr>
             ) : (
@@ -155,7 +160,7 @@ export default function DonationList() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right font-medium">
-                    ¥{donation.amount.toFixed(2)}
+                    ¥{formatAmount(donation.amount)}
                   </td>
                   <td className="px-4 py-3 text-gray-600 truncate">
                     {donation.user_message || '-'}
@@ -168,7 +173,7 @@ export default function DonationList() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-gray-500 text-xs">
-                    {new Date(donation.created_at).toLocaleDateString()}
+                    {new Date(donation.created_at).toLocaleDateString('zh-CN')}
                   </td>
                 </tr>
               ))

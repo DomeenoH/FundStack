@@ -44,11 +44,11 @@ export default function AdminPage() {
         const data = await response.json();
         setDonations(data.donations);
       } else {
-        setError('Invalid password');
+        setError('密码错误');
       }
     } catch (err) {
       console.error('[v0] Login error:', err);
-      setError('Login failed. Please try again.');
+      setError('登录失败。请重试。');
     } finally {
       setLoading(false);
     }
@@ -72,12 +72,12 @@ export default function AdminPage() {
         setDonations(prev => 
           prev.map(d => d.id === id ? { ...d, status: 'confirmed' } : d)
         );
-        setSuccessMessage('Donation confirmed!');
+        setSuccessMessage('捐赠已确认！');
         setTimeout(() => setSuccessMessage(''), 3000);
       }
     } catch (err) {
       console.error('[v0] Confirm error:', err);
-      setError('Failed to confirm donation');
+      setError('确认捐赠失败');
     } finally {
       setLoading(false);
     }
@@ -101,12 +101,12 @@ export default function AdminPage() {
         setDonations(prev => 
           prev.map(d => d.id === id ? { ...d, status: 'rejected' } : d)
         );
-        setSuccessMessage('Donation rejected');
+        setSuccessMessage('捐赠已拒绝');
         setTimeout(() => setSuccessMessage(''), 3000);
       }
     } catch (err) {
       console.error('[v0] Reject error:', err);
-      setError('Failed to reject donation');
+      setError('拒绝捐赠失败');
     } finally {
       setLoading(false);
     }
@@ -120,8 +120,8 @@ export default function AdminPage() {
     return (
       <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <Card className="w-full max-w-md p-8">
-          <h1 className="text-3xl font-bold mb-2">Admin Panel</h1>
-          <p className="text-gray-600 mb-6">Enter your admin password</p>
+          <h1 className="text-3xl font-bold mb-2">管理面板</h1>
+          <p className="text-gray-600 mb-6">输入您的管理员密码</p>
           
           {error && (
             <Alert className="mb-4 bg-red-50 border-red-200">
@@ -134,17 +134,17 @@ export default function AdminPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Admin password"
+              placeholder="管理员密码"
               required
             />
             <Button disabled={loading} className="w-full">
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Authenticating...
+                  正在验证...
                 </>
               ) : (
-                'Login'
+                '登录'
               )}
             </Button>
           </form>
@@ -157,7 +157,7 @@ export default function AdminPage() {
     <main className="min-h-screen bg-slate-50 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">Admin Dashboard</h1>
+          <h1 className="text-4xl font-bold">管理仪表板</h1>
           <Button
             variant="outline"
             onClick={() => {
@@ -167,7 +167,7 @@ export default function AdminPage() {
             }}
           >
             <LogOut className="mr-2 h-4 w-4" />
-            Logout
+            退出登录
           </Button>
         </div>
 
@@ -187,11 +187,11 @@ export default function AdminPage() {
           <div className="p-6 border-b">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h2 className="text-xl font-semibold">Donations Management</h2>
+                <h2 className="text-xl font-semibold">捐赠管理</h2>
                 <p className="text-sm text-gray-600 mt-1">
-                  Total: {donations.length} | 
-                  Pending: {donations.filter(d => d.status === 'pending').length} | 
-                  Confirmed: {donations.filter(d => d.status === 'confirmed').length}
+                  总计：{donations.length} | 
+                  待处理：{donations.filter(d => d.status === 'pending').length} | 
+                  已确认：{donations.filter(d => d.status === 'confirmed').length}
                 </p>
               </div>
             </div>
@@ -201,21 +201,21 @@ export default function AdminPage() {
                 variant={filterStatus === 'pending' ? 'default' : 'outline'}
                 onClick={() => setFilterStatus('pending')}
               >
-                Pending
+                待处理
               </Button>
               <Button
                 size="sm"
                 variant={filterStatus === 'confirmed' ? 'default' : 'outline'}
                 onClick={() => setFilterStatus('confirmed')}
               >
-                Confirmed
+                已确认
               </Button>
               <Button
                 size="sm"
                 variant={filterStatus === 'all' ? 'default' : 'outline'}
                 onClick={() => setFilterStatus('all')}
               >
-                All
+                全部
               </Button>
             </div>
           </div>
@@ -224,20 +224,20 @@ export default function AdminPage() {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-6 py-3 text-left font-medium">Donor</th>
-                  <th className="px-6 py-3 text-left font-medium">Email</th>
-                  <th className="px-6 py-3 text-left font-medium">Amount</th>
-                  <th className="px-6 py-3 text-left font-medium">Method</th>
-                  <th className="px-6 py-3 text-left font-medium">Message</th>
-                  <th className="px-6 py-3 text-left font-medium">Status</th>
-                  <th className="px-6 py-3 text-left font-medium">Action</th>
+                  <th className="px-6 py-3 text-left font-medium">捐赠者</th>
+                  <th className="px-6 py-3 text-left font-medium">邮箱</th>
+                  <th className="px-6 py-3 text-left font-medium">金额</th>
+                  <th className="px-6 py-3 text-left font-medium">方式</th>
+                  <th className="px-6 py-3 text-left font-medium">留言</th>
+                  <th className="px-6 py-3 text-left font-medium">状态</th>
+                  <th className="px-6 py-3 text-left font-medium">操作</th>
                 </tr>
               </thead>
               <tbody className="divide-y">
                 {filteredDonations.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                      No donations found
+                      未找到捐赠
                     </td>
                   </tr>
                 ) : (
@@ -258,7 +258,7 @@ export default function AdminPage() {
                             ? 'bg-red-100 text-red-800'
                             : 'bg-yellow-100 text-yellow-800'
                         }`}>
-                          {donation.status === 'confirmed' ? 'Confirmed' : donation.status === 'rejected' ? 'Rejected' : 'Pending'}
+                          {donation.status === 'confirmed' ? '已确认' : donation.status === 'rejected' ? '已拒绝' : '待处理'}
                         </span>
                       </td>
                       <td className="px-6 py-4">
@@ -276,7 +276,7 @@ export default function AdminPage() {
                                 ) : (
                                   <>
                                     <Check className="mr-1 h-4 w-4" />
-                                    Confirm
+                                    确认
                                   </>
                                 )}
                               </Button>
@@ -291,7 +291,7 @@ export default function AdminPage() {
                                 ) : (
                                   <>
                                     <X className="mr-1 h-4 w-4" />
-                                    Reject
+                                    拒绝
                                   </>
                                 )}
                               </Button>

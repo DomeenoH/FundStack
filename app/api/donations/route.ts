@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createDonation, checkRateLimit, getStats } from '@/lib/db';
+import { createDonation, checkRateLimit, getStats, getConfirmedDonations } from '@/lib/db';
 import { validateDonation } from '@/lib/validation';
 import { sendDonationNotification } from '@/lib/email';
 
@@ -64,15 +64,19 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const stats = await getStats();
+    const confirmedDonations = await getConfirmedDonations();
+    
+    const totalAmount = confirmedDonations.reduce((sum, d) => sum + (d.amount || 0), 0);
+    const averageDonation = confirmedDonations.length > 0 ? totalAmount / confirmedDonations.length : 0;
+
     return NextResponse.json({
       success: true,
       stats: {
-        total_donors: stats.total_count,
-        total_amount: stats.total_amount,
-        confirmed_amount: stats.confirmed_total,
-        confirmed_count: stats.confirmed_count,
-        average_donation: stats.avg_amount
+        total_donors: confirmedDonations.length,
+        total_amount: totalAmount,
+        confirmed_amount: totalAmount,
+        confirmed_count: confirmedDonations.length,
+        average_donation: averageDonation
       }
     });
   } catch (error) {

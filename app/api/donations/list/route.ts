@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
       payment_method: d.payment_method,
       user_message: d.user_message,
       created_at: d.created_at,
-      status: d.status // 添加状态字段供前端显示
+      status: d.status || 'pending'
     }));
 
     return NextResponse.json({

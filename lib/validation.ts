@@ -12,18 +12,18 @@ export function validateDonation(data: any): { valid: boolean; errors: string[] 
 
   // Username validation
   if (!data.user_name || typeof data.user_name !== 'string') {
-    errors.push('Please enter a valid name');
+    errors.push('请输入有效的姓名');
   } else if (data.user_name.length > 50) {
-    errors.push('Name must be less than 50 characters');
+    errors.push('姓名长度不能超过50个字符');
   } else if (data.user_name.length < 2) {
-    errors.push('Name must be at least 2 characters');
+    errors.push('姓名长度至少需要2个字符');
   }
 
   // Email validation (optional)
   if (data.user_email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(data.user_email)) {
-      errors.push('Please enter a valid email address');
+      errors.push('请输入有效的邮箱地址');
     }
   }
 
@@ -32,28 +32,28 @@ export function validateDonation(data: any): { valid: boolean; errors: string[] 
     try {
       new URL(data.user_url);
     } catch {
-      errors.push('Please enter a valid URL');
+      errors.push('请输入有效的URL地址');
     }
   }
 
   // Message validation (optional)
   if (data.user_message && data.user_message.length > 500) {
-    errors.push('Message must be less than 500 characters');
+    errors.push('留言长度不能超过500个字符');
   }
 
   // Amount validation
   if (!data.amount || typeof data.amount !== 'number') {
-    errors.push('Please enter a valid amount');
+    errors.push('请输入有效的金额');
   } else if (data.amount < 0.01) {
-    errors.push('Minimum donation is 0.01');
+    errors.push('最小捐赠金额为0.01元');
   } else if (data.amount > 99999.99) {
-    errors.push('Maximum donation is 99999.99');
+    errors.push('最大捐赠金额为99999.99元');
   }
 
   // Payment method validation
   const validMethods = ['wechat', 'alipay', 'qq', 'other'];
   if (!validMethods.includes(data.payment_method)) {
-    errors.push('Please select a valid payment method');
+    errors.push('请选择有效的支付方式');
   }
 
   return {

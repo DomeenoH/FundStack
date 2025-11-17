@@ -1,10 +1,11 @@
 import DonationForm from '@/components/donation-form';
+import DonationList from '@/components/donation-list';
 import Link from 'next/link';
 import { Heart } from 'lucide-react';
 
 export const metadata = {
-  title: 'Support Us - Donation Platform',
-  description: 'Support our work with a donation. Fast, secure, and simple.',
+  title: '支持我们 - 捐赠平台',
+  description: '用捐赠支持我们的工作。快速、安全、简单。',
 };
 
 export default function DonationPage() {
@@ -15,10 +16,9 @@ export default function DonationPage() {
           <div className="flex items-center justify-center mb-4">
             <Heart className="w-8 h-8 text-red-500 fill-red-500" />
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Support Our Mission</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">支持我们的使命</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Your generous donation helps us continue creating quality content and maintaining our services.
-            Thank you for being part of our community!
+            你的慷慨捐赠帮助我们继续创作优质内容和维护我们的服务。感谢你成为我们社区的一部分！
           </p>
         </div>
 
@@ -28,41 +28,39 @@ export default function DonationPage() {
           </div>
           <div className="space-y-6">
             <div className="bg-white rounded-lg p-6 shadow-sm">
-              <h3 className="font-semibold text-lg mb-3">Why Donate?</h3>
+              <h3 className="font-semibold text-lg mb-3">为什么要捐赠？</h3>
               <ul className="space-y-2 text-sm text-gray-700">
                 <li className="flex gap-2">
                   <span className="text-green-600">✓</span>
-                  <span>Support quality content creation</span>
+                  <span>支持优质内容创作</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-green-600">✓</span>
-                  <span>Help maintain our servers</span>
+                  <span>帮助我们维护服务器</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-green-600">✓</span>
-                  <span>Enable new features and improvements</span>
+                  <span>推动新功能和改进</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="text-green-600">✓</span>
-                  <span>Join our community of supporters</span>
+                  <span>加入我们的支持者社区</span>
                 </li>
               </ul>
             </div>
 
             <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
-              <h3 className="font-semibold text-lg mb-3">Secure & Private</h3>
+              <h3 className="font-semibold text-lg mb-3">安全且私密</h3>
               <p className="text-sm text-gray-700">
-                Your payment information is processed securely. We never store sensitive payment data and only collect necessary information for donation tracking.
+                您的支付信息经过安全处理。我们从不存储敏感的支付数据，只收集捐赠追踪所需的必要信息。
               </p>
             </div>
           </div>
         </div>
 
         <div className="bg-white rounded-lg p-8 shadow-sm">
-          <h2 className="text-2xl font-bold mb-6">Recent Donations</h2>
-          <div className="dynamic-list-content" id="donation-list-mount">
-            {/* Client-side donation list will be loaded here */}
-          </div>
+          <h2 className="text-2xl font-bold mb-6">最近捐赠</h2>
+          <DonationList />
         </div>
       </div>
     </main>
