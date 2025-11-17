@@ -1,5 +1,7 @@
-# Hexo-Donate v2.0 - 现代赞助系统
+# Hexo-Donate v2.0 - 现代赞助系统  
 
+  [English](README.md) | [简体中文](README_CN.md)  
+  
 一个使用现代网页技术、安全最佳实践和增强用户体验对 Hexo-Donate 项目的完全重写。
 
 ## 特性
