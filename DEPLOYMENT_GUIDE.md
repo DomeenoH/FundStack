@@ -12,14 +12,14 @@
 在 Vercel 项目的 **Settings > Environment Variables** 中添加以下变量：
 
 #### 数据库配置（已连接，但需验证）
-\`\`\`
+```
 DATABASE_URL=postgresql://...  # 从 Neon 集成自动获取
-\`\`\`
+```
 
 #### 管理员密码（必需）
-\`\`\`
+```
 ADMIN_PASSWORD=你的安全密码  # 例如：MySecurePass123!
-\`\`\`
+```
 
 **设置步骤：**
 - 打开侧边栏 **"Vars"** 标签
@@ -35,28 +35,28 @@ ADMIN_PASSWORD=你的安全密码  # 例如：MySecurePass123!
 选择以下任一邮件服务配置：
 
 #### 选项 A: 使用 Resend（推荐）
-\`\`\`
+```
 EMAIL_PROVIDER=resend
 EMAIL_API_KEY=re_xxxxx...  # 从 https://resend.com 获取
 EMAIL_FROM=noreply@yourdomain.com
-\`\`\`
+```
 
 #### 选项 B: 使用 SendGrid
-\`\`\`
+```
 EMAIL_PROVIDER=sendgrid
 EMAIL_API_KEY=SG.xxxxx...  # 从 https://sendgrid.com 获取
 EMAIL_FROM=noreply@yourdomain.com
-\`\`\`
+```
 
 #### 选项 C: 使用 SMTP（任何邮件服务）
-\`\`\`
+```
 EMAIL_PROVIDER=smtp
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your-email@gmail.com
 SMTP_PASSWORD=your-app-password
 EMAIL_FROM=noreply@yourdomain.com
-\`\`\`
+```
 
 **不配置邮件？** 系统会在开发环境自动使用日志模式，邮件内容会显示在控制台。
 
