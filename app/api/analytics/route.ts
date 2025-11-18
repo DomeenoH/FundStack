@@ -6,11 +6,25 @@ export async function GET() {
     const donations = await getDonations();
     const stats = await getStats();
 
-    const confirmedDonations = donations.filter(d => d.status === 'confirmed');
-    const pendingDonations = donations.filter(d => d.status === 'pending');
+    const normalizedDonations = donations.map(donation => ({
+      ...donation,
+      amount: Number(donation.amount || 0),
+    })) as Array<{
+      id: number;
+      user_name: string;
+      user_url?: string;
+      user_email?: string;
+      payment_method: string;
+      status: string;
+      created_at: string;
+      amount: number;
+    }>;
+
+    const confirmedDonations = normalizedDonations.filter(d => d.status === 'confirmed');
+    const pendingDonations = normalizedDonations.filter(d => d.status === 'pending');
 
     // Payment method breakdown
-    const paymentMethodStats = donations.reduce((acc, d) => {
+    const paymentMethodStats = normalizedDonations.reduce((acc, d) => {
       if (!acc[d.payment_method]) {
         acc[d.payment_method] = { count: 0, amount: 0 };
       }

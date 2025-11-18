@@ -9,7 +9,12 @@ export async function GET(request: NextRequest) {
 
   try {
     const donations = await getDonations();
-    return NextResponse.json({ success: true, donations });
+    const normalized = donations.map(donation => ({
+      ...donation,
+      amount: Number(donation.amount || 0),
+    }));
+
+    return NextResponse.json({ success: true, donations: normalized });
   } catch (error) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
