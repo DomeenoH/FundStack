@@ -1,14 +1,10 @@
 import type { Metadata } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 import { SiteNav } from '@/components/site-nav'
 
-const _geist = Geist({ subsets: ["latin"] });
-const _geistMono = Geist_Mono({ subsets: ["latin"] });
-
 export const metadata: Metadata = {
-  title: '捐赠平台',
-  description: '用捐赠支持我们的工作。快速、安全、简单。',
+  title: '温暖投喂小站',
+  description: '用贴心的投喂支持创作，快速、安全又安心。',
   generator: 'v0.app',
   icons: {
     icon: [

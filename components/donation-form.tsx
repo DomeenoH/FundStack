@@ -145,16 +145,16 @@ export default function DonationForm() {
     <div className="w-full max-w-md mx-auto p-6">
       <Card className="p-6 space-y-6">
         <div>
-          <h2 className="text-2xl font-bold mb-2">支持我们</h2>
+          <h2 className="text-2xl font-bold mb-2">给创作者一口能量</h2>
           <p className="text-sm text-gray-600">
-            您的捐赠帮助我们维护和改进我们的服务
+            每一份投喂都是继续前进的动力，谢谢你的支持与陪伴
           </p>
         </div>
 
         {success && (
           <Alert className="bg-green-50 border-green-200">
             <AlertDescription className="text-green-800">
-              感谢您的捐赠！它已添加到捐赠列表中，等待确认。
+              收到啦！你的投喂正在等待确认，感谢你的支持。
             </AlertDescription>
           </Alert>
         )}
@@ -174,13 +174,13 @@ export default function DonationForm() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-2">
-              姓名 <span className="text-red-500">*</span>
+              昵称 <span className="text-red-500">*</span>
             </label>
             <Input
               name="user_name"
               value={form.user_name}
               onChange={handleChange}
-              placeholder="您的名字"
+              placeholder="想怎么称呼你呢"
               maxLength={50}
               required
             />
@@ -198,19 +198,19 @@ export default function DonationForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">网站</label>
+            <label className="block text-sm font-medium mb-2">主页/链接</label>
             <Input
               name="user_url"
               type="url"
               value={form.user_url}
               onChange={handleChange}
-              placeholder="https://example.com"
+              placeholder="展示你的树洞或作品"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-2">
-              金额（¥） <span className="text-red-500">*</span>
+              投喂金额（¥） <span className="text-red-500">*</span>
             </label>
             <Input
               name="amount"
@@ -223,7 +223,7 @@ export default function DonationForm() {
               step="0.01"
               required
             />
-            <p className="text-xs text-gray-500 mt-1">金额范围：0.01 - 99999.99</p>
+            <p className="text-xs text-gray-500 mt-1">小额也珍贵：0.01 - 99999.99</p>
           </div>
 
           <div>
@@ -249,7 +249,7 @@ export default function DonationForm() {
               name="user_message"
               value={form.user_message}
               onChange={handleChange}
-              placeholder="留下您的留言（可选）"
+              placeholder="想对我们说的悄悄话（可选）"
               maxLength={500}
               rows={3}
             />
@@ -269,16 +269,16 @@ export default function DonationForm() {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                提交中...
+                投喂中...
               </>
             ) : (
-              '提交捐赠'
+              '提交投喂'
             )}
           </Button>
         </form>
 
         <p className="text-xs text-gray-500 text-center">
-          您的数据将被安全处理，仅用于捐赠目的。
+          数据仅用于确认投喂，隐私我们会好好守护。
         </p>
       </Card>
     </div>
