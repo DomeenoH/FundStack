@@ -59,7 +59,7 @@ export function AnalyticsDashboard() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">捐赠者总数</p>
+              <p className="text-sm text-gray-600">投喂小伙伴</p>
               <p className="text-3xl font-bold">{analytics.summary.total_donors}</p>
             </div>
             <Users className="w-8 h-8 text-blue-500 opacity-20" />
@@ -69,7 +69,7 @@ export function AnalyticsDashboard() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">总金额</p>
+              <p className="text-sm text-gray-600">已提交金额</p>
               <p className="text-3xl font-bold">¥{analytics.summary.total_amount.toFixed(2)}</p>
             </div>
             <DollarSign className="w-8 h-8 text-green-500 opacity-20" />
@@ -89,7 +89,7 @@ export function AnalyticsDashboard() {
         <Card className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600">平均捐赠</p>
+              <p className="text-sm text-gray-600">平均投喂</p>
               <p className="text-3xl font-bold">¥{analytics.summary.average_donation.toFixed(2)}</p>
             </div>
             <Clock className="w-8 h-8 text-orange-500 opacity-20" />
@@ -111,7 +111,7 @@ export function AnalyticsDashboard() {
       </Card>
 
       <Card className="p-6">
-        <h3 className="text-xl font-bold mb-4">顶级捐赠者</h3>
+        <h3 className="text-xl font-bold mb-4">投喂榜单</h3>
         <div className="space-y-2">
           {analytics.top_donors.length > 0 ? (
             analytics.top_donors.map((donor, idx) => (
@@ -126,7 +126,7 @@ export function AnalyticsDashboard() {
               </div>
             ))
           ) : (
-            <p className="text-gray-500 text-center py-4">暂无捐赠者</p>
+            <p className="text-gray-500 text-center py-4">还没有上榜的小伙伴</p>
           )}
         </div>
       </Card>
@@ -137,7 +137,7 @@ export function AnalyticsDashboard() {
           <div>
             <p className="text-sm text-gray-600">过去7天</p>
             <p className="text-2xl font-bold">
-              {analytics.recent_trends.last_7_days.count} 笔捐赠
+              {analytics.recent_trends.last_7_days.count} 笔投喂
             </p>
             <p className="text-sm text-gray-500">
               ¥{analytics.recent_trends.last_7_days.total.toFixed(2)} 总计
