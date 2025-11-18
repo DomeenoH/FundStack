@@ -51,31 +51,31 @@ A complete rewrite of the Hexo-Donate project with modern web technologies, secu
 
 ### Environment Variables
 
-\`\`\`env
+```env
 DATABASE_URL=your_database_url
 ADMIN_PASSWORD=your_secure_password
 ADMIN_EMAIL=admin@example.com
 RATE_LIMIT_ENABLED=true
-\`\`\`
+```
 
 ### Database Setup
 
 Run the SQL migration script:
 
-\`\`\`bash
+```bash
 # Execute scripts/init-database.sql
-\`\`\`
+```
 
 ### Installation
 
-\`\`\`bash
+```bash
 npm install
 npm run dev
-\`\`\`
+```
 
 ## Project Structure
 
-\`\`\`
+```
 app/
 ├── page.tsx                 # Main donation page
 ├── list/page.tsx           # Public donation list
@@ -100,7 +100,7 @@ lib/
 ├── validation.ts           # Form validation
 ├── email.ts               # Email templates
 └── auth.ts                # Admin auth utilities
-\`\`\`
+```
 
 ## API Endpoints
 
@@ -132,7 +132,7 @@ lib/
 
 ## Development
 
-\`\`\`bash
+```bash
 # Development server
 npm run dev
 
@@ -144,22 +144,22 @@ npm run type-check
 
 # Linting
 npm run lint
-\`\`\`
+```
 
 ## Deployment
 
 Deploy to Vercel:
 
-\`\`\`bash
+```bash
 git push origin main
-\`\`\`
+```
 
 Or manually:
 
-\`\`\`bash
+```bash
 npm run build
 npm start
-\`\`\`
+```
 
 ## Security Notes
 

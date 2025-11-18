@@ -45,12 +45,12 @@ const STATUS_BADGE_STYLES = {
 };
 
 const STATUS_LABELS = {
-  pending: '待处理',
-  confirmed: '已确认',
+  pending: '待确认',
+  confirmed: '已通过',
   rejected: '已拒绝',
 };
 
-export default function DonationList() {
+export default function DonationList({ limit }: { limit?: number }) {
   const [donations, setDonations] = useState<Donation[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
@@ -96,7 +96,7 @@ export default function DonationList() {
       .catch(err => {
         if (err.name !== 'AbortError') {
           console.error('[v0] Failed to fetch donation data:', err);
-          setError('加载捐赠数据时出现问题，请稍后重试。');
+          setError('加载投喂数据时遇到一点小状况，请稍后再试哦。');
         }
       })
       .finally(() => setLoading(false));
@@ -133,6 +133,7 @@ export default function DonationList() {
   };
 
   const filteredDonations = donations.filter(donation => donation.status !== 'rejected');
+  const visibleDonations = limit ? filteredDonations.slice(0, limit) : filteredDonations;
 
   if (loading) {
     return (
@@ -160,11 +161,11 @@ export default function DonationList() {
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="p-4">
-            <p className="text-sm text-gray-600">捐赠者总数</p>
+            <p className="text-sm text-gray-600">投喂人数</p>
             <p className="text-3xl font-bold">{stats.total_donors}</p>
           </Card>
           <Card className="p-4">
-            <p className="text-sm text-gray-600">总金额</p>
+            <p className="text-sm text-gray-600">已提交金额</p>
             <p className="text-3xl font-bold">¥{formatAmount(stats.total_amount)}</p>
           </Card>
           <Card className="p-4">
@@ -172,7 +173,7 @@ export default function DonationList() {
             <p className="text-3xl font-bold">¥{formatAmount(stats.confirmed_amount)}</p>
           </Card>
           <Card className="p-4">
-            <p className="text-sm text-gray-600">平均捐赠</p>
+            <p className="text-sm text-gray-600">平均投喂</p>
             <p className="text-3xl font-bold">
               ¥{formatAmount(stats.average_donation || 0)}
             </p>
@@ -184,7 +185,7 @@ export default function DonationList() {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 border-b">
             <tr>
-              <th className="px-4 py-3 text-left font-medium">捐赠者</th>
+              <th className="px-4 py-3 text-left font-medium">投喂者</th>
               <th className="px-4 py-3 text-left font-medium">方式</th>
               <th className="px-4 py-3 text-right font-medium">金额</th>
               <th className="px-4 py-3 text-left font-medium">留言</th>
@@ -193,13 +194,15 @@ export default function DonationList() {
             </tr>
           </thead>
           <tbody className="divide-y">
+            {visibleDonations.length === 0 ? (
             {filteredDonations.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
-                  暂无捐赠。成为第一个支持我们的人吧！
+                  还没有投喂记录，欢迎成为第一位支持者！
                 </td>
               </tr>
             ) : (
+              visibleDonations.map(donation => (
               filteredDonations.map(donation => (
                 <tr key={donation.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3">

@@ -12,11 +12,11 @@ export function validateDonation(data: any): { valid: boolean; errors: string[] 
 
   // Username validation
   if (!data.user_name || typeof data.user_name !== 'string') {
-    errors.push('请输入有效的姓名');
+    errors.push('请输入有效的昵称');
   } else if (data.user_name.length > 50) {
-    errors.push('姓名长度不能超过50个字符');
+    errors.push('昵称长度不能超过50个字符');
   } else if (data.user_name.length < 2) {
-    errors.push('姓名长度至少需要2个字符');
+    errors.push('昵称长度至少需要2个字符');
   }
 
   // Email validation (optional)
@@ -45,9 +45,9 @@ export function validateDonation(data: any): { valid: boolean; errors: string[] 
   if (!data.amount || typeof data.amount !== 'number') {
     errors.push('请输入有效的金额');
   } else if (data.amount < 0.01) {
-    errors.push('最小捐赠金额为0.01元');
+    errors.push('最小投喂金额为0.01元');
   } else if (data.amount > 99999.99) {
-    errors.push('最大捐赠金额为99999.99元');
+    errors.push('最大投喂金额为99999.99元');
   }
 
   // Payment method validation

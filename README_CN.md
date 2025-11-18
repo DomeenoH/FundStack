@@ -56,7 +56,7 @@ DATABASE_URL=your_database_url
 ADMIN_PASSWORD=your_secure_password
 ADMIN_EMAIL=admin@example.com
 RATE_LIMIT_ENABLED=true
-````
+```
 
 ### 数据库设置
 

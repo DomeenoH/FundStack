@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 const NAV_LINKS = [
-  { href: '/', label: '捐赠首页' },
-  { href: '/list', label: '捐赠列表' },
-  { href: '/analytics', label: '数据分析' },
+  { href: '/', label: '投喂首页' },
+  { href: '/list', label: '投喂墙' },
+  { href: '/analytics', label: '投喂数据' },
   { href: '/admin', label: '管理面板' },
 ];
 
