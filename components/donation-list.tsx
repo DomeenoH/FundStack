@@ -195,6 +195,7 @@ export default function DonationList({ limit }: { limit?: number }) {
           </thead>
           <tbody className="divide-y">
             {visibleDonations.length === 0 ? (
+            {filteredDonations.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                   还没有投喂记录，欢迎成为第一位支持者！
@@ -202,6 +203,7 @@ export default function DonationList({ limit }: { limit?: number }) {
               </tr>
             ) : (
               visibleDonations.map(donation => (
+              filteredDonations.map(donation => (
                 <tr key={donation.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3">
                     {donation.user_url ? (
