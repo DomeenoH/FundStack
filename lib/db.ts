@@ -67,7 +67,7 @@ export async function createDonation(donation: {
 export async function confirmDonation(id: number) {
   try {
     const data = await sql`
-      UPDATE donations 
+      UPDATE donations
       SET status = 'confirmed', confirmed_at = NOW()
       WHERE id = ${id}
       RETURNING *
@@ -94,14 +94,35 @@ export async function rejectDonation(id: number) {
   }
 }
 
+export async function updateDonationStatus(
+  id: number,
+  status: 'pending' | 'confirmed' | 'rejected'
+) {
+  try {
+    const data = await sql`
+      UPDATE donations
+      SET
+        status = ${status},
+        confirmed_at = ${status === 'confirmed' ? sql`NOW()` : null}
+      WHERE id = ${id}
+      RETURNING *
+    `;
+
+    return data[0];
+  } catch (error) {
+    console.error('[v0] Database error in updateDonationStatus:', error);
+    throw error;
+  }
+}
+
 export async function getStats() {
   try {
     const data = await sql`
-      SELECT 
-        COUNT(*) as total_count,
+      SELECT
+        COUNT(*) FILTER (WHERE status != 'rejected') as total_count,
         COUNT(CASE WHEN status = 'confirmed' THEN 1 END) as confirmed_count,
         SUM(CASE WHEN status = 'confirmed' THEN amount ELSE 0 END) as confirmed_total,
-        SUM(amount) as total_amount,
+        SUM(CASE WHEN status != 'rejected' THEN amount ELSE 0 END) as total_amount,
         AVG(CASE WHEN status = 'confirmed' THEN amount END) as avg_amount
       FROM donations
     `;

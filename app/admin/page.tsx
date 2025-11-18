@@ -27,6 +27,7 @@ export default function AdminPage() {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'confirmed'>('pending');
+  const [actioningId, setActioningId] = useState<number | null>(null);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,61 +55,39 @@ export default function AdminPage() {
     }
   };
 
-  const handleConfirm = async (id: number) => {
-    setLoading(true);
+  const updateDonationStatus = async (
+    id: number,
+    status: 'pending' | 'confirmed' | 'rejected',
+    successText: string
+  ) => {
+    setActioningId(id);
+    setError('');
     try {
       const credentials = btoa(`admin:${password}`);
-      
+
       const response = await fetch('/api/admin/donations', {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Authorization': `Basic ${credentials}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ id })
+        body: JSON.stringify({ id, status })
       });
 
       if (response.ok) {
-        setDonations(prev => 
-          prev.map(d => d.id === id ? { ...d, status: 'confirmed' } : d)
+        setDonations(prev =>
+          prev.map(d => d.id === id ? { ...d, status } : d)
         );
-        setSuccessMessage('捐赠已确认！');
+        setSuccessMessage(successText);
         setTimeout(() => setSuccessMessage(''), 3000);
+      } else {
+        setError('状态更新失败');
       }
     } catch (err) {
-      console.error('[v0] Confirm error:', err);
-      setError('确认捐赠失败');
+      console.error('[v0] Status update error:', err);
+      setError('修改状态失败');
     } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleReject = async (id: number) => {
-    setLoading(true);
-    try {
-      const credentials = btoa(`admin:${password}`);
-      
-      const response = await fetch('/api/admin/donations', {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Basic ${credentials}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ id })
-      });
-
-      if (response.ok) {
-        setDonations(prev => 
-          prev.map(d => d.id === id ? { ...d, status: 'rejected' } : d)
-        );
-        setSuccessMessage('捐赠已拒绝');
-        setTimeout(() => setSuccessMessage(''), 3000);
-      }
-    } catch (err) {
-      console.error('[v0] Reject error:', err);
-      setError('拒绝捐赠失败');
-    } finally {
-      setLoading(false);
+      setActioningId(null);
     }
   };
 
@@ -157,7 +136,7 @@ export default function AdminPage() {
     <main className="min-h-screen bg-slate-50 p-6">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">管理仪表板</h1>
+          <h1 className="text-4xl font-bold">投喂管理仪表板</h1>
           <Button
             variant="outline"
             onClick={() => {
@@ -187,10 +166,10 @@ export default function AdminPage() {
           <div className="p-6 border-b">
             <div className="flex justify-between items-start mb-4">
               <div>
-                <h2 className="text-xl font-semibold">捐赠管理</h2>
+                <h2 className="text-xl font-semibold">投喂管理</h2>
                 <p className="text-sm text-gray-600 mt-1">
-                  总计：{donations.length} | 
-                  待处理：{donations.filter(d => d.status === 'pending').length} | 
+                  记录：{donations.length} |
+                  待处理：{donations.filter(d => d.status === 'pending').length} |
                   已确认：{donations.filter(d => d.status === 'confirmed').length}
                 </p>
               </div>
@@ -224,7 +203,7 @@ export default function AdminPage() {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 border-b">
                 <tr>
-                  <th className="px-6 py-3 text-left font-medium">捐赠者</th>
+                  <th className="px-6 py-3 text-left font-medium">投喂者</th>
                   <th className="px-6 py-3 text-left font-medium">邮箱</th>
                   <th className="px-6 py-3 text-left font-medium">金额</th>
                   <th className="px-6 py-3 text-left font-medium">方式</th>
@@ -237,7 +216,7 @@ export default function AdminPage() {
                 {filteredDonations.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                      未找到捐赠
+                      暂无投喂记录
                     </td>
                   </tr>
                 ) : (
@@ -252,50 +231,69 @@ export default function AdminPage() {
                       </td>
                       <td className="px-6 py-4">
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          donation.status === 'confirmed' 
+                          donation.status === 'confirmed'
                             ? 'bg-green-100 text-green-800'
                             : donation.status === 'rejected'
                             ? 'bg-red-100 text-red-800'
                             : 'bg-yellow-100 text-yellow-800'
                         }`}>
-                          {donation.status === 'confirmed' ? '已确认' : donation.status === 'rejected' ? '已拒绝' : '待处理'}
+                          {donation.status === 'confirmed' ? '已确认' : donation.status === 'rejected' ? '已拒绝' : '待确认'}
                         </span>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex gap-2">
-                          {donation.status === 'pending' && (
-                            <>
-                              <Button
-                                size="sm"
-                                onClick={() => handleConfirm(donation.id)}
-                                disabled={loading}
-                                className="bg-green-600 hover:bg-green-700"
-                              >
-                                {loading ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <>
-                                    <Check className="mr-1 h-4 w-4" />
-                                    确认
-                                  </>
-                                )}
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="destructive"
-                                onClick={() => handleReject(donation.id)}
-                                disabled={loading}
-                              >
-                                {loading ? (
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                ) : (
-                                  <>
-                                    <X className="mr-1 h-4 w-4" />
-                                    拒绝
-                                  </>
-                                )}
-                              </Button>
-                            </>
+                        <div className="flex gap-2 items-center">
+                          {filterStatus === 'all' ? (
+                            <select
+                              className="rounded border px-3 py-2 text-sm"
+                              value={donation.status}
+                              disabled={actioningId === donation.id}
+                              onChange={(e) =>
+                                updateDonationStatus(
+                                  donation.id,
+                                  e.target.value as 'pending' | 'confirmed' | 'rejected',
+                                  '状态已更新'
+                                )
+                              }
+                            >
+                              <option value="pending">未确认</option>
+                              <option value="confirmed">已通过</option>
+                              <option value="rejected">已拒绝</option>
+                            </select>
+                          ) : (
+                            donation.status === 'pending' && (
+                              <>
+                                <Button
+                                  size="sm"
+                                  onClick={() => updateDonationStatus(donation.id, 'confirmed', '投喂已通过')}
+                                  disabled={actioningId === donation.id}
+                                  className="bg-green-600 hover:bg-green-700"
+                                >
+                                  {actioningId === donation.id ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <>
+                                      <Check className="mr-1 h-4 w-4" />
+                                      确认
+                                    </>
+                                  )}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => updateDonationStatus(donation.id, 'rejected', '投喂已标记为拒绝')}
+                                  disabled={actioningId === donation.id}
+                                >
+                                  {actioningId === donation.id ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <>
+                                      <X className="mr-1 h-4 w-4" />
+                                      拒绝
+                                    </>
+                                  )}
+                                </Button>
+                              </>
+                            )
                           )}
                         </div>
                       </td>

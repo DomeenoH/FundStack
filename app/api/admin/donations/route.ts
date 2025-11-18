@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDonations, confirmDonation, rejectDonation } from '@/lib/db';
+import { getDonations, confirmDonation, rejectDonation, updateDonationStatus } from '@/lib/db';
 import { verifyAdminAuth } from '../auth';
 
 export async function GET(request: NextRequest) {
@@ -43,6 +43,25 @@ export async function DELETE(request: NextRequest) {
     const { id } = await request.json();
     const data = await rejectDonation(id);
     return NextResponse.json({ success: true, donation: data });
+  } catch (error) {
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  if (!verifyAdminAuth(request)) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    const { id, status } = await request.json();
+
+    if (!['pending', 'confirmed', 'rejected'].includes(status)) {
+      return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+    }
+
+    const donation = await updateDonationStatus(id, status);
+    return NextResponse.json({ success: true, donation });
   } catch (error) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
