@@ -64,20 +64,27 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const confirmedDonations = await getConfirmedDonations();
-    
-    const totalAmount = confirmedDonations.reduce((sum, d) => sum + (d.amount || 0), 0);
+    const [confirmedDonations, rawStats] = await Promise.all([
+      getConfirmedDonations(),
+      getStats(),
+    ]);
+
+    const totalAmount = confirmedDonations.reduce(
+      (sum, d) => sum + Number(d.amount || 0),
+      0
+    );
     const averageDonation = confirmedDonations.length > 0 ? totalAmount / confirmedDonations.length : 0;
+    const stats = {
+      total_donors: Number(rawStats.total_count || 0),
+      confirmed_count: Number(rawStats.confirmed_count || 0),
+      total_amount: Number(rawStats.total_amount || 0),
+      confirmed_amount: Number(rawStats.confirmed_total || 0),
+      average_donation: Number(rawStats.avg_amount || 0),
+    };
 
     return NextResponse.json({
       success: true,
-      stats: {
-        total_donors: confirmedDonations.length,
-        total_amount: totalAmount,
-        confirmed_amount: totalAmount,
-        confirmed_count: confirmedDonations.length,
-        average_donation: averageDonation
-      }
+      stats,
     });
   } catch (error) {
     console.error('Stats fetch error:', error);

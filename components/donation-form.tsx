@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -14,6 +14,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
+import { ApiError, fetchJson } from '@/lib/api';
 
 interface FormState {
   user_name: string;
@@ -38,6 +39,49 @@ export default function DonationForm() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string[]>([]);
 
+  const remainingMessageChars = useMemo(
+    () => Math.max(500 - form.user_message.length, 0),
+    [form.user_message.length]
+  );
+
+  const validateBeforeSubmit = () => {
+    const issues: string[] = [];
+
+    if (!form.user_name.trim()) {
+      issues.push('请输入姓名');
+    } else if (form.user_name.trim().length < 2) {
+      issues.push('姓名长度至少需要2个字符');
+    }
+
+    if (form.user_email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(form.user_email)) {
+        issues.push('请输入有效的邮箱地址');
+      }
+    }
+
+    if (form.user_url) {
+      try {
+        new URL(form.user_url);
+      } catch {
+        issues.push('请输入有效的URL地址');
+      }
+    }
+
+    const amountValue = Number.parseFloat(form.amount);
+    if (!Number.isFinite(amountValue)) {
+      issues.push('请输入有效的金额');
+    } else if (amountValue < 0.01 || amountValue > 99999.99) {
+      issues.push('金额范围为 0.01 - 99999.99');
+    }
+
+    if (form.user_message.length > 500) {
+      issues.push('留言长度不能超过500个字符');
+    }
+
+    return { issues, amountValue };
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -55,39 +99,43 @@ export default function DonationForm() {
     setError([]);
     setSuccess(false);
 
+    const { issues, amountValue } = validateBeforeSubmit();
+    if (issues.length > 0 || !Number.isFinite(amountValue)) {
+      setError(issues.length ? issues : ['请输入有效的金额']);
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch('/api/donations', {
+      await fetchJson('/api/donations', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_name: form.user_name,
+          user_name: form.user_name.trim(),
           user_email: form.user_email || undefined,
           user_url: form.user_url || undefined,
           user_message: form.user_message || undefined,
-          amount: parseFloat(form.amount),
+          amount: amountValue,
           payment_method: form.payment_method,
         }),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.errors || [data.error || '提交失败']);
-      } else {
-        setSuccess(true);
-        setForm({
-          user_name: '',
-          user_email: '',
-          user_url: '',
-          user_message: '',
-          amount: '',
-          payment_method: 'wechat',
-        });
-        setTimeout(() => setSuccess(false), 5000);
-      }
+      setSuccess(true);
+      setForm({
+        user_name: '',
+        user_email: '',
+        user_url: '',
+        user_message: '',
+        amount: '',
+        payment_method: 'wechat',
+      });
+      setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
       console.error('[v0] Donation form error:', err);
-      setError(['网络错误。请重试。']);
+      if (err instanceof ApiError) {
+        setError([err.message]);
+      } else {
+        setError(['网络错误。请重试。']);
+      }
     } finally {
       setLoading(false);
     }
@@ -205,9 +253,12 @@ export default function DonationForm() {
               maxLength={500}
               rows={3}
             />
-            <p className="text-xs text-gray-500 mt-1">
-              {form.user_message.length}/500
-            </p>
+            <div className="mt-1 flex items-center justify-between text-xs text-gray-500">
+              <span>分享一下你的心声（可选）</span>
+              <span>
+                {form.user_message.length}/500 （剩余 {remainingMessageChars}）
+              </span>
+            </div>
           </div>
 
           <Button

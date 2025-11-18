@@ -35,13 +35,13 @@ export async function GET() {
       success: true,
       analytics: {
         summary: {
-          total_donors: stats.total_count,
-          confirmed_donors: stats.confirmed_count,
+          total_donors: Number(stats.total_count || 0),
+          confirmed_donors: Number(stats.confirmed_count || 0),
           pending_donations: pendingDonations.length,
-          total_amount: parseFloat(stats.total_amount || '0'),
-          confirmed_amount: parseFloat(stats.confirmed_total || '0'),
-          pending_amount: (parseFloat(stats.total_amount || '0') - parseFloat(stats.confirmed_total || '0')),
-          average_donation: parseFloat(stats.avg_amount || '0')
+          total_amount: Number(stats.total_amount || 0),
+          confirmed_amount: Number(stats.confirmed_total || 0),
+          pending_amount: Number(stats.total_amount || 0) - Number(stats.confirmed_total || 0),
+          average_donation: Number(stats.avg_amount || 0)
         },
         payment_methods: paymentMethodStats,
         recent_trends: {
