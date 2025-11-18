@@ -121,6 +121,19 @@ export default function DonationList() {
     return isNaN(num) ? '0.00' : num.toFixed(2);
   };
 
+  const formatDateTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return '-';
+    }
+
+    return date.toLocaleString('zh-CN', {
+      hour12: false,
+    });
+  };
+
+  const filteredDonations = donations.filter(donation => donation.status !== 'rejected');
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -176,18 +189,18 @@ export default function DonationList() {
               <th className="px-4 py-3 text-right font-medium">金额</th>
               <th className="px-4 py-3 text-left font-medium">留言</th>
               <th className="px-4 py-3 text-left font-medium">状态</th>
-              <th className="px-4 py-3 text-left font-medium">日期</th>
+              <th className="px-4 py-3 text-left font-medium">时间</th>
             </tr>
           </thead>
           <tbody className="divide-y">
-            {donations.length === 0 ? (
+            {filteredDonations.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                   暂无捐赠。成为第一个支持我们的人吧！
                 </td>
               </tr>
             ) : (
-              donations.map(donation => (
+              filteredDonations.map(donation => (
                 <tr key={donation.id} className="hover:bg-gray-50">
                   <td className="px-4 py-3">
                     {donation.user_url ? (
@@ -222,7 +235,7 @@ export default function DonationList() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-gray-500 text-xs">
-                    {new Date(donation.created_at).toLocaleDateString('zh-CN')}
+                    {formatDateTime(donation.created_at)}
                   </td>
                 </tr>
               ))
