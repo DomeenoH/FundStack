@@ -6,11 +6,25 @@ export async function GET() {
     const donations = await getDonations();
     const stats = await getStats();
 
-    const confirmedDonations = donations.filter(d => d.status === 'confirmed');
-    const pendingDonations = donations.filter(d => d.status === 'pending');
+    const normalizedDonations = donations.map(donation => ({
+      ...donation,
+      amount: Number(donation.amount || 0),
+    })) as Array<{
+      id: number;
+      user_name: string;
+      user_url?: string;
+      user_email?: string;
+      payment_method: string;
+      status: string;
+      created_at: string;
+      amount: number;
+    }>;
+
+    const confirmedDonations = normalizedDonations.filter(d => d.status === 'confirmed');
+    const pendingDonations = normalizedDonations.filter(d => d.status === 'pending');
 
     // Payment method breakdown
-    const paymentMethodStats = donations.reduce((acc, d) => {
+    const paymentMethodStats = normalizedDonations.reduce((acc, d) => {
       if (!acc[d.payment_method]) {
         acc[d.payment_method] = { count: 0, amount: 0 };
       }
@@ -35,13 +49,13 @@ export async function GET() {
       success: true,
       analytics: {
         summary: {
-          total_donors: stats.total_count,
-          confirmed_donors: stats.confirmed_count,
+          total_donors: Number(stats.total_count || 0),
+          confirmed_donors: Number(stats.confirmed_count || 0),
           pending_donations: pendingDonations.length,
-          total_amount: parseFloat(stats.total_amount || '0'),
-          confirmed_amount: parseFloat(stats.confirmed_total || '0'),
-          pending_amount: (parseFloat(stats.total_amount || '0') - parseFloat(stats.confirmed_total || '0')),
-          average_donation: parseFloat(stats.avg_amount || '0')
+          total_amount: Number(stats.total_amount || 0),
+          confirmed_amount: Number(stats.confirmed_total || 0),
+          pending_amount: Number(stats.total_amount || 0) - Number(stats.confirmed_total || 0),
+          average_donation: Number(stats.avg_amount || 0)
         },
         payment_methods: paymentMethodStats,
         recent_trends: {

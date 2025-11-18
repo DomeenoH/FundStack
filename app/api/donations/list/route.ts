@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
       id: d.id,
       user_name: d.user_name,
       user_url: d.user_url,
-      amount: d.amount,
+      amount: Number(d.amount || 0),
       payment_method: d.payment_method,
       user_message: d.user_message,
       created_at: d.created_at,
