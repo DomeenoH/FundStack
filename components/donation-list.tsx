@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Loader2, RefreshCcw } from 'lucide-react';
+import { fetchJson } from '@/lib/api';
 
 interface Donation {
   id: number;
@@ -52,33 +54,67 @@ export default function DonationList() {
   const [donations, setDonations] = useState<Donation[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const loadData = async (controller: AbortController) => {
+    setError(null);
+
+    const donationsPromise = fetchJson<{ donations: Donation[] }>(
+      '/api/donations/list',
+      { signal: controller.signal }
+    );
+    const statsPromise = fetchJson<{ stats: Stats }>(
+      '/api/donations',
+      { signal: controller.signal }
+    );
+
+    const [donationsResult, statsResult] = await Promise.allSettled([
+      donationsPromise,
+      statsPromise,
+    ]);
+
+    let encounteredError = false;
+
+    if (donationsResult.status === 'fulfilled') {
+      setDonations(donationsResult.value.donations || []);
+    } else if (donationsResult.reason instanceof Error) {
+      encounteredError = true;
+      setError(donationsResult.reason.message);
+    }
+
+    if (statsResult.status === 'fulfilled') {
+      setStats(statsResult.value.stats);
+    } else if (statsResult.reason instanceof Error && !encounteredError) {
+      setError(statsResult.reason.message);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [donationsRes, statsRes] = await Promise.all([
-          fetch('/api/donations/list'),
-          fetch('/api/donations'),
-        ]);
+    const controller = new AbortController();
 
-        if (donationsRes.ok) {
-          const donationsData = await donationsRes.json();
-          setDonations(donationsData.donations || []);
+    loadData(controller)
+      .catch(err => {
+        if (err.name !== 'AbortError') {
+          console.error('[v0] Failed to fetch donation data:', err);
+          setError('加载捐赠数据时出现问题，请稍后重试。');
         }
+      })
+      .finally(() => setLoading(false));
 
-        if (statsRes.ok) {
-          const statsData = await statsRes.json();
-          setStats(statsData.stats);
-        }
-      } catch (error) {
-        console.error('[v0] Failed to fetch donation data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
+    return () => controller.abort();
   }, []);
+
+  const handleRetry = () => {
+    setLoading(true);
+    const controller = new AbortController();
+    loadData(controller)
+      .catch(err => {
+        if (err.name !== 'AbortError') {
+          setError(err.message || '加载失败，请稍后重试。');
+        }
+      })
+      .finally(() => setLoading(false));
+  };
 
   const formatAmount = (amount: number | string): string => {
     const num = typeof amount === 'string' ? parseFloat(amount) : amount;
@@ -95,6 +131,19 @@ export default function DonationList() {
 
   return (
     <div className="w-full space-y-6">
+      {error && (
+        <Alert variant="destructive" className="flex items-center justify-between gap-4">
+          <AlertDescription className="text-sm">{error}</AlertDescription>
+          <button
+            type="button"
+            onClick={handleRetry}
+            className="inline-flex items-center gap-2 rounded border px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-50"
+          >
+            <RefreshCcw className="h-4 w-4" /> 重新加载
+          </button>
+        </Alert>
+      )}
+
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="p-4">
