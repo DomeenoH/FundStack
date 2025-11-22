@@ -7,7 +7,7 @@ import { Loader2, RefreshCcw } from 'lucide-react';
 import { fetchJson } from '@/lib/api';
 
 interface Donation {
-  id: number | string;
+  id: number;
   user_name: string;
   user_url?: string;
   amount: number | string;
@@ -229,8 +229,9 @@ export default function DonationList({ limit }: { limit?: number }) {
                     {donation.user_message || '-'}
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${STATUS_BADGE_STYLES[donation.status as keyof typeof STATUS_BADGE_STYLES] || STATUS_BADGE_STYLES.pending
-                      }`}>
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                      STATUS_BADGE_STYLES[donation.status as keyof typeof STATUS_BADGE_STYLES] || STATUS_BADGE_STYLES.pending
+                    }`}>
                       {STATUS_LABELS[donation.status as keyof typeof STATUS_LABELS] || donation.status}
                     </span>
                   </td>
