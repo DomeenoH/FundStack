@@ -336,8 +336,8 @@ pnpm lint
 ## 获取帮助
 
 - **文档**: 查看 [README.md](README.md) 了解功能概览
-- **问题**: 在[GitHub Issues](https://github.com/yourusername/hexo-donate-refactor/issues)提交问题
-- **讨论**: 加入[GitHub Discussions](https://github.com/yourusername/hexo-donate-refactor/discussions)
+- **问题**: 在 [GitHub Issues](https://github.com/DomeenoH/FundStack/issues) 提交问题
+- **讨论**: 加入 [GitHub Discussions](https://github.com/DomeenoH/FundStack/discussions)
 
 ## 下一步
 

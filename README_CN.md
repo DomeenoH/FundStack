@@ -63,8 +63,8 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/yourusername/hexo-donate-refactor.git
-cd hexo-donate-refactor
+git clone https://github.com/DomeenoH/FundStack.git
+cd FundStack
 
 # 安装依赖
 pnpm install
@@ -217,8 +217,8 @@ MIT
 
 ## 💬 支持
 
-- **问题**: [GitHub Issues](https://github.com/yourusername/hexo-donate-refactor/issues)
-- **讨论**: [GitHub Discussions](https://github.com/yourusername/hexo-donate-refactor/discussions)
+- **问题**: 在 [GitHub Issues](https://github.com/DomeenoH/FundStack/issues) 提交问题
+- **讨论**: 加入 [GitHub Discussions](https://github.com/DomeenoH/FundStack/discussions)
 - **邮件**: domino@dominoh.com
 
 ---

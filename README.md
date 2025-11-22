@@ -61,8 +61,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/hexo-donate-refactor.git
-cd hexo-donate-refactor
+git clone https://github.com/DomeenoH/FundStack.git
+cd FundStack
 
 # Install dependencies
 pnpm install
@@ -215,8 +215,8 @@ This project was collaboratively developed through an innovative AI-powered work
 
 ## 💬 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/hexo-donate-refactor/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/hexo-donate-refactor/discussions)
+- **Issues**: 在 [GitHub Issues](https://github.com/DomeenoH/FundStack/issues) 提交问题
+- **Discussions**: 加入 [GitHub Discussions](https://github.com/DomeenoH/FundStack/discussions)
 - **Email**: domino@dominoh.com
 
 ---
