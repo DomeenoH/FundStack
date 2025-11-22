@@ -8,11 +8,8 @@ export async function sendEmail(
     const apiKey = process.env.EMAIL_API_KEY;
     let from = process.env.EMAIL_FROM || 'noreply@example.com';
 
-    console.log('[投喂小站] Attempting email with provider:', emailProvider, 'from:', from);
-
     if (emailProvider === 'resend' && apiKey) {
       const domain = from.split('@')[1];
-      console.log('[投喂小站] Resend domain check - domain:', domain, 'from:', from);
 
       // Resend integration
       const response = await fetch('https://api.resend.com/emails', {
@@ -59,7 +56,7 @@ export async function sendEmail(
       }
       return true;
     } else {
-      console.log(`[Email Fallback] To: ${to}, Subject: ${subject}`);
+      // Email fallback mode - no provider configured
       return true;
     }
   } catch (error) {

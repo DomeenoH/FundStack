@@ -1,4 +1,4 @@
-# Hexo-Donate - 完整安装配置指南
+# FundStack - 完整安装配置指南
 
 [English](SETUP_GUIDE.md) | [简体中文](SETUP_GUIDE_CN.md)
 

@@ -1,4 +1,4 @@
-# Hexo-Donate v2.0 - Complete Setup Guide
+# FundStack - Complete Setup Guide
 
 ## Prerequisites
 

@@ -286,7 +286,7 @@ export function AnalyticsDashboard() {
                     outerRadius={95}
                     paddingAngle={3}
                     dataKey="value"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(1)}%`}
+                    label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(1)}%`}
                     labelLine={{ stroke: '#94a3b8', strokeWidth: 1 }}
                   >
                     {paymentData.map((entry, index) => (

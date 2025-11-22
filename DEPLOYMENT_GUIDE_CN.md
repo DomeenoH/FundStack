@@ -1,4 +1,4 @@
-# 🚀 Hexo-Donate v2.0 - 部署配置指南
+# 🚀 FundStack - 部署配置指南
 
 [English](DEPLOYMENT_GUIDE.md) | [简体中文](DEPLOYMENT_GUIDE_CN.md)
 

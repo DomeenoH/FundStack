@@ -1,4 +1,4 @@
-# 🚀 Hexo-Donate v2.0 - Deployment Configuration Guide
+# 🚀 FundStack - Deployment Configuration Guide
 
 [English](DEPLOYMENT_GUIDE.md) | [简体中文](DEPLOYMENT_GUIDE_CN.md)
 

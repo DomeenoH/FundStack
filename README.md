@@ -6,16 +6,39 @@
 
 **FundStack** is a production-ready, high-performance self-hosted sponsorship solution. Rebuilt on the Next.js 19 architecture with native Serverless support, it features real-time analytics, multi-channel payment management, automated notifications, and robust security. Designed for developers who demand full data ownership.
 
+## 🚀 Why FundStack?
+
+### Instant Visibility - The Game Changer
+
+> **Unlike traditional sponsorship platforms**, FundStack displays donations **immediately** after submission - no waiting, no delays.
+
+When a supporter submits a donation:
+- ✅ **Instant Display**: Their contribution appears on the public list immediately (marked as "Pending")
+- ✅ **Real-time Feedback**: Supporters see their message and amount right away
+- ✅ **Transparent Process**: Status updates from "Pending" → "Confirmed" after admin verification
+- ✅ **Better Engagement**: Supporters feel acknowledged instantly, not hours or days later
+
+**Traditional platforms** make donors wait until manual approval - sometimes hours or days. **FundStack** shows appreciation instantly while maintaining admin control.
+
+### Full Control, Zero Commission
+- 💰 **No Platform Fees**: Keep 100% of your donations
+- 🔒 **Your Data, Your Rules**: Complete ownership of donor information
+- ⚙️ **Customizable**: Adapt every aspect to your needs
+- 🌐 **Self-Hosted**: Deploy anywhere - Vercel, your own server, or any cloud platform
+
+---
+
 ## ✨ Features
 
 ### Core Features
-- **Modern Donation Form**: Clean, responsive interface with real-time validation
-- **Secure Data Handling**: Input sanitization, SQL injection protection, XSS protection
-- **Multiple Payment Methods**: Support for WeChat Pay, Alipay, QQ Pay, and more
-- **Email Notifications**: Automatic notifications for donors and administrators
-- **Admin Dashboard**: Comprehensive management panel with filtering and search
-- **Dynamic Configuration**: Web-based site configuration without code changes
-- **Mobile Optimized**: Fully responsive design with touch-friendly interactions
+- **⚡ Instant Display**: Donations appear immediately on public list (marked as pending until confirmed)
+- **📱 Modern Donation Form**: Clean, responsive interface with real-time validation
+- **🔒 Secure Data Handling**: Input sanitization, SQL injection protection, XSS protection
+- **💳 Multiple Payment Methods**: Support for WeChat Pay, Alipay, QQ Pay, and more
+- **📧 Email Notifications**: Automatic notifications for donors and administrators
+- **🎛️ Admin Dashboard**: Comprehensive management panel with filtering and search
+- **⚙️ Dynamic Configuration**: Web-based site configuration without code changes
+- **📱 Mobile Optimized**: Fully responsive design with touch-friendly interactions
 
 ### Security
 - TypeScript for type safety and code quality
