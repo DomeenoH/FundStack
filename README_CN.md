@@ -51,31 +51,31 @@
 
 ### 环境变量
 
-```env
+\`\`\`env
 DATABASE_URL=your_database_url
 ADMIN_PASSWORD=your_secure_password
 ADMIN_EMAIL=admin@example.com
 RATE_LIMIT_ENABLED=true
-```
+\`\`\`
 
 ### 数据库设置
 
 运行 SQL 迁移脚本：
 
-```bash
+\`\`\`bash
 # 执行 scripts/init-database.sql
-```
+\`\`\`
 
 ### 安装
 
-```bash
+\`\`\`bash
 npm install
 npm run dev
-```
+\`\`\`
 
 ## 项目结构
 
-```
+\`\`\`
 app/
 ├── page.tsx               # 主赞助页面
 ├── list/page.tsx          # 公开赞助列表
@@ -100,7 +100,7 @@ lib/
 ├── validation.ts          # 表单验证
 ├── email.ts               # 邮件模板
 └── auth.ts                # 管理员认证工具
-```
+\`\`\`
 
 ## API 端点
 
@@ -134,7 +134,7 @@ lib/
 
 ## 开发
 
-```bash
+\`\`\`bash
 # 开发服务器
 npm run dev
 
@@ -146,22 +146,22 @@ npm run type-check
 
 # 代码检查 (Linting)
 npm run lint
-```
+\`\`\`
 
 ## 部署
 
 部署到 Vercel：
 
-```bash
+\`\`\`bash
 git push origin main
-```
+\`\`\`
 
 或手动部署：
 
-```bash
+\`\`\`bash
 npm run build
 npm start
-```
+\`\`\`
 
 ## 安全注意事项
 
