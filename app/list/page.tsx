@@ -15,13 +15,13 @@ export default function ListPage() {
           <ArrowLeft className="w-4 h-4" />
           返回投喂小站
         </Link>
-        
+
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">投喂墙</h1>
           <p className="text-gray-600">这里记录着每一份温柔的支持</p>
         </div>
 
-        <DonationList />
+        <DonationList merge={true} />
       </div>
     </main>
   );

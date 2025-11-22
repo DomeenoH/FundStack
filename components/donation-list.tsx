@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -15,6 +16,7 @@ interface Donation {
   user_message?: string;
   created_at: string;
   status: string;
+  donation_count?: number;
 }
 
 interface Stats {
@@ -50,17 +52,18 @@ const STATUS_LABELS = {
   rejected: '已拒绝',
 };
 
-export default function DonationList({ limit }: { limit?: number }) {
+export default function DonationList({ limit, merge = false }: { limit?: number; merge?: boolean }) {
   const [donations, setDonations] = useState<Donation[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter(); // Initialize useRouter
 
   const loadData = async (controller: AbortController) => {
     setError(null);
 
     const donationsPromise = fetchJson<{ donations: Donation[] }>(
-      '/api/donations/list',
+      `/api/donations/list?merge=${merge}`, // Pass merge param
       { signal: controller.signal }
     );
     const statsPromise = fetchJson<{ stats: Stats }>(
@@ -102,7 +105,7 @@ export default function DonationList({ limit }: { limit?: number }) {
       .finally(() => setLoading(false));
 
     return () => controller.abort();
-  }, []);
+  }, [merge]); // Reload when merge prop changes
 
   const handleRetry = () => {
     setLoading(true);
@@ -186,23 +189,37 @@ export default function DonationList({ limit }: { limit?: number }) {
           <thead className="bg-gray-50 border-b">
             <tr>
               <th className="px-4 py-3 text-left font-medium">投喂者</th>
-              <th className="px-4 py-3 text-left font-medium">方式</th>
-              <th className="px-4 py-3 text-right font-medium">金额</th>
-              <th className="px-4 py-3 text-left font-medium">留言</th>
-              <th className="px-4 py-3 text-left font-medium">状态</th>
-              <th className="px-4 py-3 text-left font-medium">时间</th>
+              {merge ? (
+                <>
+                  <th className="px-4 py-3 text-center font-medium">投喂次数</th>
+                  <th className="px-4 py-3 text-right font-medium">总金额</th>
+                  <th className="px-4 py-3 text-left font-medium">最近时间</th>
+                </>
+              ) : (
+                <>
+                  <th className="px-4 py-3 text-left font-medium">方式</th>
+                  <th className="px-4 py-3 text-right font-medium">金额</th>
+                  <th className="px-4 py-3 text-left font-medium">留言</th>
+                  <th className="px-4 py-3 text-left font-medium">状态</th>
+                  <th className="px-4 py-3 text-left font-medium">时间</th>
+                </>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y">
             {filteredDonations.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
+                <td colSpan={merge ? 4 : 6} className="px-4 py-8 text-center text-gray-500">
                   还没有投喂记录，欢迎成为第一位支持者！
                 </td>
               </tr>
             ) : (
               visibleDonations.map(donation => (
-                <tr key={donation.id} className="hover:bg-gray-50">
+                <tr
+                  key={donation.id}
+                  className={`hover:bg-gray-50 ${merge ? 'cursor-pointer' : ''}`}
+                  onClick={() => merge && router.push(`/list/${donation.id}`)}
+                >
                   <td className="px-4 py-3">
                     {donation.user_url ? (
                       <a
@@ -210,6 +227,7 @@ export default function DonationList({ limit }: { limit?: number }) {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:underline"
+                        onClick={(e) => e.stopPropagation()} // Prevent row click
                       >
                         {donation.user_name}
                       </a>
@@ -217,26 +235,43 @@ export default function DonationList({ limit }: { limit?: number }) {
                       donation.user_name
                     )}
                   </td>
-                  <td className="px-4 py-3">
-                    <span className={PAYMENT_METHOD_COLORS[donation.payment_method as keyof typeof PAYMENT_METHOD_COLORS]}>
-                      {PAYMENT_METHOD_LABELS[donation.payment_method as keyof typeof PAYMENT_METHOD_LABELS]}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right font-medium">
-                    ¥{formatAmount(donation.amount)}
-                  </td>
-                  <td className="px-4 py-3 text-gray-600 truncate">
-                    {donation.user_message || '-'}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${STATUS_BADGE_STYLES[donation.status as keyof typeof STATUS_BADGE_STYLES] || STATUS_BADGE_STYLES.pending
-                      }`}>
-                      {STATUS_LABELS[donation.status as keyof typeof STATUS_LABELS] || donation.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-gray-500 text-xs">
-                    {formatDateTime(donation.created_at)}
-                  </td>
+
+                  {merge ? (
+                    <>
+                      <td className="px-4 py-3 text-center">
+                        {donation.donation_count}
+                      </td>
+                      <td className="px-4 py-3 text-right font-medium">
+                        ¥{formatAmount(donation.amount)}
+                      </td>
+                      <td className="px-4 py-3 text-gray-500 text-xs">
+                        {formatDateTime(donation.created_at)}
+                      </td>
+                    </>
+                  ) : (
+                    <>
+                      <td className="px-4 py-3">
+                        <span className={PAYMENT_METHOD_COLORS[donation.payment_method as keyof typeof PAYMENT_METHOD_COLORS]}>
+                          {PAYMENT_METHOD_LABELS[donation.payment_method as keyof typeof PAYMENT_METHOD_LABELS]}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-right font-medium">
+                        ¥{formatAmount(donation.amount)}
+                      </td>
+                      <td className="px-4 py-3 text-gray-600 truncate max-w-[200px]">
+                        {donation.user_message || '-'}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-1 rounded text-xs font-medium ${STATUS_BADGE_STYLES[donation.status as keyof typeof STATUS_BADGE_STYLES] || STATUS_BADGE_STYLES.pending
+                          }`}>
+                          {STATUS_LABELS[donation.status as keyof typeof STATUS_LABELS] || donation.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-gray-500 text-xs">
+                        {formatDateTime(donation.created_at)}
+                      </td>
+                    </>
+                  )}
                 </tr>
               ))
             )}

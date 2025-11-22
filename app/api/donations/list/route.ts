@@ -4,6 +4,9 @@ import { mergeDonors, Donation } from '@/lib/donor-utils';
 
 export async function GET(request: NextRequest) {
   try {
+    const { searchParams } = new URL(request.url);
+    const shouldMerge = searchParams.get('merge') === 'true';
+
     const rawDonations = await getDonations();
 
     // Convert DB result to Donation interface
@@ -22,25 +25,47 @@ export async function GET(request: NextRequest) {
     // Filter confirmed/pending for public list (usually we show all non-rejected)
     const validDonations = donations.filter(d => d.status !== 'rejected');
 
-    // Merge donors
-    const mergedDonors = mergeDonors(validDonations);
+    if (shouldMerge) {
+      // Merge donors
+      const mergedDonors = mergeDonors(validDonations);
 
-    const publicDonations = mergedDonors.map(d => ({
-      id: d.id, // This is now a string like "merged-123"
-      user_name: d.user_name,
-      user_url: d.user_url,
-      amount: d.total_amount,
-      payment_method: d.donations[0].payment_method, // Use latest payment method
-      user_message: d.donations[0].user_message, // Use latest message
-      created_at: d.last_donation_at,
-      status: d.donations[0].status, // Use latest status
-      donation_count: d.donation_count
-    }));
+      const publicDonations = mergedDonors.map(d => ({
+        id: d.id, // This is now a string like "merged-123"
+        user_name: d.user_name,
+        user_url: d.user_url,
+        amount: d.total_amount,
+        payment_method: d.donations[0].payment_method, // Use latest payment method
+        user_message: d.donations[0].user_message, // Use latest message
+        created_at: d.last_donation_at,
+        status: d.donations[0].status, // Use latest status
+        donation_count: d.donation_count
+      }));
 
-    return NextResponse.json({
-      success: true,
-      donations: publicDonations
-    });
+      return NextResponse.json({
+        success: true,
+        donations: publicDonations
+      });
+    } else {
+      // Return raw donations
+      const publicDonations = validDonations.map(d => ({
+        id: d.id,
+        user_name: d.user_name,
+        user_url: d.user_url,
+        amount: d.amount,
+        payment_method: d.payment_method,
+        user_message: d.user_message,
+        created_at:
+          d.created_at instanceof Date
+            ? d.created_at.toISOString()
+            : d.created_at?.toString() || '',
+        status: d.status
+      }));
+
+      return NextResponse.json({
+        success: true,
+        donations: publicDonations
+      });
+    }
   } catch (error) {
     console.error('List fetch error:', error);
     return NextResponse.json(

@@ -62,7 +62,7 @@ export default function DonationPage() {
 
         <div className="bg-white rounded-lg p-8 shadow-sm">
           <h2 className="text-2xl font-bold mb-6">最新投喂（取最近 5 位）</h2>
-          <DonationList limit={5} />
+          <DonationList limit={5} merge={false} />
         </div>
       </div>
     </main>

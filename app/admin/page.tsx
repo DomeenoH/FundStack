@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, LogOut, Check, X } from 'lucide-react';
+import { Loader2, LogOut, Check, X, Search, Download } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface AdminDonation {
@@ -28,6 +28,7 @@ export default function AdminPage() {
   const [successMessage, setSuccessMessage] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'confirmed'>('pending');
   const [actioningId, setActioningId] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,9 +92,44 @@ export default function AdminPage() {
     }
   };
 
-  const filteredDonations = filterStatus === 'all' 
-    ? donations 
+  const exportToCSV = () => {
+    const headers = ['ID', '投喂者', '邮箱', '金额', '方式', '留言', '状态', '时间'];
+    const csvData = filteredAndSearchedDonations.map(d => [
+      d.id,
+      d.user_name,
+      d.user_email || '',
+      d.amount,
+      d.payment_method,
+      d.user_message || '',
+      d.status,
+      new Date(d.created_at).toLocaleString('zh-CN')
+    ]);
+
+    const csvContent = [
+      headers.join(','),
+      ...csvData.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `donations-${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+  };
+
+  const filteredDonations = filterStatus === 'all'
+    ? donations
     : donations.filter(d => d.status === filterStatus);
+
+  const filteredAndSearchedDonations = filteredDonations.filter(d => {
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      d.user_name.toLowerCase().includes(query) ||
+      d.user_email?.toLowerCase().includes(query) ||
+      d.user_message?.toLowerCase().includes(query)
+    );
+  });
 
   if (!authenticated) {
     return (
@@ -101,7 +137,7 @@ export default function AdminPage() {
         <Card className="w-full max-w-md p-8">
           <h1 className="text-3xl font-bold mb-2">管理面板</h1>
           <p className="text-gray-600 mb-6">输入您的管理员密码</p>
-          
+
           {error && (
             <Alert className="mb-4 bg-red-50 border-red-200">
               <AlertDescription className="text-red-800">{error}</AlertDescription>
@@ -173,7 +209,30 @@ export default function AdminPage() {
                   已确认：{donations.filter(d => d.status === 'confirmed').length}
                 </p>
               </div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={exportToCSV}
+                disabled={filteredAndSearchedDonations.length === 0}
+              >
+                <Download className="mr-2 h-4 w-4" />
+                导出 CSV
+              </Button>
             </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 mb-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  type="text"
+                  placeholder="搜索投喂者名称、邮箱或留言..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+
             <div className="flex gap-2">
               <Button
                 size="sm"
@@ -213,14 +272,14 @@ export default function AdminPage() {
                 </tr>
               </thead>
               <tbody className="divide-y">
-                {filteredDonations.length === 0 ? (
+                {filteredAndSearchedDonations.length === 0 ? (
                   <tr>
                     <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                      暂无投喂记录
+                      {searchQuery ? '未找到匹配的记录' : '暂无投喂记录'}
                     </td>
                   </tr>
                 ) : (
-                  filteredDonations.map(donation => (
+                  filteredAndSearchedDonations.map(donation => (
                     <tr key={donation.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 font-medium">{donation.user_name}</td>
                       <td className="px-6 py-4 text-sm text-gray-600">{donation.user_email || '-'}</td>
@@ -230,13 +289,12 @@ export default function AdminPage() {
                         {donation.user_message || '-'}
                       </td>
                       <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          donation.status === 'confirmed'
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${donation.status === 'confirmed'
                             ? 'bg-green-100 text-green-800'
                             : donation.status === 'rejected'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                        }`}>
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-yellow-100 text-yellow-800'
+                          }`}>
                           {donation.status === 'confirmed' ? '已确认' : donation.status === 'rejected' ? '已拒绝' : '待确认'}
                         </span>
                       </td>
