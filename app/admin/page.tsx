@@ -50,7 +50,7 @@ export default function AdminPage() {
         setError('密码错误');
       }
     } catch (err) {
-      console.error('[v0] Login error:', err);
+      console.error('[Hexo-Donate] Login error:', err);
       setError('登录失败。请重试。');
     } finally {
       setLoading(false);
@@ -86,7 +86,7 @@ export default function AdminPage() {
         setError('状态更新失败');
       }
     } catch (err) {
-      console.error('[v0] Status update error:', err);
+      console.error('[Hexo-Donate] Status update error:', err);
       setError('修改状态失败');
     } finally {
       setActioningId(null);
@@ -172,9 +172,9 @@ export default function AdminPage() {
   return (
     <main className="min-h-screen bg-slate-50 p-6">
       <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">投喂管理仪表板</h1>
-          <div className="flex gap-3">
+        <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold">投喂管理仪表板</h1>
+          <div className="flex gap-2 md:gap-3">
             <Button
               variant="outline"
               onClick={() => window.location.href = '/admin/config'}
@@ -268,108 +268,110 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="px-6 py-3 text-left font-medium">投喂者</th>
-                  <th className="px-6 py-3 text-left font-medium">邮箱</th>
-                  <th className="px-6 py-3 text-left font-medium">金额</th>
-                  <th className="px-6 py-3 text-left font-medium">方式</th>
-                  <th className="px-6 py-3 text-left font-medium">留言</th>
-                  <th className="px-6 py-3 text-left font-medium">状态</th>
-                  <th className="px-6 py-3 text-left font-medium">操作</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y">
-                {filteredAndSearchedDonations.length === 0 ? (
+          <div className="overflow-x-auto -mx-6 md:mx-0">
+            <div className="inline-block min-w-full align-middle px-6 md:px-0">
+              <table className="min-w-full text-sm">
+                <thead className="bg-gray-50 border-b">
                   <tr>
-                    <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                      {searchQuery ? '未找到匹配的记录' : '暂无投喂记录'}
-                    </td>
+                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">投喂者</th>
+                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">邮箱</th>
+                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">金额</th>
+                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">方式</th>
+                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">留言</th>
+                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">状态</th>
+                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">操作</th>
                   </tr>
-                ) : (
-                  filteredAndSearchedDonations.map(donation => (
-                    <tr key={donation.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 font-medium">{donation.user_name}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600">{donation.user_email || '-'}</td>
-                      <td className="px-6 py-4 font-semibold">¥{donation.amount.toFixed(2)}</td>
-                      <td className="px-6 py-4 text-sm">{donation.payment_method}</td>
-                      <td className="px-6 py-4 text-sm text-gray-600 truncate max-w-xs">
-                        {donation.user_message || '-'}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${donation.status === 'confirmed'
-                          ? 'bg-green-100 text-green-800'
-                          : donation.status === 'rejected'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-yellow-100 text-yellow-800'
-                          }`}>
-                          {donation.status === 'confirmed' ? '已确认' : donation.status === 'rejected' ? '已拒绝' : '待确认'}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex gap-2 items-center">
-                          {filterStatus === 'all' ? (
-                            <select
-                              className="rounded border px-3 py-2 text-sm"
-                              value={donation.status}
-                              disabled={actioningId === donation.id}
-                              onChange={(e) =>
-                                updateDonationStatus(
-                                  donation.id,
-                                  e.target.value as 'pending' | 'confirmed' | 'rejected',
-                                  '状态已更新'
-                                )
-                              }
-                            >
-                              <option value="pending">未确认</option>
-                              <option value="confirmed">已通过</option>
-                              <option value="rejected">已拒绝</option>
-                            </select>
-                          ) : (
-                            donation.status === 'pending' && (
-                              <>
-                                <Button
-                                  size="sm"
-                                  onClick={() => updateDonationStatus(donation.id, 'confirmed', '投喂已通过')}
-                                  disabled={actioningId === donation.id}
-                                  className="bg-green-600 hover:bg-green-700"
-                                >
-                                  {actioningId === donation.id ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                  ) : (
-                                    <>
-                                      <Check className="mr-1 h-4 w-4" />
-                                      确认
-                                    </>
-                                  )}
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="destructive"
-                                  onClick={() => updateDonationStatus(donation.id, 'rejected', '投喂已标记为拒绝')}
-                                  disabled={actioningId === donation.id}
-                                >
-                                  {actioningId === donation.id ? (
-                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                  ) : (
-                                    <>
-                                      <X className="mr-1 h-4 w-4" />
-                                      拒绝
-                                    </>
-                                  )}
-                                </Button>
-                              </>
-                            )
-                          )}
-                        </div>
+                </thead>
+                <tbody className="divide-y">
+                  {filteredAndSearchedDonations.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
+                        {searchQuery ? '未找到匹配的记录' : '暂无投喂记录'}
                       </td>
                     </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                  ) : (
+                    filteredAndSearchedDonations.map(donation => (
+                      <tr key={donation.id} className="hover:bg-gray-50">
+                        <td className="px-6 py-4 font-medium">{donation.user_name}</td>
+                        <td className="px-6 py-4 text-sm text-gray-600">{donation.user_email || '-'}</td>
+                        <td className="px-6 py-4 font-semibold">¥{donation.amount.toFixed(2)}</td>
+                        <td className="px-6 py-4 text-sm">{donation.payment_method}</td>
+                        <td className="px-6 py-4 text-sm text-gray-600 truncate max-w-xs">
+                          {donation.user_message || '-'}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${donation.status === 'confirmed'
+                            ? 'bg-green-100 text-green-800'
+                            : donation.status === 'rejected'
+                              ? 'bg-red-100 text-red-800'
+                              : 'bg-yellow-100 text-yellow-800'
+                            }`}>
+                            {donation.status === 'confirmed' ? '已确认' : donation.status === 'rejected' ? '已拒绝' : '待确认'}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex gap-2 items-center">
+                            {filterStatus === 'all' ? (
+                              <select
+                                className="rounded border px-3 py-2 text-sm"
+                                value={donation.status}
+                                disabled={actioningId === donation.id}
+                                onChange={(e) =>
+                                  updateDonationStatus(
+                                    donation.id,
+                                    e.target.value as 'pending' | 'confirmed' | 'rejected',
+                                    '状态已更新'
+                                  )
+                                }
+                              >
+                                <option value="pending">未确认</option>
+                                <option value="confirmed">已通过</option>
+                                <option value="rejected">已拒绝</option>
+                              </select>
+                            ) : (
+                              donation.status === 'pending' && (
+                                <>
+                                  <Button
+                                    size="sm"
+                                    onClick={() => updateDonationStatus(donation.id, 'confirmed', '投喂已通过')}
+                                    disabled={actioningId === donation.id}
+                                    className="bg-green-600 hover:bg-green-700"
+                                  >
+                                    {actioningId === donation.id ? (
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                      <>
+                                        <Check className="mr-1 h-4 w-4" />
+                                        确认
+                                      </>
+                                    )}
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="destructive"
+                                    onClick={() => updateDonationStatus(donation.id, 'rejected', '投喂已标记为拒绝')}
+                                    disabled={actioningId === donation.id}
+                                  >
+                                    {actioningId === donation.id ? (
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                      <>
+                                        <X className="mr-1 h-4 w-4" />
+                                        拒绝
+                                      </>
+                                    )}
+                                  </Button>
+                                </>
+                              )
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

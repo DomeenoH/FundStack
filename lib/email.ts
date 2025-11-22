@@ -8,11 +8,11 @@ export async function sendEmail(
     const apiKey = process.env.EMAIL_API_KEY;
     let from = process.env.EMAIL_FROM || 'noreply@example.com';
 
-    console.log('[v0] Attempting email with provider:', emailProvider, 'from:', from);
+    console.log('[Hexo-Donate] Attempting email with provider:', emailProvider, 'from:', from);
 
     if (emailProvider === 'resend' && apiKey) {
       const domain = from.split('@')[1];
-      console.log('[v0] Resend domain check - domain:', domain, 'from:', from);
+      console.log('[Hexo-Donate] Resend domain check - domain:', domain, 'from:', from);
 
       // Resend integration
       const response = await fetch('https://api.resend.com/emails', {
@@ -31,8 +31,8 @@ export async function sendEmail(
 
       if (!response.ok) {
         const error = await response.json();
-        console.warn('[v0] Resend API failed:', error.message);
-        console.warn('[v0] Please verify your email domain at https://resend.com/domains');
+        console.warn('[Hexo-Donate] Resend API failed:', error.message);
+        console.warn('[Hexo-Donate] Please verify your email domain at https://resend.com/domains');
         return false;
       }
       return true;

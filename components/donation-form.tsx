@@ -82,7 +82,7 @@ export default function DonationForm({ config }: DonationFormProps) {
       });
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
-      console.error('[v0] Donation form error:', err);
+      console.error('[Hexo-Donate] Donation form error:', err);
       if (err instanceof ApiError) {
         setSubmitError(err.message);
       } else {
@@ -92,175 +92,179 @@ export default function DonationForm({ config }: DonationFormProps) {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-6">
-      <Card className="p-6 space-y-6">
-        <div>
-          <h2 className="text-2xl font-bold mb-2">{config.form_title}</h2>
-          <p className="text-sm text-gray-600">
-            {config.form_description}
-          </p>
-        </div>
-
-        {success && (
-          <Alert className="bg-green-50 border-green-200">
-            <AlertDescription className="text-green-800">
-              收到啦！你的投喂正在等待确认，感谢你的支持。
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {submitError && (
-          <Alert className="bg-red-50 border-red-200">
-            <AlertDescription className="text-red-800">
-              {submitError}
-            </AlertDescription>
-          </Alert>
-        )}
-
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="user_name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    昵称 <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input placeholder="想怎么称呼你呢" maxLength={config.form_name_max_length} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="user_email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>邮箱</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="your@email.com" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="user_url"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>主页/链接</FormLabel>
-                  <FormControl>
-                    <Input type="url" placeholder="展示你的树洞或作品" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="amount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    投喂金额（¥） <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder={String(config.form_amount_min)}
-                      min={config.form_amount_min}
-                      max={config.form_amount_max}
-                      step="0.01"
-                      {...field}
-                      onChange={e => field.onChange(e.target.valueAsNumber)}
-                    />
-                  </FormControl>
-                  <p className="text-xs text-gray-500 mt-1">小额也珍贵：{config.form_amount_min} - {config.form_amount_max}</p>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="payment_method"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>
-                    支付方式 <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {config.payment_methods.map((method) => (
-                        <SelectItem key={method.value} value={method.value}>
-                          {method.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="user_message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>留言</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="想对我们说的悄悄话（可选）"
-                      maxLength={config.form_message_max_length}
-                      rows={3}
-                      {...field}
-                    />
-                  </FormControl>
-                  <div className="mt-1 flex items-center justify-between text-xs text-gray-500">
-                    <span>分享一下你的心声（可选）</span>
-                    <span>
-                      {field.value?.length || 0}/{config.form_message_max_length} （剩余 {remainingMessageChars}）
-                    </span>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  投喂中...
-                </>
-              ) : (
-                '提交投喂'
-              )}
-            </Button>
-          </form>
-        </Form>
-
-        <p className="text-xs text-gray-500 text-center">
-          {config.form_privacy_text}
+    <Card className="w-full max-w-md mx-auto p-6 md:p-8 shadow-lg">
+      <div>
+        <h2 className="text-2xl font-bold mb-2">{config.form_title}</h2>
+        <p className="text-sm text-gray-600">
+          {config.form_description}
         </p>
-      </Card>
-    </div>
+      </div>
+
+      {success && (
+        <Alert className="bg-green-50 border-green-200">
+          <AlertDescription className="text-green-800">
+            收到啦！你的投喂正在等待确认，感谢你的支持。
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {submitError && (
+        <Alert className="bg-red-50 border-red-200">
+          <AlertDescription className="text-red-800">
+            {submitError}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 md:space-y-6">
+          <FormField
+            control={form.control}
+            name="user_name"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  昵称 <span className="text-red-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input placeholder="想怎么称呼你呢" maxLength={config.form_name_max_length} {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="user_email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>邮箱</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    inputMode="email"
+                    placeholder="your@email.com"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="user_url"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>主页/链接</FormLabel>
+                <FormControl>
+                  <Input type="url" placeholder="展示你的树洞或作品" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="amount"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  投喂金额（¥） <span className="text-red-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    type="number"
+                    inputMode="decimal"
+                    placeholder={String(config.form_amount_min)}
+                    min={config.form_amount_min}
+                    max={config.form_amount_max}
+                    step="0.01"
+                    {...field}
+                    onChange={e => field.onChange(e.target.valueAsNumber)}
+                  />
+                </FormControl>
+                <p className="text-xs text-gray-500 mt-1">小额也珍贵：{config.form_amount_min} - {config.form_amount_max}</p>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="payment_method"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>
+                  支付方式 <span className="text-red-500">*</span>
+                </FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {config.payment_methods.map((method) => (
+                      <SelectItem key={method.value} value={method.value}>
+                        {method.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="user_message"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>留言</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="想对我们说的悄悄话（可选）"
+                    maxLength={config.form_message_max_length}
+                    rows={3}
+                    {...field}
+                  />
+                </FormControl>
+                <div className="mt-1 flex items-center justify-between text-xs text-gray-500">
+                  <span>分享一下你的心声（可选）</span>
+                  <span>
+                    {field.value?.length || 0}/{config.form_message_max_length} （剩余 {remainingMessageChars}）
+                  </span>
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full"
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                投喂中...
+              </>
+            ) : (
+              '提交投喂'
+            )}
+          </Button>
+        </form>
+      </Form>
+
+      <p className="text-xs text-gray-500 text-center">
+        {config.form_privacy_text}
+      </p>
+    </Card>
   );
 }

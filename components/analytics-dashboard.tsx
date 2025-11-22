@@ -58,7 +58,7 @@ export function AnalyticsDashboard() {
           setAnalytics(data.analytics);
         }
       } catch (error) {
-        console.error('[v0] Failed to fetch analytics:', error);
+        console.error('[Hexo-Donate] Failed to fetch analytics:', error);
       } finally {
         setLoading(false);
       }
@@ -216,8 +216,8 @@ export function AnalyticsDashboard() {
                 <div key={idx} className="flex items-center justify-between border-b pb-2">
                   <div className="flex items-center gap-3">
                     <span className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold ${idx === 0 ? 'bg-yellow-100 text-yellow-700' :
-                        idx === 1 ? 'bg-gray-100 text-gray-700' :
-                          idx === 2 ? 'bg-orange-100 text-orange-700' : 'text-gray-500'
+                      idx === 1 ? 'bg-gray-100 text-gray-700' :
+                        idx === 2 ? 'bg-orange-100 text-orange-700' : 'text-gray-500'
                       }`}>
                       {idx + 1}
                     </span>

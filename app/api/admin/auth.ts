@@ -17,7 +17,7 @@ export function verifyAdminAuth(request: NextRequest): boolean {
     // Verify credentials
     return username === 'admin' && password === ADMIN_PASSWORD;
   } catch (error) {
-    console.error('[v0] Auth verification error:', error);
+    console.error('[Hexo-Donate] Auth verification error:', error);
     return false;
   }
 }

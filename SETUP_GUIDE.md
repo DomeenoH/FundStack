@@ -49,9 +49,9 @@ Execute the SQL migration script to create tables:
 3. Copy and paste content from `scripts/init-database.sql`
 4. Execute the script
 
-**Option B: Using v0 Script Execution**
-1. The database will initialize automatically when running the app
-2. Or manually execute: `npm run db:init`
+**Option B: Using Command Line**
+1. Install PostgreSQL client or use your database provider's CLI
+2. Execute: `psql $DATABASE_URL -f scripts/init-database.sql`
 
 ### 3. Installation
 

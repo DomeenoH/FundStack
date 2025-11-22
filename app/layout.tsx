@@ -5,7 +5,6 @@ import { SiteNav } from '@/components/site-nav'
 export const metadata: Metadata = {
   title: '温暖投喂小站',
   description: '用贴心的投喂支持创作，快速、安全又安心。',
-  generator: 'v0.app',
   icons: {
     icon: [
       {
