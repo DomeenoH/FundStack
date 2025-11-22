@@ -2,7 +2,9 @@
 
 import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Loader2, TrendingUp, Users, DollarSign, Clock } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface Analytics {
   summary: {
@@ -18,12 +20,18 @@ interface Analytics {
   recent_trends: {
     last_7_days: { count: number; total: number };
   };
+  trends: {
+    daily: Array<{ date: string; count: number; amount: number }>;
+    weekly: Array<{ date: string; count: number; amount: number }>;
+    monthly: Array<{ date: string; count: number; amount: number }>;
+  };
   top_donors: Array<{ name: string; amount: number; date: string }>;
 }
 
 export function AnalyticsDashboard() {
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [loading, setLoading] = useState(true);
+  const [trendPeriod, setTrendPeriod] = useState('daily');
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -96,6 +104,58 @@ export function AnalyticsDashboard() {
           </div>
         </Card>
       </div>
+
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold">投喂趋势</h3>
+          <Tabs value={trendPeriod} onValueChange={setTrendPeriod}>
+            <TabsList>
+              <TabsTrigger value="daily">日</TabsTrigger>
+              <TabsTrigger value="weekly">周</TabsTrigger>
+              <TabsTrigger value="monthly">月</TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
+        <div className="h-[300px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={analytics.trends[trendPeriod as keyof typeof analytics.trends]}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <XAxis
+                dataKey="date"
+                tick={{ fontSize: 12 }}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                yAxisId="left"
+                orientation="left"
+                stroke="#8884d8"
+                tick={{ fontSize: 12 }}
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => `¥${value}`}
+              />
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                stroke="#82ca9d"
+                tick={{ fontSize: 12 }}
+                tickLine={false}
+                axisLine={false}
+              />
+              <Tooltip
+                formatter={(value: number, name: string) => [
+                  name === 'amount' ? `¥${value.toFixed(2)}` : value,
+                  name === 'amount' ? '金额' : '笔数'
+                ]}
+                labelStyle={{ color: '#333' }}
+              />
+              <Bar yAxisId="left" dataKey="amount" name="amount" fill="#8884d8" radius={[4, 4, 0, 0]} maxBarSize={50} />
+              <Bar yAxisId="right" dataKey="count" name="count" fill="#82ca9d" radius={[4, 4, 0, 0]} maxBarSize={50} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
 
       <Card className="p-6">
         <h3 className="text-xl font-bold mb-4">支付方式分布</h3>
