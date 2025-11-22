@@ -1,8 +1,12 @@
-# Hexo-Donate - 现代化赞助管理系统
+# FundStack - 为创作者打造的次世代赞助基础设施
+
+> 为创作者打造的次世代赞助基础设施。
 
 [English](README.md) | [简体中文](README_CN.md)
 
-基于现代Web技术构建的完整模块化赞助管理系统，具有安全的数据处理、自动邮件通知和综合管理功能。
+**FundStack** 是一套生产级、高性能的自托管赞助管理解决方案。
+
+基于最新的 Next.js 19 架构重构,原生支持 Serverless 部署。它集成了实时数据分析、多渠道支付管理(微信/支付宝/QQ)、自动化邮件通知以及高强度的安全防护。专为那些希望完全掌控数据、拒绝平台抽成的开发者和创作者设计。
 
 ## ✨ 功能特性
 
@@ -200,10 +204,6 @@ PATCH /api/admin/config         # 更新站点配置
 ## 📄 许可证
 
 MIT
-
-## 🙏 致谢
-
-受 xingjiahui 的 [Hexo-Donate](https://github.com/xingjiahui/Hexo-Donate) 启发
 
 ## 🤖 AI 协作开发
 

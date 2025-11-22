@@ -1,8 +1,10 @@
-# Hexo-Donate - Modern Donation Management System
+# FundStack - The Next Generation of Sponsorship
+
+> The next generation of sponsorship.
 
 [English](README.md) | [简体中文](README_CN.md)
 
-A complete modular donation management system built with modern web technologies, featuring secure data handling, automatic email notifications, and comprehensive admin controls.
+**FundStack** is a production-ready, high-performance self-hosted sponsorship solution. Rebuilt on the Next.js 19 architecture with native Serverless support, it features real-time analytics, multi-channel payment management, automated notifications, and robust security. Designed for developers who demand full data ownership.
 
 ## ✨ Features
 
@@ -200,10 +202,6 @@ See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for detailed instructions.
 ## 📄 License
 
 MIT
-
-## 🙏 Acknowledgments
-
-Inspired by [Hexo-Donate](https://github.com/xingjiahui/Hexo-Donate) by xingjiahui
 
 ## 🤖 Built with AI
 
