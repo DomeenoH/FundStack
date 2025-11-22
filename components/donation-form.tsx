@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,129 +17,72 @@ import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2 } from 'lucide-react';
 import { ApiError, fetchJson } from '@/lib/api';
-
-interface FormState {
-  user_name: string;
-  user_email: string;
-  user_url: string;
-  user_message: string;
-  amount: string;
-  payment_method: string;
-}
+import { donationSchema, type DonationFormData } from '@/lib/validation';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 
 export default function DonationForm() {
-  const [form, setForm] = useState<FormState>({
-    user_name: '',
-    user_email: '',
-    user_url: '',
-    user_message: '',
-    amount: '',
-    payment_method: 'wechat',
+  const [success, setSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const form = useForm<DonationFormData>({
+    resolver: zodResolver(donationSchema),
+    defaultValues: {
+      user_name: '',
+      user_email: '',
+      user_url: '',
+      user_message: '',
+      amount: '' as any, // handled by input type number
+      payment_method: 'wechat',
+    },
   });
 
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
-  const [error, setError] = useState<string[]>([]);
+  const { watch, formState: { isSubmitting } } = form;
+  const userMessage = watch('user_message') || '';
 
   const remainingMessageChars = useMemo(
-    () => Math.max(500 - form.user_message.length, 0),
-    [form.user_message.length]
+    () => Math.max(500 - userMessage.length, 0),
+    [userMessage.length]
   );
 
-  const validateBeforeSubmit = () => {
-    const issues: string[] = [];
-
-    if (!form.user_name.trim()) {
-      issues.push('请输入姓名');
-    } else if (form.user_name.trim().length < 2) {
-      issues.push('姓名长度至少需要2个字符');
-    }
-
-    if (form.user_email) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(form.user_email)) {
-        issues.push('请输入有效的邮箱地址');
-      }
-    }
-
-    if (form.user_url) {
-      try {
-        new URL(form.user_url);
-      } catch {
-        issues.push('请输入有效的URL地址');
-      }
-    }
-
-    const amountValue = Number.parseFloat(form.amount);
-    if (!Number.isFinite(amountValue)) {
-      issues.push('请输入有效的金额');
-    } else if (amountValue < 0.01 || amountValue > 99999.99) {
-      issues.push('金额范围为 0.01 - 99999.99');
-    }
-
-    if (form.user_message.length > 500) {
-      issues.push('留言长度不能超过500个字符');
-    }
-
-    return { issues, amountValue };
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setForm(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleSelectChange = (value: string) => {
-    setForm(prev => ({ ...prev, payment_method: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError([]);
+  const onSubmit = async (data: DonationFormData) => {
+    setSubmitError(null);
     setSuccess(false);
-
-    const { issues, amountValue } = validateBeforeSubmit();
-    if (issues.length > 0 || !Number.isFinite(amountValue)) {
-      setError(issues.length ? issues : ['请输入有效的金额']);
-      setLoading(false);
-      return;
-    }
 
     try {
       await fetchJson('/api/donations', {
         method: 'POST',
         body: JSON.stringify({
-          user_name: form.user_name.trim(),
-          user_email: form.user_email || undefined,
-          user_url: form.user_url || undefined,
-          user_message: form.user_message || undefined,
-          amount: amountValue,
-          payment_method: form.payment_method,
+          ...data,
+          user_email: data.user_email || undefined,
+          user_url: data.user_url || undefined,
+          user_message: data.user_message || undefined,
         }),
       });
 
       setSuccess(true);
-      setForm({
+      form.reset({
         user_name: '',
         user_email: '',
         user_url: '',
         user_message: '',
-        amount: '',
+        amount: '' as any,
         payment_method: 'wechat',
       });
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
       console.error('[v0] Donation form error:', err);
       if (err instanceof ApiError) {
-        setError([err.message]);
+        setSubmitError(err.message);
       } else {
-        setError(['网络错误。请重试。']);
+        setSubmitError('网络错误。请重试。');
       }
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -159,123 +104,152 @@ export default function DonationForm() {
           </Alert>
         )}
 
-        {error.length > 0 && (
+        {submitError && (
           <Alert className="bg-red-50 border-red-200">
             <AlertDescription className="text-red-800">
-              <ul className="list-disc list-inside space-y-1">
-                {error.map((err, i) => (
-                  <li key={i}>{err}</li>
-                ))}
-              </ul>
+              {submitError}
             </AlertDescription>
           </Alert>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              昵称 <span className="text-red-500">*</span>
-            </label>
-            <Input
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <FormField
+              control={form.control}
               name="user_name"
-              value={form.user_name}
-              onChange={handleChange}
-              placeholder="想怎么称呼你呢"
-              maxLength={50}
-              required
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    昵称 <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="想怎么称呼你呢" maxLength={50} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">邮箱</label>
-            <Input
+            <FormField
+              control={form.control}
               name="user_email"
-              type="email"
-              value={form.user_email}
-              onChange={handleChange}
-              placeholder="your@email.com"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>邮箱</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="your@email.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">主页/链接</label>
-            <Input
+            <FormField
+              control={form.control}
               name="user_url"
-              type="url"
-              value={form.user_url}
-              onChange={handleChange}
-              placeholder="展示你的树洞或作品"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>主页/链接</FormLabel>
+                  <FormControl>
+                    <Input type="url" placeholder="展示你的树洞或作品" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              投喂金额（¥） <span className="text-red-500">*</span>
-            </label>
-            <Input
+            <FormField
+              control={form.control}
               name="amount"
-              type="number"
-              value={form.amount}
-              onChange={handleChange}
-              placeholder="0.01"
-              min="0.01"
-              max="99999.99"
-              step="0.01"
-              required
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    投喂金额（¥） <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      placeholder="0.01"
+                      min="0.01"
+                      max="99999.99"
+                      step="0.01"
+                      {...field}
+                      onChange={e => field.onChange(e.target.valueAsNumber)}
+                    />
+                  </FormControl>
+                  <p className="text-xs text-gray-500 mt-1">小额也珍贵：0.01 - 99999.99</p>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <p className="text-xs text-gray-500 mt-1">小额也珍贵：0.01 - 99999.99</p>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              支付方式 <span className="text-red-500">*</span>
-            </label>
-            <Select value={form.payment_method} onValueChange={handleSelectChange}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="wechat">微信支付</SelectItem>
-                <SelectItem value="alipay">支付宝</SelectItem>
-                <SelectItem value="qq">QQ支付</SelectItem>
-                <SelectItem value="other">其他</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+            <FormField
+              control={form.control}
+              name="payment_method"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    支付方式 <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="wechat">微信支付</SelectItem>
+                      <SelectItem value="alipay">支付宝</SelectItem>
+                      <SelectItem value="qq">QQ支付</SelectItem>
+                      <SelectItem value="other">其他</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <div>
-            <label className="block text-sm font-medium mb-2">留言</label>
-            <Textarea
+            <FormField
+              control={form.control}
               name="user_message"
-              value={form.user_message}
-              onChange={handleChange}
-              placeholder="想对我们说的悄悄话（可选）"
-              maxLength={500}
-              rows={3}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>留言</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="想对我们说的悄悄话（可选）"
+                      maxLength={500}
+                      rows={3}
+                      {...field}
+                    />
+                  </FormControl>
+                  <div className="mt-1 flex items-center justify-between text-xs text-gray-500">
+                    <span>分享一下你的心声（可选）</span>
+                    <span>
+                      {field.value?.length || 0}/500 （剩余 {remainingMessageChars}）
+                    </span>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <div className="mt-1 flex items-center justify-between text-xs text-gray-500">
-              <span>分享一下你的心声（可选）</span>
-              <span>
-                {form.user_message.length}/500 （剩余 {remainingMessageChars}）
-              </span>
-            </div>
-          </div>
 
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                投喂中...
-              </>
-            ) : (
-              '提交投喂'
-            )}
-          </Button>
-        </form>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  投喂中...
+                </>
+              ) : (
+                '提交投喂'
+              )}
+            </Button>
+          </form>
+        </Form>
 
         <p className="text-xs text-gray-500 text-center">
           数据仅用于确认投喂，隐私我们会好好守护。
