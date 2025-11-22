@@ -26,8 +26,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import type { SiteConfig } from '@/lib/config';
 
-export default function DonationForm() {
+interface DonationFormProps {
+  config: SiteConfig;
+}
+
+export default function DonationForm({ config }: DonationFormProps) {
   const [success, setSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -47,8 +52,8 @@ export default function DonationForm() {
   const userMessage = watch('user_message') || '';
 
   const remainingMessageChars = useMemo(
-    () => Math.max(500 - userMessage.length, 0),
-    [userMessage.length]
+    () => Math.max(config.form_message_max_length - userMessage.length, 0),
+    [userMessage.length, config.form_message_max_length]
   );
 
   const onSubmit = async (data: DonationFormData) => {
@@ -90,9 +95,9 @@ export default function DonationForm() {
     <div className="w-full max-w-md mx-auto p-6">
       <Card className="p-6 space-y-6">
         <div>
-          <h2 className="text-2xl font-bold mb-2">给创作者一口能量</h2>
+          <h2 className="text-2xl font-bold mb-2">{config.form_title}</h2>
           <p className="text-sm text-gray-600">
-            每一份投喂都是继续前进的动力，谢谢你的支持与陪伴
+            {config.form_description}
           </p>
         </div>
 
@@ -123,7 +128,7 @@ export default function DonationForm() {
                     昵称 <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input placeholder="想怎么称呼你呢" maxLength={50} {...field} />
+                    <Input placeholder="想怎么称呼你呢" maxLength={config.form_name_max_length} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -169,15 +174,15 @@ export default function DonationForm() {
                   <FormControl>
                     <Input
                       type="number"
-                      placeholder="0.01"
-                      min="0.01"
-                      max="99999.99"
+                      placeholder={String(config.form_amount_min)}
+                      min={config.form_amount_min}
+                      max={config.form_amount_max}
                       step="0.01"
                       {...field}
                       onChange={e => field.onChange(e.target.valueAsNumber)}
                     />
                   </FormControl>
-                  <p className="text-xs text-gray-500 mt-1">小额也珍贵：0.01 - 99999.99</p>
+                  <p className="text-xs text-gray-500 mt-1">小额也珍贵：{config.form_amount_min} - {config.form_amount_max}</p>
                   <FormMessage />
                 </FormItem>
               )}
@@ -198,10 +203,11 @@ export default function DonationForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="wechat">微信支付</SelectItem>
-                      <SelectItem value="alipay">支付宝</SelectItem>
-                      <SelectItem value="qq">QQ支付</SelectItem>
-                      <SelectItem value="other">其他</SelectItem>
+                      {config.payment_methods.map((method) => (
+                        <SelectItem key={method.value} value={method.value}>
+                          {method.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -218,7 +224,7 @@ export default function DonationForm() {
                   <FormControl>
                     <Textarea
                       placeholder="想对我们说的悄悄话（可选）"
-                      maxLength={500}
+                      maxLength={config.form_message_max_length}
                       rows={3}
                       {...field}
                     />
@@ -226,7 +232,7 @@ export default function DonationForm() {
                   <div className="mt-1 flex items-center justify-between text-xs text-gray-500">
                     <span>分享一下你的心声（可选）</span>
                     <span>
-                      {field.value?.length || 0}/500 （剩余 {remainingMessageChars}）
+                      {field.value?.length || 0}/{config.form_message_max_length} （剩余 {remainingMessageChars}）
                     </span>
                   </div>
                   <FormMessage />
@@ -252,7 +258,7 @@ export default function DonationForm() {
         </Form>
 
         <p className="text-xs text-gray-500 text-center">
-          数据仅用于确认投喂，隐私我们会好好守护。
+          {config.form_privacy_text}
         </p>
       </Card>
     </div>

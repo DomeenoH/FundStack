@@ -152,3 +152,68 @@ export async function checkRateLimit(ip: string): Promise<number> {
     return 0;
   }
 }
+
+// ==================== Configuration Management ====================
+
+export async function getSiteConfig() {
+  try {
+    const data = await sql`
+      SELECT key, value, description, updated_at 
+      FROM site_config
+      ORDER BY key
+    `;
+    // Convert array to object for easier access
+    const config: Record<string, any> = {};
+    data.forEach((row: any) => {
+      config[row.key] = row.value;
+    });
+    return config;
+  } catch (error) {
+    console.error('[v0] Database error in getSiteConfig:', error);
+    return {};
+  }
+}
+
+export async function getConfigByKey(key: string) {
+  try {
+    const data = await sql`
+      SELECT value FROM site_config 
+      WHERE key = ${key}
+    `;
+    return data[0]?.value || null;
+  } catch (error) {
+    console.error('[v0] Database error in getConfigByKey:', error);
+    return null;
+  }
+}
+
+export async function updateConfig(key: string, value: any) {
+  try {
+    const data = await sql`
+      INSERT INTO site_config (key, value, updated_at)
+      VALUES (${key}, ${JSON.stringify(value)}, NOW())
+      ON CONFLICT (key) 
+      DO UPDATE SET 
+        value = ${JSON.stringify(value)},
+        updated_at = NOW()
+      RETURNING *
+    `;
+    return data[0];
+  } catch (error) {
+    console.error('[v0] Database error in updateConfig:', error);
+    throw error;
+  }
+}
+
+export async function batchUpdateConfig(updates: Record<string, any>) {
+  try {
+    const promises = Object.entries(updates).map(([key, value]) =>
+      updateConfig(key, value)
+    );
+    await Promise.all(promises);
+    return true;
+  } catch (error) {
+    console.error('[v0] Database error in batchUpdateConfig:', error);
+    throw error;
+  }
+}

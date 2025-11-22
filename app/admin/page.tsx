@@ -43,6 +43,7 @@ export default function AdminPage() {
 
       if (response.ok) {
         setAuthenticated(true);
+        localStorage.setItem('adminToken', credentials); // Store token
         const data = await response.json();
         setDonations(data.donations);
       } else {
@@ -173,17 +174,26 @@ export default function AdminPage() {
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-bold">投喂管理仪表板</h1>
-          <Button
-            variant="outline"
-            onClick={() => {
-              setAuthenticated(false);
-              setPassword('');
-              setDonations([]);
-            }}
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            退出登录
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => window.location.href = '/admin/config'}
+            >
+              站点配置
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setAuthenticated(false);
+                setPassword('');
+                setDonations([]);
+                localStorage.removeItem('adminToken');
+              }}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              退出登录
+            </Button>
+          </div>
         </div>
 
         {successMessage && (
@@ -290,10 +300,10 @@ export default function AdminPage() {
                       </td>
                       <td className="px-6 py-4">
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${donation.status === 'confirmed'
-                            ? 'bg-green-100 text-green-800'
-                            : donation.status === 'rejected'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-yellow-100 text-yellow-800'
+                          ? 'bg-green-100 text-green-800'
+                          : donation.status === 'rejected'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-yellow-100 text-yellow-800'
                           }`}>
                           {donation.status === 'confirmed' ? '已确认' : donation.status === 'rejected' ? '已拒绝' : '待确认'}
                         </span>
