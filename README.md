@@ -8,7 +8,7 @@ A complete modular donation management system built with modern web technologies
 
 ### Core Features
 - **Modern Donation Form**: Clean, responsive interface with real-time validation
-- **Secure Data Handling**: Input sanitization, SQL inject protection, XSS防护
+- **Secure Data Handling**: Input sanitization, SQL injection protection, XSS protection
 - **Multiple Payment Methods**: Support for WeChat Pay, Alipay, QQ Pay, and more
 - **Email Notifications**: Automatic notifications for donors and administrators
 - **Admin Dashboard**: Comprehensive management panel with filtering and search
@@ -134,6 +134,7 @@ This project is fully optimized for mobile devices with:
 - **[Setup Guide](SETUP_GUIDE.md)**: Detailed installation and configuration
 - **[Setup Guide (CN)](SETUP_GUIDE_CN.md)**: 中文安装配置指南
 - **[Deployment Guide](DEPLOYMENT_GUIDE.md)**: Production deployment instructions
+- **[Deployment Guide (CN)](DEPLOYMENT_GUIDE_CN.md)**: 生产环境部署说明
 - **[API Documentation](#api-endpoints)**: API reference below
 
 ## 🔗 API Endpoints
@@ -154,7 +155,7 @@ GET  /api/config           # Get site configuration
 ```
 GET   /api/admin/donations      # List all donations
 PATCH /api/admin/donations      # Update donation status
-GET   /api/admin/config         #Get current configuration
+GET   /api/admin/config         # Get current configuration
 PATCH /api/admin/config         # Update site configuration
 ```
 
@@ -177,7 +178,7 @@ PATCH /api/admin/config         # Update site configuration
 
 ### Deploy to Vercel
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.co m/new)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
 
 1. Push code to GitHub
 2. Import repository in Vercel
@@ -204,12 +205,23 @@ MIT
 
 Inspired by [Hexo-Donate](https://github.com/xingjiahui/Hexo-Donate) by xingjiahui
 
+## 🤖 Built with AI
+
+This project was collaboratively developed through an innovative AI-powered workflow:
+
+- **[v0.dev](https://v0.dev)** - Initial UI prototyping and component generation
+- **[Google Gemini 3 Pro](https://deepmind.google/technologies/gemini/)** - Architecture design and code implementation
+- **[Claude Sonnet 4.5](https://www.anthropic.com/claude)** - Code refinement and optimization
+
+> A testament to the power of human-AI collaboration in modern software development. This entire codebase was created through iterative conversations with AI assistants, demonstrating how AI can accelerate development while maintaining code quality and best practices.
+
 ## 💬 Support
 
 - **Issues**: [GitHub Issues](https://github.com/yourusername/hexo-donate-refactor/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/yourusername/hexo-donate-refactor/discussions)
-- **Email**: Support@yourdomain.com
+- **Email**: domino@dominoh.com
 
 ---
 
-Made with ❤️ using Next.js and TypeScript
+Made with ❤️ using Next.js, TypeScript, and AI
+

@@ -131,9 +131,10 @@ RATE_LIMIT_ENABLED=true
 
 ## 📚 文档
 
-- **[安装指南](SETUP_GUIDE.md)**: 英文详细安装和配置说明
-- **[安装指南(中文)](SETUP_GUIDE_CN.md)**: 中文详细安装配置指南
-- **[部署指南](DEPLOYMENT_GUIDE.md)**: 生产环境部署说明
+- **[安装指南](SETUP_GUIDE_CN.md)**: 中文详细安装配置指南
+- **[安装指南(英文)](SETUP_GUIDE.md)**: 英文详细安装和配置说明
+- **[部署指南](DEPLOYMENT_GUIDE_CN.md)**: 生产环境部署说明
+- **[部署指南(英文)](DEPLOYMENT_GUIDE.md)**: Production deployment instructions
 - **[API文档](#api-endpoints)**: API参考见下文
 
 ## 🔗 API 端点
@@ -184,7 +185,7 @@ PATCH /api/admin/config         # 更新站点配置
 3. 配置环境变量
 4. 部署！
 
-详细说明请参见 [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)。
+详细说明请参见 [DEPLOYMENT_GUIDE_CN.md](DEPLOYMENT_GUIDE_CN.md)。
 
 ## 🔐 安全最佳实践
 
@@ -204,12 +205,23 @@ MIT
 
 受 xingjiahui 的 [Hexo-Donate](https://github.com/xingjiahui/Hexo-Donate) 启发
 
+## 🤖 AI 协作开发
+
+本项目通过创新的 AI 驱动工作流协作开发完成:
+
+- **[v0.dev](https://v0.dev)** - 初始 UI 原型设计和组件生成
+- **[Google Gemini 3 Pro](https://deepmind.google/technologies/gemini/)** - 架构设计和代码实现
+- **[Claude Sonnet 4.5](https://www.anthropic.com/claude)** - 代码优化和精炼
+
+> 这是人机协作在现代软件开发中的力量见证。整个代码库通过与 AI 助手的迭代对话创建,展示了 AI 如何在保持代码质量和最佳实践的同时加速开发过程。
+
 ## 💬 支持
 
 - **问题**: [GitHub Issues](https://github.com/yourusername/hexo-donate-refactor/issues)
 - **讨论**: [GitHub Discussions](https://github.com/yourusername/hexo-donate-refactor/discussions)
-- **邮件**: support@yourdomain.com
+- **邮件**: domino@dominoh.com
 
 ---
 
-使用 Next.js 和 TypeScript 用 ❤️ 制作
+使用 Next.js、TypeScript 和 AI 用 ❤️ 制作
+

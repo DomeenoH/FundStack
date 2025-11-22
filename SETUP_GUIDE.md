@@ -12,13 +12,13 @@
 
 Copy `.env.example` to `.env.local`:
 
-\`\`\`bash
+```bash
 cp .env.example .env.local
-\`\`\`
+```
 
 Configure the following variables:
 
-\`\`\`env
+```env
 # Database (Neon PostgreSQL)
 DATABASE_URL=postgresql://user:password@host/database
 
@@ -37,7 +37,7 @@ NEXT_PUBLIC_ADMIN_URL=http://localhost:3000/admin
 
 # Rate Limiting
 RATE_LIMIT_ENABLED=true
-\`\`\`
+```
 
 ### 2. Database Setup
 
@@ -55,13 +55,13 @@ Execute the SQL migration script to create tables:
 
 ### 3. Installation
 
-\`\`\`bash
+```bash
 # Install dependencies
 npm install
 
 # Start development server
 npm run dev
-\`\`\`
+```
 
 Visit `http://localhost:3000` in your browser.
 
@@ -116,10 +116,10 @@ To enable automatic emails:
 3. Set environment variables in Vercel dashboard
 4. Deploy
 
-\`\`\`bash
+```bash
 npm run build
 npm start
-\`\`\`
+```
 
 ## Troubleshooting
 
@@ -140,10 +140,10 @@ npm start
 - View console logs for error messages
 
 ### Port Already in Use
-\`\`\`bash
+```bash
 # Use different port
 npm run dev -- -p 3001
-\`\`\`
+```
 
 ## API Documentation
 
@@ -233,4 +233,3 @@ Response:
 3. Add more payment methods in `lib/validation.ts`
 4. Implement webhook integration for automatic payment confirmation
 5. Add two-factor authentication for admin panel
-\`\`\`

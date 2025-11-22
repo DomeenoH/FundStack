@@ -83,7 +83,7 @@ psql $DATABASE_URL -f scripts/init-database.sql
 ## 步骤三：安装依赖
 
 ```bash
-# 使用pn pm（推荐）
+# 使用pnpm（推荐）
 pnpm install
 
 # 或使用npm
@@ -290,7 +290,7 @@ pnpm lint
 2. **测试设备**
    - iPhone SE (375x667)
    - iPhone 14 Pro (393x852)
-   - iPad  (768x1024)
+   - iPad (768x1024)
    - Android各种尺寸
 
 3. **检查项目**
