@@ -82,7 +82,7 @@ export default function DonationForm({ config }: DonationFormProps) {
       });
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
-      console.error('[Hexo-Donate] Donation form error:', err);
+      console.error('[投喂小站] Donation form error:', err);
       if (err instanceof ApiError) {
         setSubmitError(err.message);
       } else {

@@ -35,7 +35,7 @@ export async function verifyAuth(request: Request): Promise<{ isValid: boolean }
 
     return { isValid };
   } catch (error) {
-    console.error('[Hexo-Donate] Auth verification error:', error);
+    console.error('[投喂小站] Auth verification error:', error);
     return { isValid: false };
   }
 }

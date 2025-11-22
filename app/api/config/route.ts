@@ -17,7 +17,7 @@ export async function GET() {
             data: config,
         });
     } catch (error) {
-        console.error('[Hexo-Donate] Error fetching site config:', error);
+        console.error('[投喂小站] Error fetching site config:', error);
         return NextResponse.json(
             {
                 success: false,

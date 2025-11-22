@@ -15,19 +15,24 @@ export function SiteNav() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-30 border-b bg-white/80 backdrop-blur">
+    <header className="sticky top-0 z-30 border-b bg-white/90 backdrop-blur-md shadow-sm">
       <div className="container mx-auto flex items-center justify-between px-4 py-3">
-        <Link href="/" className="font-semibold text-lg tracking-tight">
-          Hexo Donate Plus
+        <Link
+          href="/"
+          className="font-bold text-xl tracking-tight bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:from-blue-700 hover:to-purple-700 transition-all duration-300"
+        >
+          投喂小站
         </Link>
-        <nav className="flex items-center gap-3 text-sm font-medium text-gray-600">
+        <nav className="flex items-center gap-2 text-sm font-medium text-gray-700">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               className={cn(
-                'rounded px-3 py-2 transition-colors hover:bg-slate-100 hover:text-gray-900',
-                pathname === link.href && 'bg-slate-900 text-white hover:bg-slate-900'
+                'rounded-lg px-4 py-2 transition-all duration-200',
+                pathname === link.href
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md'
+                  : 'hover:bg-slate-100/80 hover:text-gray-900 hover:shadow-sm'
               )}
             >
               {link.label}

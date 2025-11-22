@@ -136,7 +136,7 @@ export async function getConfig(): Promise<SiteConfig> {
 
         return config;
     } catch (error) {
-        console.error('[Hexo-Donate] Error loading site config:', error);
+        console.error('[投喂小站] Error loading site config:', error);
         return DEFAULT_CONFIG;
     }
 }

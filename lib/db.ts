@@ -18,7 +18,7 @@ export async function getDonations(status?: string) {
     `;
     return data;
   } catch (error) {
-    console.error('[Hexo-Donate] Database error in getDonations:', error);
+    console.error('[投喂小站] Database error in getDonations:', error);
     throw error;
   }
 }
@@ -32,7 +32,7 @@ export async function getConfirmedDonations() {
     `;
     return data;
   } catch (error) {
-    console.error('[Hexo-Donate] Database error in getConfirmedDonations:', error);
+    console.error('[投喂小站] Database error in getConfirmedDonations:', error);
     return [];
   }
 }
@@ -59,7 +59,7 @@ export async function createDonation(donation: {
     `;
     return data[0];
   } catch (error) {
-    console.error('[Hexo-Donate] Database error in createDonation:', error);
+    console.error('[投喂小站] Database error in createDonation:', error);
     throw error;
   }
 }
@@ -74,7 +74,7 @@ export async function confirmDonation(id: number) {
     `;
     return data[0];
   } catch (error) {
-    console.error('[Hexo-Donate] Database error in confirmDonation:', error);
+    console.error('[投喂小站] Database error in confirmDonation:', error);
     throw error;
   }
 }
@@ -89,7 +89,7 @@ export async function rejectDonation(id: number) {
     `;
     return data[0];
   } catch (error) {
-    console.error('[Hexo-Donate] Database error in rejectDonation:', error);
+    console.error('[投喂小站] Database error in rejectDonation:', error);
     throw error;
   }
 }
@@ -110,7 +110,7 @@ export async function updateDonationStatus(
 
     return data[0];
   } catch (error) {
-    console.error('[Hexo-Donate] Database error in updateDonationStatus:', error);
+    console.error('[投喂小站] Database error in updateDonationStatus:', error);
     throw error;
   }
 }
@@ -128,7 +128,7 @@ export async function getStats() {
     `;
     return data[0];
   } catch (error) {
-    console.error('[Hexo-Donate] Database error in getStats:', error);
+    console.error('[投喂小站] Database error in getStats:', error);
     return {
       total_count: 0,
       confirmed_count: 0,
@@ -148,7 +148,7 @@ export async function checkRateLimit(ip: string): Promise<number> {
     `;
     return data[0]?.count || 0;
   } catch (error) {
-    console.error('[Hexo-Donate] Database error in checkRateLimit:', error);
+    console.error('[投喂小站] Database error in checkRateLimit:', error);
     return 0;
   }
 }
@@ -169,7 +169,7 @@ export async function getSiteConfig() {
     });
     return config;
   } catch (error) {
-    console.error('[Hexo-Donate] Database error in getSiteConfig:', error);
+    console.error('[投喂小站] Database error in getSiteConfig:', error);
     return {};
   }
 }
@@ -182,7 +182,7 @@ export async function getConfigByKey(key: string) {
     `;
     return data[0]?.value || null;
   } catch (error) {
-    console.error('[Hexo-Donate] Database error in getConfigByKey:', error);
+    console.error('[投喂小站] Database error in getConfigByKey:', error);
     return null;
   }
 }
@@ -200,7 +200,7 @@ export async function updateConfig(key: string, value: any) {
     `;
     return data[0];
   } catch (error) {
-    console.error('[Hexo-Donate] Database error in updateConfig:', error);
+    console.error('[投喂小站] Database error in updateConfig:', error);
     throw error;
   }
 }
@@ -213,7 +213,7 @@ export async function batchUpdateConfig(updates: Record<string, any>) {
     await Promise.all(promises);
     return true;
   } catch (error) {
-    console.error('[Hexo-Donate] Database error in batchUpdateConfig:', error);
+    console.error('[投喂小站] Database error in batchUpdateConfig:', error);
     throw error;
   }
 }

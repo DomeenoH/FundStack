@@ -50,7 +50,7 @@ export default function AdminPage() {
         setError('密码错误');
       }
     } catch (err) {
-      console.error('[Hexo-Donate] Login error:', err);
+      console.error('[投喂小站] Login error:', err);
       setError('登录失败。请重试。');
     } finally {
       setLoading(false);
@@ -86,7 +86,7 @@ export default function AdminPage() {
         setError('状态更新失败');
       }
     } catch (err) {
-      console.error('[Hexo-Donate] Status update error:', err);
+      console.error('[投喂小站] Status update error:', err);
       setError('修改状态失败');
     } finally {
       setActioningId(null);
