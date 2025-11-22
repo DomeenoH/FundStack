@@ -297,9 +297,9 @@ export function AnalyticsDashboard() {
                 <div key={idx} className="flex items-center justify-between border-b pb-3 hover:bg-gray-50 rounded px-2 -mx-2 transition-colors">
                   <div className="flex items-center gap-3">
                     <span className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold ${idx === 0 ? 'bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900' :
-                      idx === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-gray-800' :
-                        idx === 2 ? 'bg-gradient-to-br from-orange-300 to-orange-400 text-orange-900' :
-                          'bg-gray-100 text-gray-600'
+                        idx === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-gray-800' :
+                          idx === 2 ? 'bg-gradient-to-br from-orange-300 to-orange-400 text-orange-900' :
+                            'bg-gray-100 text-gray-600'
                       }`}>
                       {idx + 1}
                     </span>
