@@ -1,28 +1,32 @@
 import { NextResponse } from 'next/server';
 import { getDonations, getStats } from '@/lib/db';
 import { subDays, subWeeks, subMonths, startOfDay, startOfWeek, startOfMonth, format } from 'date-fns';
+import { mergeDonors, Donation } from '@/lib/donor-utils';
 
 export async function GET() {
   try {
-    const donations = await getDonations();
+    const rawDonations = await getDonations();
     const stats = await getStats();
 
-    const normalizedDonations = donations.map(donation => ({
-      ...donation,
+    const normalizedDonations: Donation[] = rawDonations.map(donation => ({
+      id: donation.id,
+      user_name: donation.user_name,
+      user_email: donation.user_email,
+      user_url: donation.user_url,
+      user_message: donation.user_message,
+      payment_method: donation.payment_method,
+      status: donation.status,
+      created_at: donation.created_at,
       amount: Number(donation.amount || 0),
-    })) as Array<{
-      id: number;
-      user_name: string;
-      user_url?: string;
-      user_email?: string;
-      payment_method: string;
-      status: string;
-      created_at: string;
-      amount: number;
-    }>;
+    }));
 
     const confirmedDonations = normalizedDonations.filter(d => d.status === 'confirmed');
     const pendingDonations = normalizedDonations.filter(d => d.status === 'pending');
+    const nonRejectedDonations = normalizedDonations.filter(d => d.status !== 'rejected');
+
+    // Merge donors for counts and leaderboard
+    const mergedConfirmedDonors = mergeDonors(confirmedDonations);
+    const mergedAllDonors = mergeDonors(nonRejectedDonations);
 
     // Payment method breakdown - FIX: Only count confirmed
     const paymentMethodStats = confirmedDonations.reduce((acc, d) => {
@@ -40,8 +44,8 @@ export async function GET() {
       d => new Date(d.created_at) > sevenDaysAgo
     );
 
-    const topDonors = confirmedDonations
-      .sort((a, b) => b.amount - a.amount)
+    const topDonors = mergedConfirmedDonors
+      .sort((a, b) => b.total_amount - a.total_amount)
       .slice(0, 10);
 
     // Trends Calculation
@@ -108,8 +112,8 @@ export async function GET() {
       success: true,
       analytics: {
         summary: {
-          total_donors: Number(stats.total_count || 0),
-          confirmed_donors: Number(stats.confirmed_count || 0),
+          total_donors: mergedAllDonors.length, // Use merged count
+          confirmed_donors: mergedConfirmedDonors.length, // Use merged count
           pending_donations: pendingDonations.length,
           total_amount: Number(stats.total_amount || 0),
           confirmed_amount: Number(stats.confirmed_total || 0),
@@ -130,8 +134,8 @@ export async function GET() {
         },
         top_donors: topDonors.map(d => ({
           name: d.user_name,
-          amount: d.amount,
-          date: d.created_at
+          amount: d.total_amount,
+          date: d.last_donation_at
         }))
       }
     });
