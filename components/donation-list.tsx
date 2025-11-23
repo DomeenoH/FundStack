@@ -6,6 +6,8 @@ import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, RefreshCcw } from 'lucide-react';
 import { fetchJson } from '@/lib/api';
+import { motion, AnimatePresence } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface Donation {
   id: number | string;
@@ -57,13 +59,13 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
   const [stats, setStats] = useState<Stats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter(); // Initialize useRouter
+  const router = useRouter();
 
   const loadData = async (controller: AbortController) => {
     setError(null);
 
     const donationsPromise = fetchJson<{ donations: Donation[] }>(
-      `/api/donations/list?merge=${merge}`, // Pass merge param
+      `/api/donations/list?merge=${merge}`,
       { signal: controller.signal }
     );
     const statsPromise = fetchJson<{ stats: Stats }>(
@@ -105,7 +107,7 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
       .finally(() => setLoading(false));
 
     return () => controller.abort();
-  }, [merge]); // Reload when merge prop changes
+  }, [merge]);
 
   const handleRetry = () => {
     setLoading(true);
@@ -163,120 +165,155 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
 
       {stats && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="p-4">
-            <p className="text-sm text-gray-600">投喂人数</p>
-            <p className="text-3xl font-bold">{stats.total_donors}</p>
-          </Card>
-          <Card className="p-4">
-            <p className="text-sm text-gray-600">已提交金额</p>
-            <p className="text-3xl font-bold">¥{formatAmount(stats.total_amount)}</p>
-          </Card>
-          <Card className="p-4">
-            <p className="text-sm text-gray-600">已确认</p>
-            <p className="text-3xl font-bold">¥{formatAmount(stats.confirmed_amount)}</p>
-          </Card>
-          <Card className="p-4">
-            <p className="text-sm text-gray-600">平均投喂</p>
-            <p className="text-3xl font-bold">
-              ¥{formatAmount(stats.average_donation || 0)}
-            </p>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <Card className="p-4 bg-white/50 backdrop-blur-sm border-white/20 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-sm text-gray-500">投喂人数</p>
+              <p className="text-3xl font-bold text-gray-800">{stats.total_donors}</p>
+            </Card>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <Card className="p-4 bg-white/50 backdrop-blur-sm border-white/20 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-sm text-gray-500">已提交金额</p>
+              <p className="text-3xl font-bold text-gray-800">¥{formatAmount(stats.total_amount)}</p>
+            </Card>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <Card className="p-4 bg-white/50 backdrop-blur-sm border-white/20 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-sm text-gray-500">已确认</p>
+              <p className="text-3xl font-bold text-green-600">¥{formatAmount(stats.confirmed_amount)}</p>
+            </Card>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <Card className="p-4 bg-white/50 backdrop-blur-sm border-white/20 shadow-sm hover:shadow-md transition-shadow">
+              <p className="text-sm text-gray-500">平均投喂</p>
+              <p className="text-3xl font-bold text-blue-600">
+                ¥{formatAmount(stats.average_donation || 0)}
+              </p>
+            </Card>
+          </motion.div>
         </div>
       )}
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="px-4 py-3 text-left font-medium">投喂者</th>
-              {merge ? (
-                <>
-                  <th className="px-4 py-3 text-center font-medium">投喂次数</th>
-                  <th className="px-4 py-3 text-right font-medium">总金额</th>
-                  <th className="px-4 py-3 text-left font-medium">最近时间</th>
-                </>
-              ) : (
-                <>
-                  <th className="px-4 py-3 text-left font-medium">方式</th>
-                  <th className="px-4 py-3 text-right font-medium">金额</th>
-                  <th className="px-4 py-3 text-left font-medium">留言</th>
-                  <th className="px-4 py-3 text-left font-medium">状态</th>
-                  <th className="px-4 py-3 text-left font-medium">时间</th>
-                </>
-              )}
-            </tr>
-          </thead>
-          <tbody className="divide-y">
-            {filteredDonations.length === 0 ? (
+      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white/50 backdrop-blur-sm shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-gray-50/50 border-b border-gray-100">
               <tr>
-                <td colSpan={merge ? 4 : 6} className="px-4 py-8 text-center text-gray-500">
-                  还没有投喂记录，欢迎成为第一位支持者！
-                </td>
+                <th className="px-4 py-3 text-left font-medium text-gray-500">投喂者</th>
+                {merge ? (
+                  <>
+                    <th className="px-4 py-3 text-center font-medium text-gray-500">投喂次数</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-500">总金额</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-500">最近时间</th>
+                  </>
+                ) : (
+                  <>
+                    <th className="px-4 py-3 text-left font-medium text-gray-500">方式</th>
+                    <th className="px-4 py-3 text-right font-medium text-gray-500">金额</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-500">留言</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-500">状态</th>
+                    <th className="px-4 py-3 text-left font-medium text-gray-500">时间</th>
+                  </>
+                )}
               </tr>
-            ) : (
-              visibleDonations.map(donation => (
-                <tr
-                  key={donation.id}
-                  className={`hover:bg-gray-50 ${merge ? 'cursor-pointer' : ''}`}
-                  onClick={() => merge && router.push(`/list/${donation.id}`)}
-                >
-                  <td className="px-4 py-3">
-                    {donation.user_url ? (
-                      <a
-                        href={donation.user_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
-                        onClick={(e) => e.stopPropagation()} // Prevent row click
-                      >
-                        {donation.user_name}
-                      </a>
-                    ) : (
-                      donation.user_name
-                    )}
-                  </td>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              <AnimatePresence mode="popLayout">
+                {filteredDonations.length === 0 ? (
+                  <motion.tr
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  >
+                    <td colSpan={merge ? 4 : 6} className="px-4 py-8 text-center text-gray-500">
+                      还没有投喂记录，欢迎成为第一位支持者！
+                    </td>
+                  </motion.tr>
+                ) : (
+                  visibleDonations.map((donation, index) => (
+                    <motion.tr
+                      key={donation.id}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className={`hover:bg-white/80 transition-colors ${merge ? 'cursor-pointer' : ''}`}
+                      onClick={() => merge && router.push(`/list/${donation.id}`)}
+                    >
+                      <td className="px-4 py-3 font-medium text-gray-900">
+                        {donation.user_url ? (
+                          <a
+                            href={donation.user_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-gray-900 hover:text-blue-600 hover:underline transition-colors"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {donation.user_name}
+                          </a>
+                        ) : (
+                          donation.user_name
+                        )}
+                      </td>
 
-                  {merge ? (
-                    <>
-                      <td className="px-4 py-3 text-center">
-                        {donation.donation_count}
-                      </td>
-                      <td className="px-4 py-3 text-right font-medium">
-                        ¥{formatAmount(donation.amount)}
-                      </td>
-                      <td className="px-4 py-3 text-gray-500 text-xs">
-                        {formatDateTime(donation.created_at)}
-                      </td>
-                    </>
-                  ) : (
-                    <>
-                      <td className="px-4 py-3">
-                        <span className={PAYMENT_METHOD_COLORS[donation.payment_method as keyof typeof PAYMENT_METHOD_COLORS]}>
-                          {PAYMENT_METHOD_LABELS[donation.payment_method as keyof typeof PAYMENT_METHOD_LABELS]}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-right font-medium">
-                        ¥{formatAmount(donation.amount)}
-                      </td>
-                      <td className="px-4 py-3 text-gray-600 truncate max-w-[200px]">
-                        {donation.user_message || '-'}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className={`px-2 py-1 rounded text-xs font-medium ${STATUS_BADGE_STYLES[donation.status as keyof typeof STATUS_BADGE_STYLES] || STATUS_BADGE_STYLES.pending
-                          }`}>
-                          {STATUS_LABELS[donation.status as keyof typeof STATUS_LABELS] || donation.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 text-gray-500 text-xs">
-                        {formatDateTime(donation.created_at)}
-                      </td>
-                    </>
-                  )}
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+                      {merge ? (
+                        <>
+                          <td className="px-4 py-3 text-center text-gray-600">
+                            {donation.donation_count}
+                          </td>
+                          <td className="px-4 py-3 text-right font-medium text-gray-900">
+                            ¥{formatAmount(donation.amount)}
+                          </td>
+                          <td className="px-4 py-3 text-gray-400 text-xs">
+                            {formatDateTime(donation.created_at)}
+                          </td>
+                        </>
+                      ) : (
+                        <>
+                          <td className="px-4 py-3">
+                            <span className={cn("flex items-center gap-1", PAYMENT_METHOD_COLORS[donation.payment_method as keyof typeof PAYMENT_METHOD_COLORS])}>
+                              {PAYMENT_METHOD_LABELS[donation.payment_method as keyof typeof PAYMENT_METHOD_LABELS]}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-right font-medium text-gray-900">
+                            ¥{formatAmount(donation.amount)}
+                          </td>
+                          <td className="px-4 py-3 text-gray-600 truncate max-w-[200px]">
+                            {donation.user_message || '-'}
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_BADGE_STYLES[donation.status as keyof typeof STATUS_BADGE_STYLES] || STATUS_BADGE_STYLES.pending
+                              }`}>
+                              {STATUS_LABELS[donation.status as keyof typeof STATUS_LABELS] || donation.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-gray-400 text-xs">
+                            {formatDateTime(donation.created_at)}
+                          </td>
+                        </>
+                      )}
+                    </motion.tr>
+                  ))
+                )}
+              </AnimatePresence>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

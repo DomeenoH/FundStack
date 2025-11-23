@@ -30,9 +30,10 @@ import type { SiteConfig } from '@/lib/config';
 
 interface DonationFormProps {
   config: SiteConfig;
+  onPaymentMethodChange?: (method: string) => void;
 }
 
-export default function DonationForm({ config }: DonationFormProps) {
+export default function DonationForm({ config, onPaymentMethodChange }: DonationFormProps) {
   const [success, setSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -50,6 +51,14 @@ export default function DonationForm({ config }: DonationFormProps) {
 
   const { watch, formState: { isSubmitting } } = form;
   const userMessage = watch('user_message') || '';
+
+  // Watch payment method changes to trigger callback
+  const paymentMethod = watch('payment_method');
+  React.useEffect(() => {
+    if (onPaymentMethodChange && paymentMethod) {
+      onPaymentMethodChange(paymentMethod);
+    }
+  }, [paymentMethod, onPaymentMethodChange]);
 
   const remainingMessageChars = useMemo(
     () => Math.max(config.form_message_max_length - userMessage.length, 0),
@@ -80,6 +89,9 @@ export default function DonationForm({ config }: DonationFormProps) {
         amount: '' as any,
         payment_method: 'wechat',
       });
+      // Reset payment method in parent if needed, or keep as is
+      if (onPaymentMethodChange) onPaymentMethodChange('wechat');
+
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
       console.error('[投喂小站] Donation form error:', err);
@@ -201,7 +213,13 @@ export default function DonationForm({ config }: DonationFormProps) {
                 <FormLabel>
                   支付方式 <span className="text-red-500">*</span>
                 </FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    // onPaymentMethodChange handled by useEffect
+                  }}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue />
