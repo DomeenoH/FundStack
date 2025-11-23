@@ -5,10 +5,10 @@ import { mergeDonors, Donation } from '@/lib/donor-utils';
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const { id } = params;
+        const { id } = await params;
 
         // Case 1: Numeric ID - fetch single donation
         if (/^\d+$/.test(id)) {
@@ -61,6 +61,8 @@ export async function GET(
         );
 
         if (!donor) {
+            console.error('[API] Donor not found. Searched for:', decodedId);
+            console.error('[API] Available donors:', mergedDonors.map(d => d.id));
             return NextResponse.json(
                 { success: false, error: 'Donor not found' },
                 { status: 404 }

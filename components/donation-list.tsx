@@ -253,7 +253,11 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
                       className="hover:bg-white/60 transition-all duration-200 cursor-pointer group"
-                      onClick={() => router.push(`/donation/${donation.id}`)}
+                      onClick={() => {
+                        // If merged, go to donor profile page; otherwise go to donation detail
+                        const path = merge ? `/list/${donation.id}` : `/donation/${donation.id}`;
+                        router.push(path);
+                      }}
                     >
                       <td className="px-8 py-5 font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
                         {donation.user_name}
