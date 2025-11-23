@@ -14,11 +14,12 @@ export function DonationSection({ config }: DonationSectionProps) {
     const [paymentMethod, setPaymentMethod] = useState('wechat');
 
     return (
-        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12 items-start">
+        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12 items-stretch">
             <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.1 }}
+                className="h-full"
             >
                 <DonationForm
                     config={config}
@@ -26,12 +27,12 @@ export function DonationSection({ config }: DonationSectionProps) {
                 />
             </motion.div>
 
-            <div className="space-y-6">
+            <div className="flex flex-col gap-6 h-full">
                 <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.2 }}
-                    className="h-auto"
+                    className="flex-1"
                 >
                     <CreatorCard
                         config={config}

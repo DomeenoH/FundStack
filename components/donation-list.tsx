@@ -212,23 +212,23 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
 
       <div className="overflow-hidden rounded-3xl border border-white/40 bg-white/40 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-base">
             <thead className="bg-white/50 border-b border-gray-100/50">
               <tr>
-                <th className="px-6 py-4 text-left font-semibold text-gray-400 uppercase tracking-wider text-xs">投喂者</th>
+                <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs">投喂者</th>
                 {merge ? (
                   <>
-                    <th className="px-6 py-4 text-center font-semibold text-gray-400 uppercase tracking-wider text-xs">投喂次数</th>
-                    <th className="px-6 py-4 text-right font-semibold text-gray-400 uppercase tracking-wider text-xs">总金额</th>
-                    <th className="px-6 py-4 text-left font-semibold text-gray-400 uppercase tracking-wider text-xs">最近时间</th>
+                    <th className="px-8 py-5 text-center font-bold text-gray-500 uppercase tracking-wider text-xs">投喂次数</th>
+                    <th className="px-8 py-5 text-right font-bold text-gray-500 uppercase tracking-wider text-xs">总金额</th>
+                    <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs">最近时间</th>
                   </>
                 ) : (
                   <>
-                    <th className="px-6 py-4 text-left font-semibold text-gray-400 uppercase tracking-wider text-xs">方式</th>
-                    <th className="px-6 py-4 text-right font-semibold text-gray-400 uppercase tracking-wider text-xs">金额</th>
-                    <th className="px-6 py-4 text-left font-semibold text-gray-400 uppercase tracking-wider text-xs">留言</th>
-                    <th className="px-6 py-4 text-left font-semibold text-gray-400 uppercase tracking-wider text-xs">状态</th>
-                    <th className="px-6 py-4 text-left font-semibold text-gray-400 uppercase tracking-wider text-xs">时间</th>
+                    <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs">方式</th>
+                    <th className="px-8 py-5 text-right font-bold text-gray-500 uppercase tracking-wider text-xs">金额</th>
+                    <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs">留言</th>
+                    <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs">状态</th>
+                    <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs">时间</th>
                   </>
                 )}
               </tr>
@@ -241,7 +241,7 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    <td colSpan={merge ? 4 : 6} className="px-6 py-12 text-center text-gray-400 font-medium">
+                    <td colSpan={merge ? 4 : 6} className="px-8 py-16 text-center text-gray-400 font-medium">
                       还没有投喂记录，欢迎成为第一位支持者！
                     </td>
                   </motion.tr>
@@ -252,57 +252,45 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className={`hover:bg-white/60 transition-colors duration-200 ${merge ? 'cursor-pointer' : ''}`}
-                      onClick={() => merge && router.push(`/list/${donation.id}`)}
+                      className="hover:bg-white/60 transition-all duration-200 cursor-pointer group"
+                      onClick={() => router.push(`/list/${donation.user_name}`)}
                     >
-                      <td className="px-6 py-4 font-medium text-gray-900">
-                        {donation.user_url ? (
-                          <a
-                            href={donation.user_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-gray-900 hover:text-blue-600 transition-colors"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {donation.user_name}
-                          </a>
-                        ) : (
-                          donation.user_name
-                        )}
+                      <td className="px-8 py-5 font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                        {donation.user_name}
                       </td>
 
                       {merge ? (
                         <>
-                          <td className="px-6 py-4 text-center text-gray-600">
+                          <td className="px-8 py-5 text-center text-gray-600 font-medium">
                             {donation.donation_count}
                           </td>
-                          <td className="px-6 py-4 text-right font-medium text-gray-900">
+                          <td className="px-8 py-5 text-right font-bold text-gray-900">
                             ¥{formatAmount(donation.amount)}
                           </td>
-                          <td className="px-6 py-4 text-gray-400 text-xs font-medium">
+                          <td className="px-8 py-5 text-gray-400 text-sm font-medium">
                             {formatDateTime(donation.created_at)}
                           </td>
                         </>
                       ) : (
                         <>
-                          <td className="px-6 py-4">
-                            <span className={cn("flex items-center gap-1.5 text-xs font-medium", PAYMENT_METHOD_COLORS[donation.payment_method as keyof typeof PAYMENT_METHOD_COLORS])}>
+                          <td className="px-8 py-5">
+                            <span className={cn("flex items-center gap-2 text-sm font-semibold", PAYMENT_METHOD_COLORS[donation.payment_method as keyof typeof PAYMENT_METHOD_COLORS])}>
                               {PAYMENT_METHOD_LABELS[donation.payment_method as keyof typeof PAYMENT_METHOD_LABELS]}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-right font-medium text-gray-900">
+                          <td className="px-8 py-5 text-right font-bold text-gray-900">
                             ¥{formatAmount(donation.amount)}
                           </td>
-                          <td className="px-6 py-4 text-gray-600 truncate max-w-[200px] text-xs">
+                          <td className="px-8 py-5 text-gray-600 truncate max-w-[240px] text-sm">
                             {donation.user_message || '-'}
                           </td>
-                          <td className="px-6 py-4">
-                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${STATUS_BADGE_STYLES[donation.status as keyof typeof STATUS_BADGE_STYLES] || STATUS_BADGE_STYLES.pending
+                          <td className="px-8 py-5">
+                            <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide ${STATUS_BADGE_STYLES[donation.status as keyof typeof STATUS_BADGE_STYLES] || STATUS_BADGE_STYLES.pending
                               }`}>
                               {STATUS_LABELS[donation.status as keyof typeof STATUS_LABELS] || donation.status}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-gray-400 text-xs font-medium">
+                          <td className="px-8 py-5 text-gray-400 text-sm font-medium">
                             {formatDateTime(donation.created_at)}
                           </td>
                         </>

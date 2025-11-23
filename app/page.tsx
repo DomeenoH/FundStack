@@ -15,7 +15,7 @@ export default async function DonationPage() {
   const config = await getConfig();
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <main className="min-h-screen bg-stone-50/50">
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">
@@ -29,8 +29,8 @@ export default async function DonationPage() {
 
         <DonationSection config={config} />
 
-        <div className="bg-white rounded-lg p-8 shadow-sm">
-          <h2 className="text-2xl font-bold mb-6">{config.list_home_title}</h2>
+        <div className="max-w-6xl mx-auto bg-white/60 backdrop-blur-xl rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/20">
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 tracking-tight">{config.list_home_title}</h2>
           <DonationList limit={config.list_home_limit} merge={false} />
         </div>
       </div>
