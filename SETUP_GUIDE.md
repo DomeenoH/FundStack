@@ -4,7 +4,7 @@
 
 - Node.js 18+ 
 - PostgreSQL database (or Neon)
-- npm or yarn package manager
+- pnpm package manager
 
 ## Step-by-Step Installation
 
@@ -57,10 +57,10 @@ Execute the SQL migration script to create tables:
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Start development server
-npm run dev
+pnpm dev
 ```
 
 Visit `http://localhost:3000` in your browser.
@@ -117,8 +117,8 @@ To enable automatic emails:
 4. Deploy
 
 ```bash
-npm run build
-npm start
+pnpm build
+pnpm start
 ```
 
 ## Troubleshooting
@@ -142,7 +142,7 @@ npm start
 ### Port Already in Use
 ```bash
 # Use different port
-npm run dev -- -p 3001
+pnpm dev -- -p 3001
 ```
 
 ## API Documentation
@@ -206,7 +206,7 @@ Response:
 1. Never commit `.env.local` to version control
 2. Use strong ADMIN_PASSWORD (20+ characters)
 3. Enable HTTPS in production
-4. Regularly update dependencies: `npm audit`
+4. Regularly update dependencies: `pnpm audit`
 5. Review rate limit settings
 6. Backup database regularly
 7. Use environment-specific credentials

@@ -232,8 +232,8 @@ export function AnalyticsDashboard() {
                   />
                   <Tooltip
                     formatter={(value: number, name: string) => [
-                      name === 'amount' ? `¥${value.toFixed(2)}` : value,
-                      name === 'amount' ? '金额' : '笔数'
+                      name === '金额' ? `¥${value.toFixed(2)}` : value,
+                      name
                     ]}
                     labelStyle={{ color: '#333' }}
                     contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb' }}

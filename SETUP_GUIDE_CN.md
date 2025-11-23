@@ -6,7 +6,7 @@
 
 - Node.js 18+ 
 - PostgreSQL数据库（或Neon账户）
-- npm/pnpm包管理器
+- pnpm包管理器
 
 ## 步骤一：环境变量配置
 
@@ -57,9 +57,9 @@ RATE_LIMIT_ENABLED=true
 1. 安装PostgreSQL
 2. 创建新数据库：
    ```sql
-   CREATE DATABASE hexo_donate;
+   CREATE DATABASE fund_stack;
    ```
-3. 设置`DATABASE_URL=postgresql://localhost:5432/hexo_donate`
+3. 设置`DATABASE_URL=postgresql://localhost:5432/fund_stack`
 
 ### 执行数据库迁移
 
@@ -83,11 +83,8 @@ psql $DATABASE_URL -f scripts/init-database.sql
 ## 步骤三：安装依赖
 
 ```bash
-# 使用pnpm（推荐）
+# 安装依赖
 pnpm install
-
-# 或使用npm
-npm install
 ```
 
 ## 步骤四：启动开发服务器
@@ -95,9 +92,6 @@ npm install
 ```bash
 # 开发模式
 pnpm dev
-
-# 或
-npm run dev
 ```
 
 访问 `http://localhost:3000` 查看应用。
