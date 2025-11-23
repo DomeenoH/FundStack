@@ -154,12 +154,19 @@ export default function DonationForm({ config, onPaymentMethodChange }: Donation
                           : "border-transparent bg-gray-50"
                       )}
                     >
-                      <div className="w-8 h-8 mb-2 relative">
-                        {/* Simple visual placeholders if icons fail, but ideally should be SVGs */}
-                        {method.value === 'alipay' ? (
-                          <div className="w-full h-full rounded bg-blue-500 flex items-center justify-center text-white font-bold text-xs">支</div>
-                        ) : (
-                          <div className="w-full h-full rounded bg-green-500 flex items-center justify-center text-white font-bold text-xs">微</div>
+                      <div className="w-8 h-8 mb-2 relative flex items-center justify-center">
+                        {/* Visual placeholders/Icons */}
+                        {method.value === 'alipay' && (
+                          <div className="w-full h-full rounded bg-[#1677FF] flex items-center justify-center text-white font-bold text-xs">支</div>
+                        )}
+                        {method.value === 'wechat' && (
+                          <div className="w-full h-full rounded bg-[#07C160] flex items-center justify-center text-white font-bold text-xs">微</div>
+                        )}
+                        {method.value === 'qq' && (
+                          <div className="w-full h-full rounded bg-[#12B7F5] flex items-center justify-center text-white font-bold text-xs">Q</div>
+                        )}
+                        {method.value === 'other' && (
+                          <div className="w-full h-full rounded bg-gray-400 flex items-center justify-center text-white font-bold text-xs">...</div>
                         )}
                       </div>
                       <span className={cn(

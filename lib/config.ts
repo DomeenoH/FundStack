@@ -25,6 +25,7 @@ export interface SiteConfig {
     creator_avatar: string;
     payment_alipay_qr: string;
     payment_wechat_qr: string;
+    payment_qq_number?: string;
 
     // Donation form configuration
     form_title: string;
@@ -69,6 +70,7 @@ export const DEFAULT_CONFIG: SiteConfig = {
     creator_avatar: '/placeholder-user.jpg',
     payment_alipay_qr: '/placeholder.svg',
     payment_wechat_qr: '/placeholder.svg',
+    payment_qq_number: '123456789',
 
     form_title: '给创作者一口能量',
     form_description: '每一份投喂都是继续前进的动力，谢谢你的支持与陪伴',
@@ -81,7 +83,7 @@ export const DEFAULT_CONFIG: SiteConfig = {
         { value: 'wechat', label: '微信支付' },
         { value: 'alipay', label: '支付宝' },
         { value: 'qq', label: 'QQ支付' },
-        { value: 'other', label: '其他' },
+        { value: 'other', label: '其他方式' },
     ],
 
     list_home_limit: 5,
