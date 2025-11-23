@@ -253,7 +253,7 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
                       className="hover:bg-white/60 transition-all duration-200 cursor-pointer group"
-                      onClick={() => router.push(`/list/${donation.user_name}`)}
+                      onClick={() => router.push(`/donation/${donation.id}`)}
                     >
                       <td className="px-8 py-5 font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
                         {donation.user_name}
@@ -281,8 +281,14 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
                           <td className="px-8 py-5 text-right font-bold text-gray-900">
                             ¥{formatAmount(donation.amount)}
                           </td>
-                          <td className="px-8 py-5 text-gray-600 truncate max-w-[240px] text-sm">
+                          <td className="px-8 py-5 text-gray-600 truncate max-w-[240px] text-sm flex items-center gap-2">
                             {donation.user_message || '-'}
+                            {/* @ts-ignore */}
+                            {donation.reply_content && (
+                              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-600" title="已回复">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>
+                              </span>
+                            )}
                           </td>
                           <td className="px-8 py-5">
                             <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide ${STATUS_BADGE_STYLES[donation.status as keyof typeof STATUS_BADGE_STYLES] || STATUS_BADGE_STYLES.pending

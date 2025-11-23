@@ -30,10 +30,11 @@ export function CreatorCard({ config, selectedPaymentMethod }: CreatorCardProps)
 
   return (
     <motion.div
+      layout
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className="relative overflow-hidden rounded-3xl bg-white/90 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/40 h-full flex flex-col"
+      className="relative overflow-hidden rounded-3xl bg-white/80 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/20 h-full flex flex-col"
     >
       {/* Header / Profile Section */}
       <div className="p-8 pb-6 flex flex-col items-center text-center z-10 relative">
