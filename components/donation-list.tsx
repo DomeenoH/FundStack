@@ -149,91 +149,91 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
   }
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-8">
       {error && (
-        <Alert variant="destructive" className="flex items-center justify-between gap-4">
-          <AlertDescription className="text-sm">{error}</AlertDescription>
+        <Alert variant="destructive" className="flex items-center justify-between gap-4 rounded-xl">
+          <AlertDescription className="text-sm font-medium">{error}</AlertDescription>
           <button
             type="button"
             onClick={handleRetry}
-            className="inline-flex items-center gap-2 rounded border px-3 py-1 text-xs font-medium text-red-700 hover:bg-red-50"
+            className="inline-flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100 transition-colors"
           >
-            <RefreshCcw className="h-4 w-4" /> 重新加载
+            <RefreshCcw className="h-3.5 w-3.5" /> 重新加载
           </button>
         </Alert>
       )}
 
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <Card className="p-4 bg-white/50 backdrop-blur-sm border-white/20 shadow-sm hover:shadow-md transition-shadow">
-              <p className="text-sm text-gray-500">投喂人数</p>
-              <p className="text-3xl font-bold text-gray-800">{stats.total_donors}</p>
-            </Card>
+            <div className="p-6 rounded-2xl bg-white/60 backdrop-blur-md border border-white/40 shadow-[0_4px_20px_rgb(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300">
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">投喂人数</p>
+              <p className="text-3xl font-bold text-gray-900 tracking-tight">{stats.total_donors}</p>
+            </div>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Card className="p-4 bg-white/50 backdrop-blur-sm border-white/20 shadow-sm hover:shadow-md transition-shadow">
-              <p className="text-sm text-gray-500">已提交金额</p>
-              <p className="text-3xl font-bold text-gray-800">¥{formatAmount(stats.total_amount)}</p>
-            </Card>
+            <div className="p-6 rounded-2xl bg-white/60 backdrop-blur-md border border-white/40 shadow-[0_4px_20px_rgb(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300">
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">已提交金额</p>
+              <p className="text-3xl font-bold text-gray-900 tracking-tight">¥{formatAmount(stats.total_amount)}</p>
+            </div>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Card className="p-4 bg-white/50 backdrop-blur-sm border-white/20 shadow-sm hover:shadow-md transition-shadow">
-              <p className="text-sm text-gray-500">已确认</p>
-              <p className="text-3xl font-bold text-green-600">¥{formatAmount(stats.confirmed_amount)}</p>
-            </Card>
+            <div className="p-6 rounded-2xl bg-white/60 backdrop-blur-md border border-white/40 shadow-[0_4px_20px_rgb(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300">
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">已确认</p>
+              <p className="text-3xl font-bold text-green-600 tracking-tight">¥{formatAmount(stats.confirmed_amount)}</p>
+            </div>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <Card className="p-4 bg-white/50 backdrop-blur-sm border-white/20 shadow-sm hover:shadow-md transition-shadow">
-              <p className="text-sm text-gray-500">平均投喂</p>
-              <p className="text-3xl font-bold text-blue-600">
+            <div className="p-6 rounded-2xl bg-white/60 backdrop-blur-md border border-white/40 shadow-[0_4px_20px_rgb(0,0,0,0.02)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300">
+              <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">平均投喂</p>
+              <p className="text-3xl font-bold text-blue-600 tracking-tight">
                 ¥{formatAmount(stats.average_donation || 0)}
               </p>
-            </Card>
+            </div>
           </motion.div>
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white/50 backdrop-blur-sm shadow-sm">
+      <div className="overflow-hidden rounded-3xl border border-white/40 bg-white/40 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50/50 border-b border-gray-100">
+            <thead className="bg-white/50 border-b border-gray-100/50">
               <tr>
-                <th className="px-4 py-3 text-left font-medium text-gray-500">投喂者</th>
+                <th className="px-6 py-4 text-left font-semibold text-gray-400 uppercase tracking-wider text-xs">投喂者</th>
                 {merge ? (
                   <>
-                    <th className="px-4 py-3 text-center font-medium text-gray-500">投喂次数</th>
-                    <th className="px-4 py-3 text-right font-medium text-gray-500">总金额</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500">最近时间</th>
+                    <th className="px-6 py-4 text-center font-semibold text-gray-400 uppercase tracking-wider text-xs">投喂次数</th>
+                    <th className="px-6 py-4 text-right font-semibold text-gray-400 uppercase tracking-wider text-xs">总金额</th>
+                    <th className="px-6 py-4 text-left font-semibold text-gray-400 uppercase tracking-wider text-xs">最近时间</th>
                   </>
                 ) : (
                   <>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500">方式</th>
-                    <th className="px-4 py-3 text-right font-medium text-gray-500">金额</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500">留言</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500">状态</th>
-                    <th className="px-4 py-3 text-left font-medium text-gray-500">时间</th>
+                    <th className="px-6 py-4 text-left font-semibold text-gray-400 uppercase tracking-wider text-xs">方式</th>
+                    <th className="px-6 py-4 text-right font-semibold text-gray-400 uppercase tracking-wider text-xs">金额</th>
+                    <th className="px-6 py-4 text-left font-semibold text-gray-400 uppercase tracking-wider text-xs">留言</th>
+                    <th className="px-6 py-4 text-left font-semibold text-gray-400 uppercase tracking-wider text-xs">状态</th>
+                    <th className="px-6 py-4 text-left font-semibold text-gray-400 uppercase tracking-wider text-xs">时间</th>
                   </>
                 )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody className="divide-y divide-gray-50/50">
               <AnimatePresence mode="popLayout">
                 {filteredDonations.length === 0 ? (
                   <motion.tr
@@ -241,7 +241,7 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    <td colSpan={merge ? 4 : 6} className="px-4 py-8 text-center text-gray-500">
+                    <td colSpan={merge ? 4 : 6} className="px-6 py-12 text-center text-gray-400 font-medium">
                       还没有投喂记录，欢迎成为第一位支持者！
                     </td>
                   </motion.tr>
@@ -249,19 +249,19 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
                   visibleDonations.map((donation, index) => (
                     <motion.tr
                       key={donation.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className={`hover:bg-white/80 transition-colors ${merge ? 'cursor-pointer' : ''}`}
+                      className={`hover:bg-white/60 transition-colors duration-200 ${merge ? 'cursor-pointer' : ''}`}
                       onClick={() => merge && router.push(`/list/${donation.id}`)}
                     >
-                      <td className="px-4 py-3 font-medium text-gray-900">
+                      <td className="px-6 py-4 font-medium text-gray-900">
                         {donation.user_url ? (
                           <a
                             href={donation.user_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-gray-900 hover:text-blue-600 hover:underline transition-colors"
+                            className="text-gray-900 hover:text-blue-600 transition-colors"
                             onClick={(e) => e.stopPropagation()}
                           >
                             {donation.user_name}
@@ -273,36 +273,36 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
 
                       {merge ? (
                         <>
-                          <td className="px-4 py-3 text-center text-gray-600">
+                          <td className="px-6 py-4 text-center text-gray-600">
                             {donation.donation_count}
                           </td>
-                          <td className="px-4 py-3 text-right font-medium text-gray-900">
+                          <td className="px-6 py-4 text-right font-medium text-gray-900">
                             ¥{formatAmount(donation.amount)}
                           </td>
-                          <td className="px-4 py-3 text-gray-400 text-xs">
+                          <td className="px-6 py-4 text-gray-400 text-xs font-medium">
                             {formatDateTime(donation.created_at)}
                           </td>
                         </>
                       ) : (
                         <>
-                          <td className="px-4 py-3">
-                            <span className={cn("flex items-center gap-1", PAYMENT_METHOD_COLORS[donation.payment_method as keyof typeof PAYMENT_METHOD_COLORS])}>
+                          <td className="px-6 py-4">
+                            <span className={cn("flex items-center gap-1.5 text-xs font-medium", PAYMENT_METHOD_COLORS[donation.payment_method as keyof typeof PAYMENT_METHOD_COLORS])}>
                               {PAYMENT_METHOD_LABELS[donation.payment_method as keyof typeof PAYMENT_METHOD_LABELS]}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-right font-medium text-gray-900">
+                          <td className="px-6 py-4 text-right font-medium text-gray-900">
                             ¥{formatAmount(donation.amount)}
                           </td>
-                          <td className="px-4 py-3 text-gray-600 truncate max-w-[200px]">
+                          <td className="px-6 py-4 text-gray-600 truncate max-w-[200px] text-xs">
                             {donation.user_message || '-'}
                           </td>
-                          <td className="px-4 py-3">
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_BADGE_STYLES[donation.status as keyof typeof STATUS_BADGE_STYLES] || STATUS_BADGE_STYLES.pending
+                          <td className="px-6 py-4">
+                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${STATUS_BADGE_STYLES[donation.status as keyof typeof STATUS_BADGE_STYLES] || STATUS_BADGE_STYLES.pending
                               }`}>
                               {STATUS_LABELS[donation.status as keyof typeof STATUS_LABELS] || donation.status}
                             </span>
                           </td>
-                          <td className="px-4 py-3 text-gray-400 text-xs">
+                          <td className="px-6 py-4 text-gray-400 text-xs font-medium">
                             {formatDateTime(donation.created_at)}
                           </td>
                         </>
