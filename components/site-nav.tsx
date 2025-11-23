@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { useEffect, useRef, useState } from 'react';
 
 const NAV_LINKS = [
   { href: '/', label: '投喂首页' },
@@ -15,23 +16,47 @@ const NAV_LINKS = [
 export function SiteNav() {
   const pathname = usePathname();
   const activeIndex = NAV_LINKS.findIndex((link) => link.href === pathname);
+  const navRef = useRef<HTMLElement>(null);
+  const linkRefs = useRef<(HTMLAnchorElement | null)[]>([]);
+  const [activeTabStyle, setActiveTabStyle] = useState({ x: 0, width: 0 });
+
+  useEffect(() => {
+    if (activeIndex === -1 || !navRef.current || !linkRefs.current[activeIndex]) return;
+
+    const updateTabPosition = () => {
+      const navRect = navRef.current?.getBoundingClientRect();
+      const activeTabRect = linkRefs.current[activeIndex]?.getBoundingClientRect();
+
+      if (navRect && activeTabRect) {
+        setActiveTabStyle({
+          x: activeTabRect.left - navRect.left,
+          width: activeTabRect.width,
+        });
+      }
+    };
+
+    updateTabPosition();
+    window.addEventListener('resize', updateTabPosition);
+    return () => window.removeEventListener('resize', updateTabPosition);
+  }, [activeIndex]);
 
   return (
     <header className="sticky top-0 z-30 border-b bg-white/95 backdrop-blur-lg shadow-sm">
-      <div className="container mx-auto flex items-center justify-between px-4 py-3">
+      <div className="container mx-auto flex items-center justify-between px-3 md:px-4 py-3">
         <Link
           href="/"
-          className="font-bold text-xl tracking-tight text-slate-800 hover:text-slate-600 transition-colors duration-300"
+          className="font-bold text-lg md:text-xl tracking-tight text-slate-800 hover:text-slate-600 transition-colors duration-300 shrink-0"
         >
           投喂小站
         </Link>
-        <nav className="relative flex items-center gap-1 text-sm font-medium">
+        <nav ref={navRef} className="relative flex items-center gap-0.5 md:gap-1 text-xs md:text-sm font-medium">
           {NAV_LINKS.map((link, index) => (
             <Link
               key={link.href}
+              ref={(el) => { linkRefs.current[index] = el; }}
               href={link.href}
               className={cn(
-                'relative z-10 rounded-lg px-4 py-2 transition-colors duration-300',
+                'relative z-10 rounded-lg px-2 md:px-4 py-2 transition-colors duration-300 whitespace-nowrap',
                 pathname === link.href
                   ? 'text-slate-900'
                   : 'text-slate-600 hover:text-slate-900'
@@ -40,13 +65,13 @@ export function SiteNav() {
               {link.label}
             </Link>
           ))}
-          {activeIndex !== -1 && (
+          {activeIndex !== -1 && activeTabStyle.width > 0 && (
             <motion.div
               className="absolute h-[36px] rounded-lg bg-slate-200/80 shadow-sm"
               initial={false}
               animate={{
-                x: activeIndex * 88 + 4,
-                width: 80,
+                x: activeTabStyle.x,
+                width: activeTabStyle.width,
               }}
               transition={{
                 type: 'spring',
