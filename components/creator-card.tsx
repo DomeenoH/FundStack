@@ -117,9 +117,28 @@ export function CreatorCard({ config, selectedPaymentMethod }: CreatorCardProps)
                   className="rounded-xl"
                 />
               </div>
-              <div className="mt-6 flex items-center gap-2 text-sm font-medium text-gray-500">
-                <span className="w-2 h-2 rounded-full bg-blue-500" />
-                QQ 支付
+              <div className="mt-6 flex flex-col items-center gap-3">
+                <div className="flex items-center gap-2 text-sm font-medium text-gray-500">
+                  <span className="w-2 h-2 rounded-full bg-blue-500" />
+                  QQ 支付
+                </div>
+                <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm">
+                  <span className="text-lg font-mono font-bold text-gray-900">
+                    {config.payment_qq_number || '未设置'}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleCopyQQ}
+                    className="h-7 w-7 p-0"
+                  >
+                    {copied ? (
+                      <Check className="w-3.5 h-3.5 text-green-500" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5 text-gray-400" />
+                    )}
+                  </Button>
+                </div>
               </div>
             </motion.div>
           )}
