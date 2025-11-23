@@ -98,44 +98,29 @@ export function CreatorCard({ config, selectedPaymentMethod }: CreatorCardProps)
             </motion.div>
           )}
 
-          {/* Case 2: QQ Payment (Show Number) */}
+          {/* Case 2: QQ Payment (Show QQ Avatar) */}
           {activeMethod === 'qq' && (
             <motion.div
-              key="qq-number"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
+              key="qq-avatar"
+              initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="flex flex-col items-center justify-center w-full text-center"
+              className="flex flex-col items-center w-full"
             >
-              <div className="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center mb-4 text-blue-500">
-                {/* QQ Icon Placeholder or SVG */}
-                <span className="font-bold text-xl">QQ</span>
+              <div className="relative bg-white p-4 rounded-2xl shadow-sm border border-gray-200/60">
+                <Image
+                  src={`http://q.qlogo.cn/headimg_dl?dst_uin=${config.payment_qq_number}&spec=640&img_type=jpg`}
+                  alt="QQ Avatar"
+                  width={200}
+                  height={200}
+                  className="rounded-xl"
+                />
               </div>
-              <h4 className="text-gray-500 text-sm font-medium mb-2">QQ 账号</h4>
-              <div className="flex items-center gap-3 bg-white px-4 py-3 rounded-xl border border-gray-200 shadow-sm mb-4">
-                <span className="text-xl font-mono font-bold text-gray-900 tracking-wide">
-                  {config.payment_qq_number || '未设置'}
-                </span>
+              <div className="mt-6 flex items-center gap-2 text-sm font-medium text-gray-500">
+                <span className="w-2 h-2 rounded-full bg-blue-500" />
+                QQ 支付
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCopyQQ}
-                className="rounded-full px-6 border-gray-200 hover:bg-gray-50 hover:text-gray-900"
-              >
-                {copied ? (
-                  <>
-                    <Check className="w-3.5 h-3.5 mr-2 text-green-500" />
-                    已复制
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-3.5 h-3.5 mr-2" />
-                    复制账号
-                  </>
-                )}
-              </Button>
             </motion.div>
           )}
 
