@@ -178,56 +178,6 @@ export default function DonationDetailPage() {
                                 </div>
                             </div>
                         </div>
-
-                        {/* Reply Section */}
-                        {(donation.reply_content || isAdmin) && (
-                            <div className="p-8 bg-blue-50/30 border-t border-blue-100/50">
-                                <div className="flex gap-4">
-                                    <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center shrink-0 shadow-md shadow-blue-200">
-                                        <Reply className="w-5 h-5 text-white" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <p className="text-sm font-bold text-blue-900">站长回复</p>
-                                            {donation.reply_at && (
-                                                <span className="text-xs text-blue-400">
-                                                    {new Date(donation.reply_at).toLocaleString('zh-CN')}
-                                                </span>
-                                            )}
-                                        </div>
-
-                                        {donation.reply_content ? (
-                                            <div className="prose prose-blue max-w-none">
-                                                <p className="text-gray-700 leading-relaxed bg-white p-4 rounded-2xl rounded-tl-none shadow-sm border border-blue-100">
-                                                    {donation.reply_content}
-                                                </p>
-                                            </div>
-                                        ) : (
-                                            isAdmin && (
-                                                <div className="space-y-3">
-                                                    <Textarea
-                                                        placeholder="写下你的回复..."
-                                                        value={replyContent}
-                                                        onChange={(e) => setReplyContent(e.target.value)}
-                                                        className="bg-white border-blue-200 focus:border-blue-400 min-h-[100px]"
-                                                    />
-                                                    <div className="flex justify-end">
-                                                        <Button
-                                                            onClick={handleReplySubmit}
-                                                            disabled={submittingReply || !replyContent.trim()}
-                                                            className="bg-blue-600 hover:bg-blue-700 text-white"
-                                                        >
-                                                            {submittingReply ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
-                                                            发送回复
-                                                        </Button>
-                                                    </div>
-                                                </div>
-                                            )
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
                     </Card>
                 </motion.div>
             </div>

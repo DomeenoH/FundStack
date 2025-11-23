@@ -68,7 +68,9 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.2.3",
     "postcss": "^8.5",
+    "postgres": "^3.4.7",
     "tailwindcss": "^4.1.9",
     "typescript": "^5"
   },
