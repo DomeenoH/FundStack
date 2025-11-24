@@ -30,9 +30,17 @@ export function md5Hash(email: string): string {
 
 /**
  * Get QQ avatar URL
+ * QQ avatar API only supports specific spec values: 40, 100, 140, 640
+ * We map the requested size to the nearest supported spec
  */
 export function getQQAvatarUrl(qqNumber: string, size: number = 640): string {
-    return `https://q.qlogo.cn/headimg_dl?dst_uin=${qqNumber}&spec=${size}&img_type=jpg`;
+    // Map size to nearest supported spec value
+    const validSpecs = [40, 100, 140, 640];
+    const spec = validSpecs.reduce((prev, curr) => {
+        return Math.abs(curr - size) < Math.abs(prev - size) ? curr : prev;
+    });
+
+    return `https://q.qlogo.cn/headimg_dl?dst_uin=${qqNumber}&spec=${spec}&img_type=jpg`;
 }
 
 /**

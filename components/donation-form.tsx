@@ -32,9 +32,10 @@ import type { SiteConfig } from '@/lib/config';
 interface DonationFormProps {
   config: SiteConfig;
   onPaymentMethodChange?: (method: string) => void;
+  onSubmitSuccess?: () => void;
 }
 
-export default function DonationForm({ config, onPaymentMethodChange }: DonationFormProps) {
+export default function DonationForm({ config, onPaymentMethodChange, onSubmitSuccess }: DonationFormProps) {
   const [success, setSuccess] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -99,6 +100,9 @@ export default function DonationForm({ config, onPaymentMethodChange }: Donation
       // Reset payment method in parent if needed, or keep as is
       if (onPaymentMethodChange) onPaymentMethodChange('wechat');
 
+      // Notify parent component to refresh data
+      if (onSubmitSuccess) onSubmitSuccess();
+
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
       console.error('[投喂小站] Donation form error:', err);
@@ -118,14 +122,6 @@ export default function DonationForm({ config, onPaymentMethodChange }: Donation
           {config.form_description}
         </p>
       </div>
-
-      {success && (
-        <Alert className="bg-green-50 border-green-200 mb-6 rounded-xl">
-          <AlertDescription className="text-green-800 font-medium">
-            收到啦！你的投喂正在等待确认，感谢你的支持。
-          </AlertDescription>
-        </Alert>
-      )}
 
       {submitError && (
         <Alert className="bg-red-50 border-red-200 mb-6 rounded-xl">
@@ -311,6 +307,14 @@ export default function DonationForm({ config, onPaymentMethodChange }: Donation
               '确认投喂'
             )}
           </Button>
+
+          {success && (
+            <Alert className="bg-green-50 border-green-200 rounded-xl">
+              <AlertDescription className="text-green-800 font-medium">
+                收到啦！你的投喂正在等待确认，感谢你的支持。
+              </AlertDescription>
+            </Alert>
+          )}
         </form>
       </Form>
 

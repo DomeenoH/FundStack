@@ -1,18 +1,51 @@
-import DonationList from '@/components/donation-list';
-import { Heart } from 'lucide-react';
+'use client';
+
+import DonationList, { DonationListRef } from '@/components/donation-list';
+import { Heart, Loader2 } from 'lucide-react';
 import { DonationSection } from '@/components/donation-section';
-import { getConfig } from '@/lib/config';
+import { useEffect, useState, useRef } from 'react';
+import type { SiteConfig } from '@/lib/config';
+import { fetchJson } from '@/lib/api';
 
-export async function generateMetadata() {
-  const config = await getConfig();
-  return {
-    title: config.site_title,
-    description: config.site_description,
+export default function DonationPage() {
+  const [config, setConfig] = useState<SiteConfig | null>(null);
+  const [loading, setLoading] = useState(true);
+  const donationListRef = useRef<DonationListRef>(null);
+
+  useEffect(() => {
+    fetchJson<{ success: boolean; data: SiteConfig }>('/api/config')
+      .then(response => {
+        setConfig(response.data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to load config:', err);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleSubmitSuccess = () => {
+    // Refresh the donation list after successful submission
+    if (donationListRef.current) {
+      donationListRef.current.refresh();
+    }
   };
-}
 
-export default async function DonationPage() {
-  const config = await getConfig();
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-stone-50/50 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+      </div>
+    );
+  }
+
+  if (!config) {
+    return (
+      <div className="min-h-screen bg-stone-50/50 flex items-center justify-center">
+        <p className="text-red-500">加载配置失败，请刷新页面重试</p>
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-stone-50/50">
@@ -27,11 +60,11 @@ export default async function DonationPage() {
           </p>
         </div>
 
-        <DonationSection config={config} />
+        <DonationSection config={config} onSubmitSuccess={handleSubmitSuccess} />
 
         <div className="max-w-6xl mx-auto bg-white/60 backdrop-blur-xl rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/20">
           <h2 className="text-2xl font-bold mb-6 text-gray-900 tracking-tight">{config.list_home_title}</h2>
-          <DonationList limit={config.list_home_limit} merge={false} />
+          <DonationList ref={donationListRef} limit={config.list_home_limit} merge={false} />
         </div>
       </div>
     </main>

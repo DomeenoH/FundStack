@@ -8,9 +8,10 @@ import { motion } from 'framer-motion';
 
 interface DonationSectionProps {
     config: SiteConfig;
+    onSubmitSuccess?: () => void;
 }
 
-export function DonationSection({ config }: DonationSectionProps) {
+export function DonationSection({ config, onSubmitSuccess }: DonationSectionProps) {
     const [paymentMethod, setPaymentMethod] = useState('wechat');
 
     return (
@@ -24,6 +25,7 @@ export function DonationSection({ config }: DonationSectionProps) {
                 <DonationForm
                     config={config}
                     onPaymentMethodChange={setPaymentMethod}
+                    onSubmitSuccess={onSubmitSuccess}
                 />
             </motion.div>
 
