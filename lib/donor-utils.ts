@@ -14,6 +14,7 @@ export interface Donation {
 export interface MergedDonor {
     id: string; // Composite ID or the ID of the primary donor
     user_name: string;
+    user_email?: string;
     user_url?: string;
     total_amount: number;
     donation_count: number;
@@ -104,10 +105,13 @@ export function mergeDonors(donations: Donation[]): MergedDonor[] {
 
         // Find the most recent non-empty URL
         const validUrlDonor = group.find(d => d.user_url && d.user_url.trim() !== '');
+        // Find the most recent non-empty Email
+        const validEmailDonor = group.find(d => d.user_email && d.user_email.trim() !== '');
 
         return {
             id: `merged-${latest.id}`,
             user_name: latest.user_name, // Use the most recent name
+            user_email: validEmailDonor?.user_email || undefined,
             user_url: validUrlDonor?.user_url || undefined,
             total_amount: totalAmount,
             donation_count: group.length,

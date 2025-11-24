@@ -32,6 +32,7 @@ export async function GET(request: NextRequest) {
       const publicDonations = mergedDonors.map(d => ({
         id: d.id, // This is now a string like "merged-123"
         user_name: d.user_name,
+        user_email: d.user_email,
         user_url: d.user_url,
         amount: d.total_amount,
         payment_method: d.donations[0].payment_method, // Use latest payment method
@@ -50,6 +51,7 @@ export async function GET(request: NextRequest) {
       const publicDonations = validDonations.map(d => ({
         id: d.id,
         user_name: d.user_name,
+        user_email: d.user_email,
         user_url: d.user_url,
         amount: d.amount,
         payment_method: d.payment_method,
@@ -58,7 +60,9 @@ export async function GET(request: NextRequest) {
           d.created_at instanceof Date
             ? d.created_at.toISOString()
             : d.created_at?.toString() || '',
-        status: d.status
+        status: d.status,
+        reply_content: (d as any).reply_content,
+        reply_at: (d as any).reply_at
       }));
 
       return NextResponse.json({

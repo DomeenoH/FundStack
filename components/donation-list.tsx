@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, RefreshCcw } from 'lucide-react';
+import { getUserAvatarUrl, maskContact } from '@/lib/avatar-utils';
+import { Tooltip } from '@/components/ui/tooltip';
 import { fetchJson } from '@/lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -12,6 +14,7 @@ import { cn } from '@/lib/utils';
 interface Donation {
   id: number | string;
   user_name: string;
+  user_email?: string;
   user_url?: string;
   amount: number | string;
   payment_method: string;
@@ -19,6 +22,8 @@ interface Donation {
   created_at: string;
   status: string;
   donation_count?: number;
+  reply_content?: string;
+  reply_at?: string;
 }
 
 interface Stats {
@@ -215,7 +220,9 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
           <table className="w-full text-base">
             <thead className="bg-white/50 border-b border-gray-100/50">
               <tr>
+                <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs">头像</th>
                 <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs">投喂者</th>
+                <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs">联系方式</th>
                 {merge ? (
                   <>
                     <th className="px-8 py-5 text-center font-bold text-gray-500 uppercase tracking-wider text-xs">投喂次数</th>
@@ -241,7 +248,7 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                   >
-                    <td colSpan={merge ? 4 : 6} className="px-8 py-16 text-center text-gray-400 font-medium">
+                    <td colSpan={merge ? 6 : 8} className="px-8 py-16 text-center text-gray-400 font-medium">
                       还没有投喂记录，欢迎成为第一位支持者！
                     </td>
                   </motion.tr>
@@ -259,8 +266,14 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
                         router.push(path);
                       }}
                     >
+                      <td className="px-8 py-5">
+                        <img src={getUserAvatarUrl(donation.user_email, 40)} alt="avatar" className="w-8 h-8 rounded-full" />
+                      </td>
                       <td className="px-8 py-5 font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
                         {donation.user_name}
+                      </td>
+                      <td className="px-8 py-5 text-sm text-gray-600">
+                        {maskContact(donation.user_email)}
                       </td>
 
                       {merge ? (
@@ -287,11 +300,10 @@ export default function DonationList({ limit, merge = false }: { limit?: number;
                           </td>
                           <td className="px-8 py-5 text-gray-600 truncate max-w-[240px] text-sm flex items-center gap-2">
                             {donation.user_message || '-'}
-                            {/* @ts-ignore */}
                             {donation.reply_content && (
-                              <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-600" title="已回复">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3"><polyline points="9 17 4 12 9 7"></polyline><path d="M20 18v-2a4 4 0 0 0-4-4H4"></path></svg>
-                              </span>
+                              <Tooltip content={donation.reply_content}>
+                                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-600" title="已回复"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3"><polyline points="9 17 4 12 9 7" /><path d="M20 18v-2a4 4 0 0 0-4-4H4" /></svg></span>
+                              </Tooltip>
                             )}
                           </td>
                           <td className="px-8 py-5">

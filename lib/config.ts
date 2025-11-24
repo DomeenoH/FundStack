@@ -23,6 +23,7 @@ export interface SiteConfig {
     creator_role: string;
     creator_description: string;
     creator_avatar: string;
+    creator_qq_number?: string;
     payment_alipay_qr: string;
     payment_wechat_qr: string;
     payment_qq_number?: string;
@@ -49,9 +50,11 @@ export interface SiteConfig {
     // Security section
     security_title: string;
     security_description: string;
+    security_visible: boolean;
 
     // Other text
     form_privacy_text: string;
+    form_privacy_visible: boolean;
     payment_methods_button_text: string;
     payment_methods_button_text_close: string;
     payment_methods_description: string;
@@ -68,6 +71,7 @@ export const DEFAULT_CONFIG: SiteConfig = {
     creator_role: '站长 / 创作者',
     creator_description: '热爱分享的代码种田人，用键盘播种快乐，用故事陪伴每一个夜晚。',
     creator_avatar: '/placeholder-user.jpg',
+    creator_qq_number: '',
     payment_alipay_qr: '/placeholder.svg',
     payment_wechat_qr: '/placeholder.svg',
     payment_qq_number: '123456789',
@@ -99,8 +103,10 @@ export const DEFAULT_CONFIG: SiteConfig = {
 
     security_title: '安全且贴心',
     security_description: '你的支付信息会被安全处理，敏感数据绝不存储，只会记录必要的投喂信息用于确认。',
+    security_visible: true,
 
     form_privacy_text: '数据仅用于确认投喂，隐私我们会好好守护。',
+    form_privacy_visible: true,
     payment_methods_button_text: '查看收款方式',
     payment_methods_button_text_close: '收起收款方式',
     payment_methods_description: '打开喜欢的方式扫一扫：',

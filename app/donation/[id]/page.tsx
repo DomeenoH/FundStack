@@ -9,10 +9,12 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { fetchJson } from '@/lib/api';
 import { motion } from 'framer-motion';
+import { getUserAvatarUrl } from '@/lib/avatar-utils';
 
 interface DonationDetail {
     id: number;
     user_name: string;
+    user_email?: string;
     user_url?: string;
     amount: number;
     payment_method: string;
@@ -138,8 +140,12 @@ export default function DonationDetailPage() {
                         {/* Header */}
                         <div className="p-8 border-b border-gray-100/50 flex items-start justify-between">
                             <div className="flex items-center gap-4">
-                                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center border-4 border-white shadow-sm">
-                                    <User className="w-8 h-8 text-blue-400" />
+                                <div className="w-16 h-16 rounded-full border-4 border-white shadow-sm overflow-hidden">
+                                    <img
+                                        src={getUserAvatarUrl(donation.user_email, 64)}
+                                        alt={donation.user_name}
+                                        className="w-full h-full object-cover"
+                                    />
                                 </div>
                                 <div>
                                     <h1 className="text-2xl font-bold text-gray-900 mb-1">{donation.user_name}</h1>
@@ -178,6 +184,63 @@ export default function DonationDetailPage() {
                                 </div>
                             </div>
                         </div>
+
+                        {/* Reply Section */}
+                        {(donation.reply_content || isAdmin) && (
+                            <div className="p-8 bg-blue-50/30 border-t border-blue-100/50">
+                                <div className="flex gap-4">
+                                    <Reply className="w-5 h-5 text-blue-500 shrink-0 mt-1" />
+                                    <div className="flex-1">
+                                        <p className="text-sm font-medium text-blue-600 mb-2 uppercase tracking-wider">
+                                            站长回复
+                                            {donation.reply_at && (
+                                                <span className="text-blue-400 ml-2 text-xs normal-case">
+                                                    {new Date(donation.reply_at).toLocaleString('zh-CN')}
+                                                </span>
+                                            )}
+                                        </p>
+
+                                        {donation.reply_content ? (
+                                            <p className="text-gray-800 leading-relaxed bg-white/60 p-4 rounded-xl border border-blue-100/50">
+                                                {donation.reply_content}
+                                            </p>
+                                        ) : (
+                                            !isAdmin && <p className="text-gray-400 italic">暂无回复</p>
+                                        )}
+
+                                        {isAdmin && (
+                                            <div className="mt-4 space-y-3">
+                                                <Textarea
+                                                    placeholder="输入回复内容..."
+                                                    value={replyContent}
+                                                    onChange={(e) => setReplyContent(e.target.value)}
+                                                    className="bg-white"
+                                                />
+                                                <div className="flex justify-end">
+                                                    <Button
+                                                        onClick={handleReplySubmit}
+                                                        disabled={submittingReply || !replyContent.trim()}
+                                                        size="sm"
+                                                    >
+                                                        {submittingReply ? (
+                                                            <>
+                                                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                                发送中...
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Send className="w-4 h-4 mr-2" />
+                                                                {donation.reply_content ? '更新回复' : '发送回复'}
+                                                            </>
+                                                        )}
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </Card>
                 </motion.div>
             </div>

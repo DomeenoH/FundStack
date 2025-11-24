@@ -4,8 +4,20 @@ import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, LogOut, Check, X, Search, Download } from 'lucide-react';
+import { Loader2, LogOut, Check, X, Search, Download, Reply, MessageSquare } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { getUserAvatarUrl } from '@/lib/avatar-utils';
+import { Tooltip } from '@/components/ui/tooltip';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface AdminDonation {
   id: number;
@@ -17,6 +29,8 @@ interface AdminDonation {
   status: string;
   created_at: string;
   user_message?: string;
+  reply_content?: string;
+  reply_at?: string;
 }
 
 export default function AdminPage() {
@@ -29,6 +43,11 @@ export default function AdminPage() {
   const [filterStatus, setFilterStatus] = useState<'all' | 'pending' | 'confirmed'>('pending');
   const [actioningId, setActioningId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Reply state
+  const [replyingId, setReplyingId] = useState<number | null>(null);
+  const [replyContent, setReplyContent] = useState('');
+  const [submittingReply, setSubmittingReply] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,8 +112,45 @@ export default function AdminPage() {
     }
   };
 
+  const handleReplySubmit = async (id: number) => {
+    if (!replyContent.trim()) return;
+    setSubmittingReply(true);
+    try {
+      const credentials = btoa(`admin:${password}`);
+      const response = await fetch(`/api/donations/${id}/reply`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${credentials}`
+        },
+        body: JSON.stringify({ content: replyContent })
+      });
+
+      if (response.ok) {
+        const updatedDonation = await response.json();
+        setDonations(prev => prev.map(d => d.id === id ? { ...d, ...updatedDonation.donation } : d));
+        setSuccessMessage('回复已发送');
+        setTimeout(() => setSuccessMessage(''), 3000);
+        setReplyingId(null);
+        setReplyContent('');
+      } else {
+        setError('回复失败');
+      }
+    } catch (error) {
+      console.error('Reply error:', error);
+      setError('回复出错');
+    } finally {
+      setSubmittingReply(false);
+    }
+  };
+
+  const openReplyDialog = (donation: AdminDonation) => {
+    setReplyingId(donation.id);
+    setReplyContent(donation.reply_content || '');
+  };
+
   const exportToCSV = () => {
-    const headers = ['ID', '投喂者', '邮箱', '金额', '方式', '留言', '状态', '时间'];
+    const headers = ['ID', '投喂者', '邮箱', '金额', '方式', '留言', '回复', '状态', '时间'];
     const csvData = filteredAndSearchedDonations.map(d => [
       d.id,
       d.user_name,
@@ -102,6 +158,7 @@ export default function AdminPage() {
       d.amount,
       d.payment_method,
       d.user_message || '',
+      d.reply_content || '',
       d.status,
       new Date(d.created_at).toLocaleString('zh-CN')
     ]);
@@ -128,7 +185,8 @@ export default function AdminPage() {
     return (
       d.user_name.toLowerCase().includes(query) ||
       d.user_email?.toLowerCase().includes(query) ||
-      d.user_message?.toLowerCase().includes(query)
+      d.user_message?.toLowerCase().includes(query) ||
+      d.reply_content?.toLowerCase().includes(query)
     );
   });
 
@@ -171,7 +229,7 @@ export default function AdminPage() {
 
   return (
     <main className="min-h-screen bg-slate-50 p-6">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center mb-8">
           <h1 className="text-3xl md:text-4xl font-bold">投喂管理仪表板</h1>
           <div className="flex gap-2 md:gap-3">
@@ -235,7 +293,7 @@ export default function AdminPage() {
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   type="text"
-                  placeholder="搜索投喂者名称、邮箱或留言..."
+                  placeholder="搜索投喂者名称、邮箱、留言或回复..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
@@ -273,11 +331,11 @@ export default function AdminPage() {
               <table className="min-w-full text-sm">
                 <thead className="bg-gray-50 border-b">
                   <tr>
+                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">头像</th>
                     <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">投喂者</th>
-                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">邮箱</th>
                     <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">金额</th>
                     <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">方式</th>
-                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">留言</th>
+                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">留言/回复</th>
                     <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">状态</th>
                     <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">操作</th>
                   </tr>
@@ -292,12 +350,27 @@ export default function AdminPage() {
                   ) : (
                     filteredAndSearchedDonations.map(donation => (
                       <tr key={donation.id} className="hover:bg-gray-50">
-                        <td className="px-6 py-4 font-medium">{donation.user_name}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600">{donation.user_email || '-'}</td>
+                        <td className="px-6 py-4">
+                          <img src={getUserAvatarUrl(donation.user_email, 40)} alt="avatar" className="w-8 h-8 rounded-full" />
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="font-medium">{donation.user_name}</div>
+                          <div className="text-xs text-gray-500">{donation.user_email || '-'}</div>
+                        </td>
                         <td className="px-6 py-4 font-semibold">¥{donation.amount.toFixed(2)}</td>
                         <td className="px-6 py-4 text-sm">{donation.payment_method}</td>
-                        <td className="px-6 py-4 text-sm text-gray-600 truncate max-w-xs">
-                          {donation.user_message || '-'}
+                        <td className="px-6 py-4 text-sm max-w-xs">
+                          <div className="flex flex-col gap-1">
+                            <div className="text-gray-800 truncate" title={donation.user_message}>
+                              {donation.user_message || <span className="text-gray-400 italic">无留言</span>}
+                            </div>
+                            {donation.reply_content && (
+                              <div className="text-blue-600 text-xs flex items-center gap-1 truncate" title={donation.reply_content}>
+                                <Reply className="w-3 h-3" />
+                                {donation.reply_content}
+                              </div>
+                            )}
+                          </div>
                         </td>
                         <td className="px-6 py-4">
                           <span className={`px-3 py-1 rounded-full text-xs font-medium ${donation.status === 'confirmed'
@@ -311,6 +384,37 @@ export default function AdminPage() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex gap-2 items-center">
+                            <Dialog open={replyingId === donation.id} onOpenChange={(open) => !open && setReplyingId(null)}>
+                              <DialogTrigger asChild>
+                                <Button size="sm" variant="outline" onClick={() => openReplyDialog(donation)}>
+                                  <MessageSquare className="w-4 h-4" />
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>回复 {donation.user_name}</DialogTitle>
+                                  <DialogDescription>
+                                    发送回复给投喂者，回复内容将显示在投喂墙上。
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="py-4">
+                                  <Textarea
+                                    value={replyContent}
+                                    onChange={(e) => setReplyContent(e.target.value)}
+                                    placeholder="输入回复内容..."
+                                    rows={4}
+                                  />
+                                </div>
+                                <DialogFooter>
+                                  <Button variant="outline" onClick={() => setReplyingId(null)}>取消</Button>
+                                  <Button onClick={() => handleReplySubmit(donation.id)} disabled={submittingReply || !replyContent.trim()}>
+                                    {submittingReply && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                    发送回复
+                                  </Button>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
+
                             {filterStatus === 'all' ? (
                               <select
                                 className="rounded border px-3 py-2 text-sm"

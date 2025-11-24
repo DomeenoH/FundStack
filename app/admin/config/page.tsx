@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Save, RotateCcw, Settings } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Switch } from '@/components/ui/switch';
 import type { SiteConfig, PaymentMethod } from '@/lib/config';
 
 export default function ConfigManagementPage() {
@@ -293,6 +294,16 @@ export default function ConfigManagementPage() {
                             </div>
 
                             <div className="space-y-2">
+                                <Label htmlFor="creator_qq_number">创作者QQ号 (用于头像Fallback)</Label>
+                                <Input
+                                    id="creator_qq_number"
+                                    value={config.creator_qq_number || ''}
+                                    onChange={(e) => updateConfig('creator_qq_number', e.target.value)}
+                                    placeholder="输入QQ号"
+                                />
+                            </div>
+
+                            <div className="space-y-2">
                                 <Label htmlFor="payment_alipay_qr">支付宝收款码路径</Label>
                                 <Input
                                     id="payment_alipay_qr"
@@ -385,31 +396,34 @@ export default function ConfigManagementPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label>支付方式列表</Label>
+                                <Label>支付方式列表 (只读)</Label>
                                 {((config.payment_methods || []) as PaymentMethod[]).map((method, index) => (
                                     <div key={index} className="flex gap-2">
                                         <Input
-                                            placeholder="值 (例如: wechat)"
                                             value={method.value}
-                                            onChange={(e) => updatePaymentMethod(index, 'value', e.target.value)}
+                                            readOnly
+                                            className="bg-gray-100 text-gray-500"
                                         />
                                         <Input
-                                            placeholder="标签 (例如: 微信支付)"
                                             value={method.label}
-                                            onChange={(e) => updatePaymentMethod(index, 'label', e.target.value)}
+                                            readOnly
+                                            className="bg-gray-100 text-gray-500"
                                         />
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => removePaymentMethod(index)}
-                                        >
-                                            删除
-                                        </Button>
                                     </div>
                                 ))}
-                                <Button variant="outline" size="sm" onClick={addPaymentMethod}>
-                                    + 添加支付方式
-                                </Button>
+                                <p className="text-xs text-gray-500">支付方式列表不可修改，如需调整请联系开发者。</p>
+                            </div>
+
+                            <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg">
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="form_privacy_visible">显示隐私说明</Label>
+                                    <p className="text-sm text-gray-500">控制表单底部是否显示隐私说明文字</p>
+                                </div>
+                                <Switch
+                                    id="form_privacy_visible"
+                                    checked={config.form_privacy_visible ?? true}
+                                    onCheckedChange={(checked) => updateConfig('form_privacy_visible', checked)}
+                                />
                             </div>
 
                             <div className="space-y-2">
@@ -496,6 +510,18 @@ export default function ConfigManagementPage() {
                                     value={config.security_description || ''}
                                     onChange={(e) => updateConfig('security_description', e.target.value)}
                                     rows={3}
+                                />
+                            </div>
+
+                            <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg">
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="security_visible">显示安全说明</Label>
+                                    <p className="text-sm text-gray-500">控制首页底部是否显示安全说明区块</p>
+                                </div>
+                                <Switch
+                                    id="security_visible"
+                                    checked={config.security_visible ?? true}
+                                    onCheckedChange={(checked) => updateConfig('security_visible', checked)}
                                 />
                             </div>
                         </Card>

@@ -61,17 +61,19 @@ export function DonationSection({ config }: DonationSectionProps) {
                     </ul>
                 </motion.div>
 
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.4 }}
-                    className="bg-blue-50/50 backdrop-blur-xl rounded-3xl p-8 border border-blue-100/50"
-                >
-                    <h3 className="font-bold text-lg mb-3 text-blue-900 tracking-tight">{config.security_title}</h3>
-                    <p className="text-sm text-blue-800/80 leading-relaxed">
-                        {config.security_description}
-                    </p>
-                </motion.div>
+                {config.security_visible && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ type: "spring", stiffness: 260, damping: 20, delay: 0.4 }}
+                        className="bg-blue-50/50 backdrop-blur-xl rounded-3xl p-8 border border-blue-100/50"
+                    >
+                        <h3 className="font-bold text-lg mb-3 text-blue-900 tracking-tight">{config.security_title}</h3>
+                        <p className="text-sm text-blue-800/80 leading-relaxed">
+                            {config.security_description}
+                        </p>
+                    </motion.div>
+                )}
             </div>
         </div>
     );

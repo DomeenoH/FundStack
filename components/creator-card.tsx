@@ -8,6 +8,7 @@ import type { SiteConfig } from '@/lib/config';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
+import { getCreatorAvatarUrl } from '@/lib/avatar-utils';
 
 interface CreatorCardProps {
   config: SiteConfig;
@@ -16,9 +17,18 @@ interface CreatorCardProps {
 
 export function CreatorCard({ config, selectedPaymentMethod }: CreatorCardProps) {
   const [copied, setCopied] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
 
   // Default to wechat if none selected, but we only show QR if explicitly selected or if we decide to show a default
   const activeMethod = selectedPaymentMethod || 'wechat';
+
+  // Get creator avatar with QQ fallback
+  const creatorAvatarUrl = avatarError
+    ? '/placeholder-user.jpg'
+    : getCreatorAvatarUrl(
+      config.creator_avatar,
+      config.creator_qq_number || config.payment_qq_number
+    );
 
   const handleCopyQQ = () => {
     if (config.payment_qq_number) {
@@ -45,12 +55,13 @@ export function CreatorCard({ config, selectedPaymentMethod }: CreatorCardProps)
         >
           <div className="absolute inset-0 rounded-full bg-gray-100/50 blur-2xl opacity-50" />
           <Image
-            src={config.creator_avatar}
+            src={creatorAvatarUrl}
             alt="Avatar"
             width={120}
             height={120}
             className="relative h-28 w-28 rounded-full object-cover shadow-lg border-4 border-white"
             priority
+            onError={() => setAvatarError(true)}
           />
           <div className="absolute bottom-1 right-1 bg-blue-500 text-white p-1.5 rounded-full border-4 border-white shadow-sm">
             <Sparkles className="w-3 h-3" />

@@ -6,9 +6,17 @@ export const donationSchema = z.object({
     .max(50, '姓名长度不能超过50个字符')
     .trim(),
   user_email: z.string()
-    .email('请输入有效的邮箱地址')
     .optional()
-    .or(z.literal('')),
+    .refine(
+      (val) => {
+        if (!val || val === '') return true;
+        // Allow QQ number (5-11 digits) or valid email
+        const isQQ = /^\d{5,11}$/.test(val.trim());
+        const isEmail = z.string().email().safeParse(val).success;
+        return isQQ || isEmail;
+      },
+      { message: '请输入有效的邮箱地址或QQ号' }
+    ),
   user_url: z.string()
     .url('请输入有效的URL地址')
     .optional()

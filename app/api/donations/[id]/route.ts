@@ -88,6 +88,7 @@ export async function GET(
             donor: {
                 id: donor.id,
                 user_name: donor.user_name,
+                user_email: donor.user_email,
                 user_url: donor.user_url,
                 total_amount: donor.total_amount,
                 donation_count: donor.donation_count,

@@ -71,11 +71,17 @@ export default function DonationForm({ config, onPaymentMethodChange }: Donation
     setSuccess(false);
 
     try {
+      // Import normalizeEmailInput dynamically to avoid server-side issues
+      const { normalizeEmailInput } = await import('@/lib/avatar-utils');
+
+      // Normalize email input (convert QQ number to QQ email)
+      const normalizedEmail = data.user_email ? normalizeEmailInput(data.user_email) : undefined;
+
       await fetchJson('/api/donations', {
         method: 'POST',
         body: JSON.stringify({
           ...data,
-          user_email: data.user_email || undefined,
+          user_email: normalizedEmail,
           user_url: data.user_url || undefined,
           user_message: data.user_message || undefined,
         }),
@@ -219,6 +225,27 @@ export default function DonationForm({ config, onPaymentMethodChange }: Donation
 
             <FormField
               control={form.control}
+              name="user_email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-sm font-medium text-gray-700">
+                    邮箱/QQ号 <span className="text-gray-400 font-normal">(可选)</span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="用于显示头像，可填QQ号"
+                      {...field}
+                      className="h-12 rounded-xl bg-gray-50 border-transparent focus:bg-white focus:border-blue-500/20 transition-all"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="amount"
               render={({ field }) => (
                 <FormItem>
@@ -287,9 +314,11 @@ export default function DonationForm({ config, onPaymentMethodChange }: Donation
         </form>
       </Form>
 
-      <p className="text-xs text-gray-400 text-center mt-6">
-        {config.form_privacy_text}
-      </p>
+      {config.form_privacy_visible && (
+        <p className="text-xs text-gray-400 text-center mt-6">
+          {config.form_privacy_text}
+        </p>
+      )}
     </Card>
   );
 }

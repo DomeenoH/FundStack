@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowLeft, Loader2, User, Calendar, CreditCard } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { fetchJson } from '@/lib/api';
+import { getUserAvatarUrl } from '@/lib/avatar-utils';
 
 interface DonationHistoryItem {
     id: number;
@@ -21,6 +22,7 @@ interface DonationHistoryItem {
 interface DonorDetails {
     id: string;
     user_name: string;
+    user_email?: string;
     user_url?: string;
     total_amount: number;
     donation_count: number;
@@ -97,23 +99,30 @@ export default function DonorDetailPage() {
                     返回投喂墙
                 </Link>
 
-                <div className="mb-8">
-                    <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
-                        <div className="bg-blue-100 p-2 rounded-full">
-                            <User className="w-6 h-6 text-blue-600" />
-                        </div>
-                        {donor.user_name} 的投喂记录
-                    </h1>
-                    {donor.user_url && (
-                        <a
-                            href={donor.user_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:underline ml-12"
-                        >
-                            访问主页
-                        </a>
-                    )}
+                <div className="mb-8 flex items-center gap-6">
+                    <div className="w-20 h-20 rounded-full border-4 border-white shadow-sm overflow-hidden bg-white">
+                        <img
+                            src={getUserAvatarUrl(donor.user_email, 80)}
+                            alt={donor.user_name}
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
+                    <div>
+                        <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
+                            {donor.user_name} 的投喂记录
+                        </h1>
+                        {donor.user_url && (
+                            <a
+                                href={donor.user_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:underline inline-flex items-center gap-1"
+                            >
+                                <User className="w-4 h-4" />
+                                访问主页
+                            </a>
+                        )}
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
