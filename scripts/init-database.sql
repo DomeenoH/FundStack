@@ -19,7 +19,9 @@ CREATE TABLE IF NOT EXISTS donations (
   user_agent VARCHAR(500),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   confirmed_at TIMESTAMP NULL,
-  admin_notes VARCHAR(500)
+  admin_notes VARCHAR(500),
+  reply_content TEXT,
+  reply_at TIMESTAMP NULL
 );
 
 -- Create indexes for better query performance
@@ -27,6 +29,7 @@ CREATE INDEX IF NOT EXISTS idx_donations_status ON donations(status);
 CREATE INDEX IF NOT EXISTS idx_donations_created_at ON donations(created_at);
 CREATE INDEX IF NOT EXISTS idx_donations_user_ip ON donations(user_ip);
 CREATE INDEX IF NOT EXISTS idx_donations_payment_method ON donations(payment_method);
+CREATE INDEX IF NOT EXISTS idx_donations_reply_at ON donations(reply_at);
 
 -- Stats table (optional, can be computed on demand)
 CREATE TABLE IF NOT EXISTS donation_stats (
