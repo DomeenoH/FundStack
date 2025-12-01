@@ -1068,8 +1068,15 @@ export default function ConfigManagementPage() {
                         {activeTab === 'site' && (
                             <div className="space-y-8 animate-in fade-in zoom-in-95 duration-300">
                                 <SiteHeaderPreview config={previewConfig} />
+
+                                {/* Footer Preview */}
+                                <div className="border rounded-lg overflow-hidden bg-gray-50 shadow-sm">
+                                    <div className="p-2 bg-gray-100 border-b text-xs text-gray-500 text-center">Footer Preview</div>
+                                    <SiteFooter config={previewConfig} />
+                                </div>
+
                                 <div className="text-center text-sm text-gray-400">
-                                    此处仅预览 Header 和 Hero 区域，更多内容请切换其他标签页
+                                    此处预览 Header 和 Footer
                                 </div>
                             </div>
                         )}
@@ -1110,6 +1117,57 @@ export default function ConfigManagementPage() {
                                         <p className="text-xs text-blue-700">{config.security_description}</p>
                                     </div>
                                 )}
+                            </div>
+                        )}
+
+                        {activeTab === 'email' && (
+                            <div className="animate-in fade-in zoom-in-95 duration-300">
+                                <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
+                                    <div className="bg-gray-50 border-b p-3 flex items-center gap-2">
+                                        <div className="flex gap-1.5">
+                                            <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                                            <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                                            <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                                        </div>
+                                        <div className="flex-1 text-center text-xs text-gray-500 font-medium">Email Preview</div>
+                                    </div>
+                                    <div className="p-0">
+                                        {['notification', 'confirmation', 'reply'].map((type) => {
+                                            const templateKey = `donation_${type}`;
+                                            // @ts-ignore
+                                            const template = config.email_config?.templates?.[templateKey] || {};
+
+                                            const dummyData = {
+                                                user_name: '张三',
+                                                amount: '50.00',
+                                                user_message: '加油！',
+                                                reply_content: '谢谢支持！'
+                                            };
+
+                                            let previewBody = template.body || '';
+                                            Object.entries(dummyData).forEach(([key, value]) => {
+                                                previewBody = previewBody.replace(new RegExp(`{${key}}`, 'g'), value);
+                                            });
+
+                                            return (
+                                                <div key={type} className="border-b last:border-0">
+                                                    <div className="bg-gray-50/50 p-2 text-xs font-medium text-gray-500 uppercase tracking-wider pl-4">
+                                                        {type.replace('donation_', '')}
+                                                    </div>
+                                                    <div className="p-4">
+                                                        <div className="mb-2 pb-2 border-b border-dashed">
+                                                            <p className="text-sm text-gray-500">Subject: <span className="text-gray-900 font-medium">{(template.subject || '').replace(/{user_name}/g, dummyData.user_name).replace(/{amount}/g, dummyData.amount)}</span></p>
+                                                        </div>
+                                                        <div
+                                                            className="prose prose-sm max-w-none email-preview-content"
+                                                            dangerouslySetInnerHTML={{ __html: previewBody }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>
