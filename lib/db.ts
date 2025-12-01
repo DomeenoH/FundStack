@@ -229,19 +229,36 @@ export async function updateDonation(
   }
 ) {
   try {
-    // 构建动态更新查询
-    const updates: any = {};
-    if (data.user_name !== undefined) updates.user_name = data.user_name;
-    if (data.user_email !== undefined) updates.user_email = data.user_email || null;
-    if (data.user_url !== undefined) updates.user_url = data.user_url || null;
+    // First fetch the existing donation to ensure we don't overwrite fields with null/undefined
+    // if we were to use a static query with optional parameters.
+    // This also avoids the need for dynamic SQL generation which can be tricky with tagged templates.
+    const existing = await sql`
+      SELECT * FROM donations WHERE id = ${id}
+    `;
 
-    if (Object.keys(updates).length === 0) {
-      throw new Error('No fields to update');
+    if (!existing || existing.length === 0) {
+      throw new Error('Donation not found');
     }
+
+    const current = existing[0];
+
+    // Prepare new values, using existing ones if not provided in the update data
+    const user_name = data.user_name !== undefined ? data.user_name : current.user_name;
+    // For email and url, we allow setting them to null/empty if passed as such, 
+    // but if undefined (not in payload), we keep existing.
+    // Note: The frontend sends '' for empty, which we might want to store as null or ''.
+    // Let's store as null if empty string to keep DB clean, or just pass through.
+    // The previous logic was: data.user_email || null.
+
+    const user_email = data.user_email !== undefined ? (data.user_email || null) : current.user_email;
+    const user_url = data.user_url !== undefined ? (data.user_url || null) : current.user_url;
 
     const result = await sql`
       UPDATE donations
-      SET ${sql(updates)}
+      SET 
+        user_name = ${user_name},
+        user_email = ${user_email},
+        user_url = ${user_url}
       WHERE id = ${id}
       RETURNING *
     `;
