@@ -217,32 +217,35 @@ export const DEFAULT_CONFIG: SiteConfig = {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>New Donation</title>
 <style>
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f9fafb; margin: 0; padding: 0; }
-.container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
-.header { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); padding: 32px; text-align: center; color: white; }
-.header h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.025em; }
-.content { padding: 32px; }
-.amount-card { background: #eff6ff; border: 1px solid #dbeafe; border-radius: 12px; padding: 24px; text-align: center; margin-bottom: 24px; }
-.amount { font-size: 36px; font-weight: 800; color: #1e40af; margin: 8px 0; }
-.label { font-size: 14px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
-.message-box { background: #f3f4f6; border-radius: 8px; padding: 16px; margin-top: 24px; border-left: 4px solid #3b82f6; }
-.message-text { font-style: italic; color: #4b5563; margin: 0; }
-.footer { background: #f9fafb; padding: 24px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #e5e7eb; }
-.button { display: inline-block; background: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 24px; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #374151; background-color: #f3f4f6; margin: 0; padding: 0; }
+.container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
+.header { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); padding: 40px 32px; text-align: center; color: white; }
+.header h1 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.025em; }
+.content { padding: 40px 32px; }
+.amount-card { background: #eff6ff; border: 1px solid #dbeafe; border-radius: 16px; padding: 32px; text-align: center; margin-bottom: 32px; }
+.amount { font-size: 42px; font-weight: 800; color: #1e40af; margin: 8px 0; letter-spacing: -0.025em; }
+.label { font-size: 13px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+.message-box { background: #f9fafb; border-radius: 12px; padding: 24px; margin-top: 24px; border-left: 4px solid #3b82f6; }
+.message-text { font-style: italic; color: #4b5563; margin: 0; font-size: 15px; }
+.footer { background: #f9fafb; padding: 32px; text-align: center; font-size: 13px; color: #9ca3af; border-top: 1px solid #e5e7eb; }
+.button { display: inline-block; background: #2563eb; color: white; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: 600; margin-top: 24px; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); transition: all 0.2s; }
+.avatar { width: 64px; height: 64px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.2); margin-bottom: 16px; object-fit: cover; }
 </style>
 </head>
 <body>
 <div class="container">
 <div class="header">
+<img src="{creator_avatar}" alt="Avatar" class="avatar">
 <h1>🎉 好消息！收到新的投喂</h1>
 </div>
 <div class="content">
-<p>Hi {creator_name}，</p>
-<p>刚刚收到了一笔新的支持！以下是详细信息：</p>
+<p style="font-size: 16px; margin-bottom: 24px;">Hi <strong>{creator_name}</strong>，</p>
+<p style="color: #6b7280; margin-bottom: 32px;">刚刚收到了一笔新的支持！以下是详细信息：</p>
 <div class="amount-card">
 <div class="label">投喂金额</div>
 <div class="amount">¥ {amount}</div>
-<div class="label">来自: {user_name}</div>
+<div class="label" style="margin-top: 16px;">来自</div>
+<div style="font-size: 18px; font-weight: 600; color: #1f2937; margin-top: 4px;">{user_name}</div>
 </div>
 <div class="message-box">
 <p class="message-text">"{user_message}"</p>
@@ -269,30 +272,32 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Thank You</title>
 <style>
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f9fafb; margin: 0; padding: 0; }
-.container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
-.header { background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); padding: 32px; text-align: center; color: white; }
-.header h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.025em; }
-.content { padding: 32px; text-align: center; }
-.heart-icon { font-size: 48px; margin-bottom: 16px; display: block; }
-.message { font-size: 16px; color: #4b5563; margin-bottom: 24px; }
-.amount-badge { display: inline-block; background: #fdf2f8; color: #be185d; padding: 8px 16px; border-radius: 9999px; font-weight: 700; font-size: 18px; margin-bottom: 24px; }
-.footer { background: #f9fafb; padding: 24px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #e5e7eb; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #374151; background-color: #f3f4f6; margin: 0; padding: 0; }
+.container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
+.header { background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); padding: 48px 32px; text-align: center; color: white; }
+.header h1 { margin: 16px 0 0 0; font-size: 28px; font-weight: 800; letter-spacing: -0.025em; }
+.content { padding: 48px 32px; text-align: center; }
+.avatar { width: 80px; height: 80px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.3); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); object-fit: cover; }
+.message { font-size: 18px; color: #4b5563; margin-bottom: 32px; line-height: 1.8; }
+.amount-badge { display: inline-block; background: #fdf2f8; color: #be185d; padding: 12px 24px; border-radius: 9999px; font-weight: 800; font-size: 24px; margin-bottom: 32px; box-shadow: 0 2px 4px rgba(190, 24, 93, 0.1); }
+.footer { background: #f9fafb; padding: 32px; text-align: center; font-size: 13px; color: #9ca3af; border-top: 1px solid #e5e7eb; }
+.divider { height: 1px; background: #e5e7eb; width: 60px; margin: 0 auto 32px auto; }
 </style>
 </head>
 <body>
 <div class="container">
 <div class="header">
+<img src="{creator_avatar}" alt="{creator_name}" class="avatar">
 <h1>感谢你的支持！</h1>
 </div>
 <div class="content">
-<span class="heart-icon">❤️</span>
 <p class="message">Hi <strong>{user_name}</strong>，</p>
-<p class="message">收到了你的投喂！非常感谢你对我的支持，这对我来说意义重大。</p>
+<p class="message">收到了你的投喂！非常感谢你对 <strong>{creator_name}</strong> 的支持，这对我来说意义重大。</p>
 <div class="amount-badge">
 ¥ {amount}
 </div>
-<p class="message">我会继续努力创作更好的内容！</p>
+<div class="divider"></div>
+<p class="message" style="font-size: 16px; margin-bottom: 0;">我会继续努力创作更好的内容！</p>
 </div>
 <div class="footer">
 <p>Powered by FundStack</p>
@@ -312,26 +317,28 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>New Reply</title>
 <style>
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f9fafb; margin: 0; padding: 0; }
-.container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
-.header { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); padding: 32px; text-align: center; color: white; }
-.header h1 { margin: 0; font-size: 24px; font-weight: 700; letter-spacing: -0.025em; }
-.content { padding: 32px; }
-.reply-box { background: #f5f3ff; border-radius: 12px; padding: 24px; margin: 24px 0; border: 1px solid #ede9fe; }
-.reply-label { font-size: 12px; color: #7c3aed; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; display: block; }
-.reply-text { font-size: 16px; color: #1f2937; margin: 0; white-space: pre-wrap; }
-.original-message { margin-top: 32px; padding-top: 24px; border-top: 1px dashed #e5e7eb; color: #6b7280; font-size: 14px; }
-.footer { background: #f9fafb; padding: 24px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #e5e7eb; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #374151; background-color: #f3f4f6; margin: 0; padding: 0; }
+.container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
+.header { background: linear-gradient(135deg, #1f2937 0%, #0f172a 100%); padding: 40px 32px; text-align: center; color: white; }
+.header h1 { margin: 16px 0 0 0; font-size: 24px; font-weight: 800; letter-spacing: -0.025em; }
+.content { padding: 40px 32px; }
+.avatar { width: 72px; height: 72px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.3); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); object-fit: cover; }
+.reply-box { background: #f8fafc; border-radius: 16px; padding: 32px; margin: 24px 0; border: 1px solid #e2e8f0; position: relative; }
+.reply-label { font-size: 12px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; display: block; }
+.reply-text { font-size: 16px; color: #1f2937; margin: 0; white-space: pre-wrap; line-height: 1.8; }
+.original-message { margin-top: 40px; padding-top: 24px; border-top: 1px dashed #e5e7eb; color: #6b7280; font-size: 14px; }
+.footer { background: #f9fafb; padding: 32px; text-align: center; font-size: 13px; color: #9ca3af; border-top: 1px solid #e5e7eb; }
 </style>
 </head>
 <body>
 <div class="container">
 <div class="header">
+<img src="{creator_avatar}" alt="{creator_name}" class="avatar">
 <h1>收到新的回复</h1>
 </div>
 <div class="content">
-<p>Hi <strong>{user_name}</strong>，</p>
-<p>{creator_name}刚刚回复了你的投喂留言：</p>
+<p style="font-size: 16px;">Hi <strong>{user_name}</strong>，</p>
+<p style="font-size: 16px; color: #4b5563; margin-bottom: 24px;"><strong>{creator_name}</strong> 刚刚回复了你的投喂留言：</p>
 <div class="reply-box">
 <span class="reply-label">回复内容</span>
 <p class="reply-text">{reply_content}</p>

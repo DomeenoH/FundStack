@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sendEmail } from '@/lib/email';
 import { getConfig } from '@/lib/config';
+import { getCreatorAvatarUrl } from '@/lib/avatar-utils';
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,10 +26,18 @@ export async function POST(request: NextRequest) {
     let subject = templateConfig.subject;
     let html = templateConfig.body;
 
+    // Resolve avatar URL
+    let avatarUrl = getCreatorAvatarUrl(config.creator_avatar, config.creator_qq_number);
+    if (avatarUrl.startsWith('/')) {
+      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+      avatarUrl = `${baseUrl}${avatarUrl}`;
+    }
+
     // Merge config variables
     const substitutionData = {
       ...data,
-      creator_name: config.creator_name
+      creator_name: config.creator_name,
+      creator_avatar: avatarUrl
     };
 
     Object.keys(substitutionData).forEach(key => {
