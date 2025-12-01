@@ -39,10 +39,22 @@ export async function POST(
             return NextResponse.json({ error: 'Donation not found' }, { status: 404 });
         }
 
+        const donation = data[0];
+
+        // Send email notification
+        if (donation.user_email) {
+            const { sendDonationReply } = await import('@/lib/email');
+            sendDonationReply(donation.user_email, {
+                user_name: donation.user_name,
+                reply_content: content,
+                user_message: donation.user_message
+            }).catch(console.error);
+        }
+
         return NextResponse.json({
             donation: {
-                ...data[0],
-                amount: Number(data[0].amount)
+                ...donation,
+                amount: Number(donation.amount)
             }
         });
     } catch (error) {

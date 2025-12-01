@@ -79,6 +79,31 @@ export interface SiteConfig {
     payment_methods_button_text: string;
     payment_methods_button_text_close: string;
     payment_methods_description: string;
+
+    // Email Configuration
+    email_config?: EmailConfig;
+}
+
+export interface EmailTemplate {
+    enabled: boolean;
+    subject: string;
+    body: string; // HTML content
+}
+
+export interface EmailConfig {
+    enabled: boolean;
+    host: string;
+    port: number;
+    secure: boolean;
+    auth_user: string;
+    auth_pass: string;
+    from_name: string;
+    from_email: string;
+    templates: {
+        donation_notification: EmailTemplate; // To Admin
+        donation_confirmation: EmailTemplate; // To Donor
+        donation_reply: EmailTemplate;        // To Donor (Reply)
+    };
 }
 
 // Default configuration fallback
@@ -150,6 +175,34 @@ export const DEFAULT_CONFIG: SiteConfig = {
     payment_methods_button_text: '查看收款方式',
     payment_methods_button_text_close: '收起收款方式',
     payment_methods_description: '打开喜欢的方式扫一扫：',
+
+    email_config: {
+        enabled: false,
+        host: 'smtp.example.com',
+        port: 465,
+        secure: true,
+        auth_user: '',
+        auth_pass: '',
+        from_name: '投喂小站',
+        from_email: 'noreply@example.com',
+        templates: {
+            donation_notification: {
+                enabled: true,
+                subject: '【投喂小站】收到新的投喂：{user_name} - ¥{amount}',
+                body: '<p>收到新的投喂！</p><p><strong>捐赠者：</strong>{user_name}</p><p><strong>金额：</strong>¥{amount}</p><p><strong>留言：</strong>{user_message}</p>'
+            },
+            donation_confirmation: {
+                enabled: true,
+                subject: '【投喂小站】感谢你的支持！',
+                body: '<p>亲爱的 {user_name}：</p><p>感谢你的投喂！我们已经收到了你的心意（¥{amount}）。</p><p>你的支持是我们前进的动力！</p>'
+            },
+            donation_reply: {
+                enabled: true,
+                subject: '【投喂小站】你的留言有新回复',
+                body: '<p>亲爱的 {user_name}：</p><p>站长回复了你的留言：</p><blockquote>{reply_content}</blockquote><p>再次感谢你的支持！</p>'
+            }
+        }
+    }
 };
 
 // Simple in-memory cache

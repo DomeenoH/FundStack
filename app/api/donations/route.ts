@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createDonation, checkRateLimit, getStats, getConfirmedDonations } from '@/lib/db';
 import { donationSchema } from '@/lib/validation';
-import { sendDonationNotification } from '@/lib/email';
+import { sendDonationNotification, sendDonationConfirmation } from '@/lib/email';
 
 const RATE_LIMIT_PER_24H = 15;
 const RATE_LIMIT_ENABLED = process.env.RATE_LIMIT_ENABLED !== 'false';
@@ -40,9 +40,15 @@ export async function POST(request: NextRequest) {
       user_agent: userAgent
     });
 
-    if (process.env.ADMIN_EMAIL && data.user_email) {
-      sendDonationNotification(process.env.ADMIN_EMAIL, donation).catch((error) => {
-        console.warn('Email notification failed (non-blocking):', error);
+    if (process.env.ADMIN_EMAIL) {
+      sendDonationNotification(process.env.ADMIN_EMAIL, donation).catch((error: any) => {
+        console.warn('Admin notification failed (non-blocking):', error);
+      });
+    }
+
+    if (data.user_email) {
+      sendDonationConfirmation(data.user_email, donation).catch((error: any) => {
+        console.warn('User confirmation failed (non-blocking):', error);
       });
     }
 

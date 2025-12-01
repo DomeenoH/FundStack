@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Save, RotateCcw, Settings, Eye, LayoutTemplate, User, CreditCard, FileText } from 'lucide-react';
+import { Loader2, Save, RotateCcw, Settings, Eye, LayoutTemplate, User, CreditCard, FileText, Mail } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import type { SiteConfig, PaymentMethod } from '@/lib/config';
@@ -207,11 +207,188 @@ export default function ConfigManagementPage() {
                                 <CreditCard className="w-4 h-4 mr-2" />
                                 表单
                             </TabsTrigger>
+                            <TabsTrigger value="email" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                                <Mail className="w-4 h-4 mr-2" />
+                                邮件
+                            </TabsTrigger>
                             <TabsTrigger value="content" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
                                 <FileText className="w-4 h-4 mr-2" />
                                 内容
                             </TabsTrigger>
                         </TabsList>
+
+                        {/* Email Configuration Tab */}
+                        <TabsContent value="email" className="space-y-6 animate-in fade-in slide-in-from-left-2 duration-300">
+                            <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="email_enabled">启用邮件通知</Label>
+                                    <p className="text-xs text-gray-500">开启后，系统将在收到投喂或回复时发送邮件通知</p>
+                                </div>
+                                <Switch
+                                    id="email_enabled"
+                                    checked={config.email_config?.enabled ?? false}
+                                    onCheckedChange={(checked) => updateConfig('email_config', { ...config.email_config, enabled: checked })}
+                                />
+                            </div>
+
+                            {config.email_config?.enabled && (
+                                <div className="space-y-6 animate-in fade-in slide-in-from-top-1">
+                                    <div className="space-y-4 border p-4 rounded-lg bg-white">
+                                        <h3 className="font-medium text-sm text-gray-900 border-b pb-2 mb-4">SMTP 服务器设置</h3>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label htmlFor="smtp_host">SMTP 主机</Label>
+                                                <Input
+                                                    id="smtp_host"
+                                                    value={config.email_config?.host || ''}
+                                                    onChange={(e) => updateConfig('email_config', { ...config.email_config, host: e.target.value })}
+                                                    placeholder="smtp.example.com"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="smtp_port">端口</Label>
+                                                <Input
+                                                    id="smtp_port"
+                                                    type="number"
+                                                    value={config.email_config?.port || 465}
+                                                    onChange={(e) => updateConfig('email_config', { ...config.email_config, port: parseInt(e.target.value) })}
+                                                    placeholder="465"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="auth_user">用户名 / 邮箱</Label>
+                                                <Input
+                                                    id="auth_user"
+                                                    value={config.email_config?.auth_user || ''}
+                                                    onChange={(e) => updateConfig('email_config', { ...config.email_config, auth_user: e.target.value })}
+                                                    placeholder="user@example.com"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="auth_pass">密码 / 授权码</Label>
+                                                <Input
+                                                    id="auth_pass"
+                                                    type="password"
+                                                    value={config.email_config?.auth_pass || ''}
+                                                    onChange={(e) => updateConfig('email_config', { ...config.email_config, auth_pass: e.target.value })}
+                                                    placeholder="********"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="from_name">发件人名称</Label>
+                                                <Input
+                                                    id="from_name"
+                                                    value={config.email_config?.from_name || ''}
+                                                    onChange={(e) => updateConfig('email_config', { ...config.email_config, from_name: e.target.value })}
+                                                    placeholder="投喂小站"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="from_email">发件人邮箱</Label>
+                                                <Input
+                                                    id="from_email"
+                                                    value={config.email_config?.from_email || ''}
+                                                    onChange={(e) => updateConfig('email_config', { ...config.email_config, from_email: e.target.value })}
+                                                    placeholder="noreply@example.com"
+                                                />
+                                            </div>
+                                            <div className="flex items-center space-x-2 pt-8">
+                                                <Switch
+                                                    id="smtp_secure"
+                                                    checked={config.email_config?.secure ?? true}
+                                                    onCheckedChange={(checked) => updateConfig('email_config', { ...config.email_config, secure: checked })}
+                                                />
+                                                <Label htmlFor="smtp_secure">启用 SSL/TLS</Label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <h3 className="font-medium text-sm text-gray-900">邮件模板设置</h3>
+                                        <Tabs defaultValue="notification" className="w-full">
+                                            <TabsList className="w-full justify-start">
+                                                <TabsTrigger value="notification">新投喂通知 (给站长)</TabsTrigger>
+                                                <TabsTrigger value="confirmation">投喂成功 (给用户)</TabsTrigger>
+                                                <TabsTrigger value="reply">收到回复 (给用户)</TabsTrigger>
+                                            </TabsList>
+
+                                            {['notification', 'confirmation', 'reply'].map((type) => {
+                                                const templateKey = `donation_${type}`;
+                                                // @ts-ignore
+                                                const template = config.email_config?.templates?.[templateKey] || {};
+
+                                                return (
+                                                    <TabsContent key={type} value={type} className="space-y-4 border p-4 rounded-lg bg-white mt-2">
+                                                        <div className="flex items-center justify-between mb-4">
+                                                            <div className="space-y-0.5">
+                                                                <Label>启用此模板</Label>
+                                                                <p className="text-xs text-gray-500">是否发送此类邮件</p>
+                                                            </div>
+                                                            <Switch
+                                                                checked={template.enabled ?? true}
+                                                                onCheckedChange={(checked) => {
+                                                                    const newConfig = { ...config.email_config };
+                                                                    // @ts-ignore
+                                                                    if (!newConfig.templates) newConfig.templates = {};
+                                                                    // @ts-ignore
+                                                                    if (!newConfig.templates[templateKey]) newConfig.templates[templateKey] = {};
+                                                                    // @ts-ignore
+                                                                    newConfig.templates[templateKey].enabled = checked;
+                                                                    updateConfig('email_config', newConfig);
+                                                                }}
+                                                            />
+                                                        </div>
+
+                                                        <div className="space-y-2">
+                                                            <Label>邮件标题</Label>
+                                                            <Input
+                                                                value={template.subject || ''}
+                                                                onChange={(e) => {
+                                                                    const newConfig = { ...config.email_config };
+                                                                    // @ts-ignore
+                                                                    if (!newConfig.templates) newConfig.templates = {};
+                                                                    // @ts-ignore
+                                                                    if (!newConfig.templates[templateKey]) newConfig.templates[templateKey] = {};
+                                                                    // @ts-ignore
+                                                                    newConfig.templates[templateKey].subject = e.target.value;
+                                                                    updateConfig('email_config', newConfig);
+                                                                }}
+                                                            />
+                                                        </div>
+
+                                                        <div className="space-y-2">
+                                                            <Label>邮件内容 (支持 HTML)</Label>
+                                                            <Textarea
+                                                                value={template.body || ''}
+                                                                onChange={(e) => {
+                                                                    const newConfig = { ...config.email_config };
+                                                                    // @ts-ignore
+                                                                    if (!newConfig.templates) newConfig.templates = {};
+                                                                    // @ts-ignore
+                                                                    if (!newConfig.templates[templateKey]) newConfig.templates[templateKey] = {};
+                                                                    // @ts-ignore
+                                                                    newConfig.templates[templateKey].body = e.target.value;
+                                                                    updateConfig('email_config', newConfig);
+                                                                }}
+                                                                rows={8}
+                                                                className="font-mono text-sm"
+                                                            />
+                                                            <div className="text-xs text-gray-500 space-x-2">
+                                                                <span>可用变量:</span>
+                                                                <code className="bg-gray-100 px-1 rounded">{'{user_name}'}</code>
+                                                                <code className="bg-gray-100 px-1 rounded">{'{amount}'}</code>
+                                                                <code className="bg-gray-100 px-1 rounded">{'{user_message}'}</code>
+                                                                {type === 'reply' && <code className="bg-gray-100 px-1 rounded">{'{reply_content}'}</code>}
+                                                            </div>
+                                                        </div>
+                                                    </TabsContent>
+                                                );
+                                            })}
+                                        </Tabs>
+                                    </div>
+                                </div>
+                            )}
+                        </TabsContent>
 
                         {/* Site Information Tab */}
                         <TabsContent value="site" className="space-y-6 animate-in fade-in slide-in-from-left-2 duration-300">
