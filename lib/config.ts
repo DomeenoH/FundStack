@@ -40,6 +40,7 @@ export interface SiteConfig {
     form_amount_max: number;
     form_message_max_length: number;
     form_name_max_length: number;
+    form_success_message: string;
     donation_tips?: string[];
 
     // Payment methods
@@ -135,6 +136,7 @@ export const DEFAULT_CONFIG: SiteConfig = {
     form_amount_max: 99999.99,
     form_message_max_length: 500,
     form_name_max_length: 50,
+    form_success_message: '感谢你的支持！',
     donation_tips: ['祝老板身体健康！', '加油，看好你！', '一点心意，不成敬意', '催更催更！'],
 
     payment_methods: [

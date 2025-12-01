@@ -316,7 +316,7 @@ export default function DonationForm({ config, onPaymentMethodChange, onSubmitSu
           {success && (
             <Alert className="bg-green-50 border-green-200 rounded-xl">
               <AlertDescription className="text-green-800 font-medium">
-                收到啦！你的投喂正在等待确认，感谢你的支持。
+                {config.form_success_message || '收到啦！你的投喂正在等待确认，感谢你的支持。'}
               </AlertDescription>
             </Alert>
           )}

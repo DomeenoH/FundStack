@@ -31,9 +31,23 @@ export async function GET(request: NextRequest) {
             ...rawConfig,
         };
 
+        // Get masked environment variables
+        const envConfig = {
+            EMAIL_PROVIDER: process.env.EMAIL_PROVIDER || 'Not Set',
+            SMTP_HOST: process.env.SMTP_HOST || 'Not Set',
+            SMTP_PORT: process.env.SMTP_PORT || 'Not Set',
+            SMTP_USER: process.env.SMTP_USER || 'Not Set',
+            EMAIL_FROM: process.env.EMAIL_FROM || 'Not Set',
+            // Mask sensitive values
+            SMTP_PASSWORD: process.env.SMTP_PASSWORD ? '******' : 'Not Set',
+            EMAIL_API_KEY: process.env.EMAIL_API_KEY ? '******' : 'Not Set',
+            ADMIN_EMAIL: process.env.ADMIN_EMAIL || 'Not Set',
+        };
+
         return NextResponse.json({
             success: true,
             data: config,
+            env_config: envConfig,
         });
     } catch (error) {
         console.error('[v0] Error fetching admin config:', error);

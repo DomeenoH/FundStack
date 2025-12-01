@@ -25,6 +25,7 @@ export default function ConfigManagementPage() {
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
     const [config, setConfig] = useState<Partial<SiteConfig>>({});
+    const [envConfig, setEnvConfig] = useState<any>({});
     const [activeTab, setActiveTab] = useState('site');
 
     // Load configuration on mount
@@ -60,6 +61,7 @@ export default function ConfigManagementPage() {
 
             const data = await response.json();
             setConfig(data.data || {});
+            setEnvConfig(data.env_config || {});
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Failed to load configuration');
         } finally {
@@ -344,6 +346,22 @@ export default function ConfigManagementPage() {
                                         </div>
                                     </div>
 
+                                    {/* Environment Configuration Display */}
+                                    <div className="space-y-4 border p-4 rounded-lg bg-slate-50">
+                                        <h3 className="font-medium text-sm text-gray-900 border-b pb-2 mb-4">当前环境变量配置 (仅供参考)</h3>
+                                        <div className="grid grid-cols-2 gap-4 text-xs font-mono">
+                                            {Object.entries(envConfig).map(([key, value]) => (
+                                                <div key={key} className="flex flex-col">
+                                                    <span className="text-gray-500">{key}</span>
+                                                    <span className="text-gray-900 truncate" title={String(value)}>{String(value)}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <p className="text-xs text-gray-400 mt-2">
+                                            注意：如果上方手动配置已启用，将优先使用手动配置。环境变量仅作为默认值或备用。
+                                        </p>
+                                    </div>
+
                                     <div className="space-y-4">
                                         <h3 className="font-medium text-sm text-gray-900">邮件模板设置</h3>
                                         <Tabs defaultValue="notification" className="w-full">
@@ -358,68 +376,106 @@ export default function ConfigManagementPage() {
                                                 // @ts-ignore
                                                 const template = config.email_config?.templates?.[templateKey] || {};
 
+                                                // Dummy data for preview
+                                                const dummyData = {
+                                                    user_name: '张三',
+                                                    amount: '50.00',
+                                                    user_message: '加油！',
+                                                    reply_content: '谢谢支持！'
+                                                };
+
+                                                let previewBody = template.body || '';
+                                                Object.entries(dummyData).forEach(([key, value]) => {
+                                                    previewBody = previewBody.replace(new RegExp(`{${key}}`, 'g'), value);
+                                                });
+
                                                 return (
-                                                    <TabsContent key={type} value={type} className="space-y-4 border p-4 rounded-lg bg-white mt-2">
-                                                        <div className="flex items-center justify-between mb-4">
-                                                            <div className="space-y-0.5">
-                                                                <Label>启用此模板</Label>
-                                                                <p className="text-xs text-gray-500">是否发送此类邮件</p>
+                                                    <TabsContent key={type} value={type} className="space-y-4 mt-2">
+                                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                                            {/* Editor */}
+                                                            <div className="space-y-4 border p-4 rounded-lg bg-white">
+                                                                <div className="flex items-center justify-between mb-4">
+                                                                    <div className="space-y-0.5">
+                                                                        <Label>启用此模板</Label>
+                                                                        <p className="text-xs text-gray-500">是否发送此类邮件</p>
+                                                                    </div>
+                                                                    <Switch
+                                                                        checked={template.enabled ?? true}
+                                                                        onCheckedChange={(checked) => {
+                                                                            const newConfig = { ...config.email_config };
+                                                                            // @ts-ignore
+                                                                            if (!newConfig.templates) newConfig.templates = {};
+                                                                            // @ts-ignore
+                                                                            if (!newConfig.templates[templateKey]) newConfig.templates[templateKey] = {};
+                                                                            // @ts-ignore
+                                                                            newConfig.templates[templateKey].enabled = checked;
+                                                                            updateConfig('email_config', newConfig);
+                                                                        }}
+                                                                    />
+                                                                </div>
+
+                                                                <div className="space-y-2">
+                                                                    <Label>邮件标题</Label>
+                                                                    <Input
+                                                                        value={template.subject || ''}
+                                                                        onChange={(e) => {
+                                                                            const newConfig = { ...config.email_config };
+                                                                            // @ts-ignore
+                                                                            if (!newConfig.templates) newConfig.templates = {};
+                                                                            // @ts-ignore
+                                                                            if (!newConfig.templates[templateKey]) newConfig.templates[templateKey] = {};
+                                                                            // @ts-ignore
+                                                                            newConfig.templates[templateKey].subject = e.target.value;
+                                                                            updateConfig('email_config', newConfig);
+                                                                        }}
+                                                                    />
+                                                                </div>
+
+                                                                <div className="space-y-2">
+                                                                    <Label>邮件内容 (支持 HTML)</Label>
+                                                                    <Textarea
+                                                                        value={template.body || ''}
+                                                                        onChange={(e) => {
+                                                                            const newConfig = { ...config.email_config };
+                                                                            // @ts-ignore
+                                                                            if (!newConfig.templates) newConfig.templates = {};
+                                                                            // @ts-ignore
+                                                                            if (!newConfig.templates[templateKey]) newConfig.templates[templateKey] = {};
+                                                                            // @ts-ignore
+                                                                            newConfig.templates[templateKey].body = e.target.value;
+                                                                            updateConfig('email_config', newConfig);
+                                                                        }}
+                                                                        rows={12}
+                                                                        className="font-mono text-sm"
+                                                                    />
+                                                                    <div className="text-xs text-gray-500 space-x-2">
+                                                                        <span>可用变量:</span>
+                                                                        <code className="bg-gray-100 px-1 rounded">{'{user_name}'}</code>
+                                                                        <code className="bg-gray-100 px-1 rounded">{'{amount}'}</code>
+                                                                        <code className="bg-gray-100 px-1 rounded">{'{user_message}'}</code>
+                                                                        {type === 'reply' && <code className="bg-gray-100 px-1 rounded">{'{reply_content}'}</code>}
+                                                                    </div>
+                                                                </div>
                                                             </div>
-                                                            <Switch
-                                                                checked={template.enabled ?? true}
-                                                                onCheckedChange={(checked) => {
-                                                                    const newConfig = { ...config.email_config };
-                                                                    // @ts-ignore
-                                                                    if (!newConfig.templates) newConfig.templates = {};
-                                                                    // @ts-ignore
-                                                                    if (!newConfig.templates[templateKey]) newConfig.templates[templateKey] = {};
-                                                                    // @ts-ignore
-                                                                    newConfig.templates[templateKey].enabled = checked;
-                                                                    updateConfig('email_config', newConfig);
-                                                                }}
-                                                            />
-                                                        </div>
 
-                                                        <div className="space-y-2">
-                                                            <Label>邮件标题</Label>
-                                                            <Input
-                                                                value={template.subject || ''}
-                                                                onChange={(e) => {
-                                                                    const newConfig = { ...config.email_config };
-                                                                    // @ts-ignore
-                                                                    if (!newConfig.templates) newConfig.templates = {};
-                                                                    // @ts-ignore
-                                                                    if (!newConfig.templates[templateKey]) newConfig.templates[templateKey] = {};
-                                                                    // @ts-ignore
-                                                                    newConfig.templates[templateKey].subject = e.target.value;
-                                                                    updateConfig('email_config', newConfig);
-                                                                }}
-                                                            />
-                                                        </div>
-
-                                                        <div className="space-y-2">
-                                                            <Label>邮件内容 (支持 HTML)</Label>
-                                                            <Textarea
-                                                                value={template.body || ''}
-                                                                onChange={(e) => {
-                                                                    const newConfig = { ...config.email_config };
-                                                                    // @ts-ignore
-                                                                    if (!newConfig.templates) newConfig.templates = {};
-                                                                    // @ts-ignore
-                                                                    if (!newConfig.templates[templateKey]) newConfig.templates[templateKey] = {};
-                                                                    // @ts-ignore
-                                                                    newConfig.templates[templateKey].body = e.target.value;
-                                                                    updateConfig('email_config', newConfig);
-                                                                }}
-                                                                rows={8}
-                                                                className="font-mono text-sm"
-                                                            />
-                                                            <div className="text-xs text-gray-500 space-x-2">
-                                                                <span>可用变量:</span>
-                                                                <code className="bg-gray-100 px-1 rounded">{'{user_name}'}</code>
-                                                                <code className="bg-gray-100 px-1 rounded">{'{amount}'}</code>
-                                                                <code className="bg-gray-100 px-1 rounded">{'{user_message}'}</code>
-                                                                {type === 'reply' && <code className="bg-gray-100 px-1 rounded">{'{reply_content}'}</code>}
+                                                            {/* Preview */}
+                                                            <div className="space-y-4 border p-4 rounded-lg bg-gray-50 h-full">
+                                                                <div className="flex items-center justify-between border-b pb-2">
+                                                                    <h4 className="font-medium text-sm text-gray-900">预览</h4>
+                                                                    <span className="text-xs text-gray-500">基于示例数据</span>
+                                                                </div>
+                                                                <div className="bg-white p-4 rounded border shadow-sm h-[400px] overflow-y-auto">
+                                                                    <div className="mb-4 border-b pb-2">
+                                                                        <p className="text-sm text-gray-500">Subject:</p>
+                                                                        <p className="font-medium">
+                                                                            {(template.subject || '').replace(/{user_name}/g, dummyData.user_name).replace(/{amount}/g, dummyData.amount)}
+                                                                        </p>
+                                                                    </div>
+                                                                    <div
+                                                                        className="prose prose-sm max-w-none"
+                                                                        dangerouslySetInnerHTML={{ __html: previewBody }}
+                                                                    />
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </TabsContent>
@@ -839,213 +895,212 @@ export default function ConfigManagementPage() {
                                     </div>
                                 </div>
 
-                                <div className="space-y-3 pt-2">
-                                    <Label>投喂提示语 (随机显示)</Label>
-                                    {((config.donation_tips || []) as string[]).map((tip, index) => (
-                                        <div key={index} className="flex gap-2">
-                                            <Input
-                                                value={tip}
-                                                onChange={(e) => {
-                                                    const tips = [...((config.donation_tips || []) as string[])];
-                                                    tips[index] = e.target.value;
-                                                    updateConfig('donation_tips', tips);
-                                                }}
-                                                placeholder={`提示语 ${index + 1}`}
-                                            />
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                                                onClick={() => {
-                                                    const tips = [...((config.donation_tips || []) as string[])];
-                                                    tips.splice(index, 1);
-                                                    updateConfig('donation_tips', tips);
-                                                }}
-                                            >
-                                                <span className="sr-only">删除</span>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c0 1 1 2 2 2v2" /></svg>
-                                            </Button>
-                                        </div>
-                                    ))}
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => {
-                                            const tips = (config.donation_tips || []) as string[];
-                                            updateConfig('donation_tips', [...tips, '']);
-                                        }}
-                                        className="w-full border-dashed"
-                                    >
-                                        + 添加提示语
-                                    </Button>
-                                </div>
-                            </div>
-
-                            <div className="space-y-4 pt-4 border-t">
-                                <h2 className="text-lg font-semibold">隐私与说明</h2>
-                                <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
-                                    <div className="space-y-0.5">
-                                        <Label htmlFor="form_privacy_visible">显示隐私说明</Label>
-                                        <p className="text-xs text-gray-500">在表单底部显示隐私相关的提示文字</p>
-                                    </div>
-                                    <Switch
-                                        id="form_privacy_visible"
-                                        checked={config.form_privacy_visible ?? true}
-                                        onCheckedChange={(checked) => updateConfig('form_privacy_visible', checked)}
-                                    />
-                                </div>
-
-                                {config.form_privacy_visible && (
-                                    <div className="space-y-2 animate-in fade-in slide-in-from-top-1">
-                                        <Label htmlFor="form_privacy_text">隐私说明内容</Label>
-                                        <Textarea
-                                            id="form_privacy_text"
-                                            value={config.form_privacy_text || ''}
-                                            onChange={(e) => updateConfig('form_privacy_text', e.target.value)}
-                                            rows={2}
-                                        />
-                                    </div>
-                                )}
-                            </div>
-                        </TabsContent>
-
-                        {/* Content Configuration Tab */}
-                        <TabsContent value="content" className="space-y-6 animate-in fade-in slide-in-from-left-2 duration-300">
-                            <div className="space-y-4">
-                                <h2 className="text-lg font-semibold">投喂理由</h2>
                                 <div className="space-y-2">
-                                    <Label htmlFor="reasons_title">板块标题</Label>
+                                    <Label htmlFor="form_success_message">投喂成功提示语</Label>
                                     <Input
-                                        id="reasons_title"
-                                        value={config.reasons_title || ''}
-                                        onChange={(e) => updateConfig('reasons_title', e.target.value)}
+                                        id="form_success_message"
+                                        value={config.form_success_message || '感谢你的支持！'}
+                                        onChange={(e) => updateConfig('form_success_message', e.target.value)}
+                                        placeholder="感谢你的支持！"
                                     />
+                                    <p className="text-xs text-gray-500">用户投喂成功后弹出的提示信息</p>
                                 </div>
 
-                                <div className="space-y-3">
-                                    <Label>理由列表</Label>
-                                    {((config.reasons_items || []) as string[]).map((item, index) => (
-                                        <div key={index} className="flex gap-2">
-                                            <Input
-                                                value={item}
-                                                onChange={(e) => updateReasonItem(index, e.target.value)}
-                                                placeholder={`理由 ${index + 1}`}
-                                            />
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                                                onClick={() => removeReasonItem(index)}
-                                            >
-                                                <span className="sr-only">删除</span>
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c0 1 1 2 2 2v2" /></svg>
-                                            </Button>
-                                        </div>
-                                    ))}
-                                    <Button variant="outline" size="sm" onClick={addReasonItem} className="w-full border-dashed">
-                                        + 添加理由
+                                <div className="space-y-3 pt-2">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                        onClick={() => {
+                                            const tips = [...((config.donation_tips || []) as string[])];
+                                            tips.splice(index, 1);
+                                            updateConfig('donation_tips', tips);
+                                        }}
+                                    >
+                                        <span className="sr-only">删除</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c0 1 1 2 2 2v2" /></svg>
                                     </Button>
                                 </div>
+                                    ))}
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                        const tips = (config.donation_tips || []) as string[];
+                                        updateConfig('donation_tips', [...tips, '']);
+                                    }}
+                                    className="w-full border-dashed"
+                                >
+                                    + 添加提示语
+                                </Button>
                             </div>
-
-                            <div className="space-y-4 pt-4 border-t">
-                                <h2 className="text-lg font-semibold">安全说明</h2>
-                                <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
-                                    <div className="space-y-0.5">
-                                        <Label htmlFor="security_visible">显示安全说明</Label>
-                                        <p className="text-xs text-gray-500">在首页底部显示防诈骗等安全提示</p>
-                                    </div>
-                                    <Switch
-                                        id="security_visible"
-                                        checked={config.security_visible ?? true}
-                                        onCheckedChange={(checked) => updateConfig('security_visible', checked)}
-                                    />
-                                </div>
-
-                                {config.security_visible && (
-                                    <div className="space-y-4 animate-in fade-in slide-in-from-top-1">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="security_title">标题</Label>
-                                            <Input
-                                                id="security_title"
-                                                value={config.security_title || ''}
-                                                onChange={(e) => updateConfig('security_title', e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="security_description">内容</Label>
-                                            <Textarea
-                                                id="security_description"
-                                                value={config.security_description || ''}
-                                                onChange={(e) => updateConfig('security_description', e.target.value)}
-                                                rows={3}
-                                            />
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </TabsContent>
-                    </Tabs>
-                </div>
-
-                {/* Right Panel: Live Preview */}
-                <div className="hidden lg:block lg:w-1/2 xl:w-7/12 bg-slate-100 p-8 overflow-y-auto relative">
-                    <div className="max-w-md mx-auto sticky top-8">
-                        <div className="flex items-center gap-2 mb-4 text-sm text-gray-500 font-medium uppercase tracking-wider">
-                            <Eye className="w-4 h-4" />
-                            实时预览
                         </div>
 
-                        {activeTab === 'site' && (
-                            <div className="space-y-8 animate-in fade-in zoom-in-95 duration-300">
-                                <SiteHeaderPreview config={previewConfig} />
-                                <div className="text-center text-sm text-gray-400">
-                                    此处仅预览 Header 和 Hero 区域，更多内容请切换其他标签页
+                        <div className="space-y-4 pt-4 border-t">
+                            <h2 className="text-lg font-semibold">隐私与说明</h2>
+                            <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="form_privacy_visible">显示隐私说明</Label>
+                                    <p className="text-xs text-gray-500">在表单底部显示隐私相关的提示文字</p>
                                 </div>
+                                <Switch
+                                    id="form_privacy_visible"
+                                    checked={config.form_privacy_visible ?? true}
+                                    onCheckedChange={(checked) => updateConfig('form_privacy_visible', checked)}
+                                />
                             </div>
-                        )}
 
-                        {activeTab === 'creator' && (
-                            <div className="min-h-[650px] flex items-center justify-center animate-in fade-in zoom-in-95 duration-300 pb-12">
-                                <div className="w-full max-w-[380px]">
-                                    <CreatorCard config={previewConfig} />
+                            {config.form_privacy_visible && (
+                                <div className="space-y-2 animate-in fade-in slide-in-from-top-1">
+                                    <Label htmlFor="form_privacy_text">隐私说明内容</Label>
+                                    <Textarea
+                                        id="form_privacy_text"
+                                        value={config.form_privacy_text || ''}
+                                        onChange={(e) => updateConfig('form_privacy_text', e.target.value)}
+                                        rows={2}
+                                    />
                                 </div>
-                            </div>
-                        )}
+                            )}
+                        </div>
+                    </TabsContent>
 
-                        {activeTab === 'form' && (
-                            <div className="animate-in fade-in zoom-in-95 duration-300">
-                                <DonationForm config={previewConfig} />
+                    {/* Content Configuration Tab */}
+                    <TabsContent value="content" className="space-y-6 animate-in fade-in slide-in-from-left-2 duration-300">
+                        <div className="space-y-4">
+                            <h2 className="text-lg font-semibold">投喂理由</h2>
+                            <div className="space-y-2">
+                                <Label htmlFor="reasons_title">板块标题</Label>
+                                <Input
+                                    id="reasons_title"
+                                    value={config.reasons_title || ''}
+                                    onChange={(e) => updateConfig('reasons_title', e.target.value)}
+                                />
                             </div>
-                        )}
 
-                        {activeTab === 'content' && (
-                            <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
-                                <Card className="p-6">
-                                    <h3 className="text-lg font-bold mb-4 text-center">{config.reasons_title || '为什么投喂?'}</h3>
+                            <div className="space-y-3">
+                                <Label>理由列表</Label>
+                                {((config.reasons_items || []) as string[]).map((item, index) => (
+                                    <div key={index} className="flex gap-2">
+                                        <Input
+                                            value={item}
+                                            onChange={(e) => updateReasonItem(index, e.target.value)}
+                                            placeholder={`理由 ${index + 1}`}
+                                        />
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                            onClick={() => removeReasonItem(index)}
+                                        >
+                                            <span className="sr-only">删除</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c0 1 1 2 2 2v2" /></svg>
+                                        </Button>
+                                    </div>
+                                ))}
+                                <Button variant="outline" size="sm" onClick={addReasonItem} className="w-full border-dashed">
+                                    + 添加理由
+                                </Button>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4 pt-4 border-t">
+                            <h2 className="text-lg font-semibold">安全说明</h2>
+                            <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
+                                <div className="space-y-0.5">
+                                    <Label htmlFor="security_visible">显示安全说明</Label>
+                                    <p className="text-xs text-gray-500">在首页底部显示防诈骗等安全提示</p>
+                                </div>
+                                <Switch
+                                    id="security_visible"
+                                    checked={config.security_visible ?? true}
+                                    onCheckedChange={(checked) => updateConfig('security_visible', checked)}
+                                />
+                            </div>
+
+                            {config.security_visible && (
+                                <div className="space-y-4 animate-in fade-in slide-in-from-top-1">
                                     <div className="space-y-2">
-                                        {((config.reasons_items || []) as string[]).map((item, i) => (
-                                            <div key={i} className="p-3 bg-slate-50 rounded-lg text-sm text-gray-600 text-center">
-                                                {item}
-                                            </div>
-                                        ))}
-                                        {(!config.reasons_items || config.reasons_items.length === 0) && (
-                                            <div className="text-center text-gray-400 italic text-sm">暂无理由</div>
-                                        )}
+                                        <Label htmlFor="security_title">标题</Label>
+                                        <Input
+                                            id="security_title"
+                                            value={config.security_title || ''}
+                                            onChange={(e) => updateConfig('security_title', e.target.value)}
+                                        />
                                     </div>
-                                </Card>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="security_description">内容</Label>
+                                        <Textarea
+                                            id="security_description"
+                                            value={config.security_description || ''}
+                                            onChange={(e) => updateConfig('security_description', e.target.value)}
+                                            rows={3}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </TabsContent>
+                </Tabs>
+            </div>
 
-                                {config.security_visible && (
-                                    <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 text-center">
-                                        <h4 className="font-semibold text-blue-900 text-sm mb-1">{config.security_title}</h4>
-                                        <p className="text-xs text-blue-700">{config.security_description}</p>
-                                    </div>
-                                )}
-                            </div>
-                        )}
+            {/* Right Panel: Live Preview */}
+            <div className="hidden lg:block lg:w-1/2 xl:w-7/12 bg-slate-100 p-8 overflow-y-auto relative">
+                <div className="max-w-md mx-auto sticky top-8">
+                    <div className="flex items-center gap-2 mb-4 text-sm text-gray-500 font-medium uppercase tracking-wider">
+                        <Eye className="w-4 h-4" />
+                        实时预览
                     </div>
+
+                    {activeTab === 'site' && (
+                        <div className="space-y-8 animate-in fade-in zoom-in-95 duration-300">
+                            <SiteHeaderPreview config={previewConfig} />
+                            <div className="text-center text-sm text-gray-400">
+                                此处仅预览 Header 和 Hero 区域，更多内容请切换其他标签页
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'creator' && (
+                        <div className="min-h-[650px] flex items-center justify-center animate-in fade-in zoom-in-95 duration-300 pb-12">
+                            <div className="w-full max-w-[380px]">
+                                <CreatorCard config={previewConfig} />
+                            </div>
+                        </div>
+                    )}
+
+                    {activeTab === 'form' && (
+                        <div className="animate-in fade-in zoom-in-95 duration-300">
+                            <DonationForm config={previewConfig} />
+                        </div>
+                    )}
+
+                    {activeTab === 'content' && (
+                        <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
+                            <Card className="p-6">
+                                <h3 className="text-lg font-bold mb-4 text-center">{config.reasons_title || '为什么投喂?'}</h3>
+                                <div className="space-y-2">
+                                    {((config.reasons_items || []) as string[]).map((item, i) => (
+                                        <div key={i} className="p-3 bg-slate-50 rounded-lg text-sm text-gray-600 text-center">
+                                            {item}
+                                        </div>
+                                    ))}
+                                    {(!config.reasons_items || config.reasons_items.length === 0) && (
+                                        <div className="text-center text-gray-400 italic text-sm">暂无理由</div>
+                                    )}
+                                </div>
+                            </Card>
+
+                            {config.security_visible && (
+                                <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 text-center">
+                                    <h4 className="font-semibold text-blue-900 text-sm mb-1">{config.security_title}</h4>
+                                    <p className="text-xs text-blue-700">{config.security_description}</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
         </div>
+        </div >
     );
 }
