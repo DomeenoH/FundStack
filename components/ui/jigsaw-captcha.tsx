@@ -217,23 +217,36 @@ export function JigsawCaptcha({
                 )}
             </div>
 
-            <div className="mt-4 relative">
-                <div className="absolute inset-0 bg-gray-100 rounded-full h-10 border border-gray-200">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-4 text-xs text-gray-400 select-none pointer-events-none">
-                        向右滑动填充拼图
+            <div className="mt-4 space-y-2">
+                {/* Hint text above the slider */}
+                <div
+                    className="text-sm text-gray-500 text-center transition-opacity duration-200"
+                    style={{ opacity: sliderValue[0] > 20 ? 0.5 : 1 }}
+                >
+                    向右滑动填充拼图
+                </div>
+
+                {/* Slider track container */}
+                <div className="relative bg-gradient-to-r from-gray-100 to-gray-50 rounded-full h-10 border border-gray-200 shadow-inner overflow-hidden">
+                    {/* Progress indicator */}
+                    <div
+                        className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-50 to-blue-100 transition-all duration-100"
+                        style={{ width: `${sliderValue[0]}px` }}
+                    />
+
+                    {/* Slider component */}
+                    <div className="relative h-full flex items-center">
+                        <Slider
+                            value={sliderValue}
+                            min={0}
+                            max={width - L}
+                            step={1}
+                            onValueChange={handleSliderChange}
+                            onValueCommit={handleSliderCommit}
+                            className="w-full px-1"
+                        />
                     </div>
                 </div>
-                <Slider
-                    value={sliderValue}
-                    min={0}
-                    max={width - L} // Don't slide past the end
-                    step={1}
-                    onValueChange={handleSliderChange}
-                    onValueCommit={handleSliderCommit}
-                    className="relative z-10 py-3" // Add padding to make touch target larger
-                // We need to customize the slider thumb to match the style if possible, 
-                // but default shadcn slider is fine for now.
-                />
             </div>
         </div>
     );
