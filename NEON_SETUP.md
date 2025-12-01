@@ -37,7 +37,9 @@ CREATE TABLE IF NOT EXISTS donations (
     user_ip VARCHAR(45),
     user_agent TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    confirmed_at TIMESTAMP
+    confirmed_at TIMESTAMP,
+    reply_content TEXT,
+    reply_at TIMESTAMP
 );
 
 -- 创建站点配置表
@@ -52,6 +54,7 @@ CREATE TABLE IF NOT EXISTS site_config (
 CREATE INDEX IF NOT EXISTS idx_donations_status ON donations(status);
 CREATE INDEX IF NOT EXISTS idx_donations_created_at ON donations(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_donations_user_name ON donations(user_name);
+CREATE INDEX IF NOT EXISTS idx_donations_reply_at ON donations(reply_at);
 ```
 
 ## 步骤4: 重启开发服务器

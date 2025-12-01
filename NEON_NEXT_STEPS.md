@@ -10,13 +10,14 @@
 ### 1. 在Neon控制台执行SQL
 
 1. 访问 https://console.neon.tech
-2. 选择你的项目: `ep-late-dew-a4n0meda`
+2. 选择你的项目
 3. 点击 **SQL Editor**
-4. 复制并执行 `scripts/init-neon-db.sql` 中的SQL语句
+4. 复制并执行 `scripts/init-database.sql` 中的SQL语句
 
 或者直接复制以下SQL:
 
 ```sql
+-- 创建捐赠表
 -- 创建捐赠表
 CREATE TABLE IF NOT EXISTS donations (
     id SERIAL PRIMARY KEY,
@@ -30,7 +31,9 @@ CREATE TABLE IF NOT EXISTS donations (
     user_ip VARCHAR(45),
     user_agent TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    confirmed_at TIMESTAMP
+    confirmed_at TIMESTAMP,
+    reply_content TEXT,
+    reply_at TIMESTAMP
 );
 
 -- 创建站点配置表
@@ -45,6 +48,7 @@ CREATE TABLE IF NOT EXISTS site_config (
 CREATE INDEX IF NOT EXISTS idx_donations_status ON donations(status);
 CREATE INDEX IF NOT EXISTS idx_donations_created_at ON donations(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_donations_user_name ON donations(user_name);
+CREATE INDEX IF NOT EXISTS idx_donations_reply_at ON donations(reply_at);
 ```
 
 ### 2. 重启开发服务器
