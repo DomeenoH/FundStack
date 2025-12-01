@@ -385,7 +385,7 @@ const DonationList = forwardRef<DonationListRef, { limit?: number; merge?: boole
                                   )}
                                 </div>
                               </td>
-                              <td className="px-8 py-5">
+                              <td className="px-8 py-5 whitespace-nowrap">
                                 <div className="flex items-center justify-center">
                                   <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide ${STATUS_BADGE_STYLES[donation.status as keyof typeof STATUS_BADGE_STYLES] || STATUS_BADGE_STYLES.pending
                                     }`}>
