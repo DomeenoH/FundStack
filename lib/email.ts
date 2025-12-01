@@ -30,41 +30,51 @@ export async function sendEmail(
 
     async function createTransporter(config: SiteConfig) {
       const emailConfig = config.email_config;
-      if (!emailConfig?.enabled) return null;
+      // If enabled is explicitly false, return null. If undefined, check env vars.
+      if (emailConfig?.enabled === false) return null;
+
+      // Determine provider: config > env > default(smtp)
+      const provider = emailConfig?.provider || process.env.EMAIL_PROVIDER || 'smtp';
 
       let transportConfig: any = {};
 
-      if (emailConfig.provider === 'resend') {
+      if (provider === 'resend') {
         transportConfig = {
           host: 'smtp.resend.com',
           port: 465,
           secure: true,
           auth: {
             user: 'resend',
-            pass: emailConfig.apiKey || emailConfig.auth_pass,
+            pass: emailConfig?.apiKey || process.env.EMAIL_API_KEY || emailConfig?.auth_pass,
           },
         };
-      } else if (emailConfig.provider === 'sendgrid') {
+      } else if (provider === 'sendgrid') {
         transportConfig = {
           host: 'smtp.sendgrid.net',
           port: 587,
-          secure: false, // SendGrid recommends port 587 with STARTTLS
+          secure: false,
           auth: {
             user: 'apikey',
-            pass: emailConfig.apiKey || emailConfig.auth_pass,
+            pass: emailConfig?.apiKey || process.env.EMAIL_API_KEY || emailConfig?.auth_pass,
           },
         };
       } else {
         // Default SMTP
         transportConfig = {
-          host: emailConfig.host,
-          port: emailConfig.port,
-          secure: emailConfig.secure,
+          host: emailConfig?.host || process.env.SMTP_HOST,
+          port: Number(emailConfig?.port || process.env.SMTP_PORT || 465),
+          secure: emailConfig?.secure ?? (process.env.SMTP_SECURE === 'true'),
           auth: {
-            user: emailConfig.auth_user,
-            pass: emailConfig.auth_pass,
+            user: emailConfig?.auth_user || process.env.SMTP_USER,
+            pass: emailConfig?.auth_pass || process.env.SMTP_PASSWORD,
           },
         };
+      }
+
+      // If missing critical config, return null
+      if (!transportConfig.host || !transportConfig.auth?.pass) {
+        console.warn('Email transporter config missing host or password');
+        return null;
       }
 
       return nodemailer.createTransport(transportConfig);

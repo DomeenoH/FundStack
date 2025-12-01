@@ -10,6 +10,14 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Save, RotateCcw, Settings, Eye, LayoutTemplate, User, CreditCard, FileText, Mail } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { Switch } from '@/components/ui/switch';
 import type { SiteConfig, PaymentMethod } from '@/lib/config';
 import { CreatorCard } from '@/components/creator-card';
@@ -241,86 +249,125 @@ export default function ConfigManagementPage() {
 
                                         <div className="space-y-2">
                                             <Label>邮件服务商</Label>
-                                            <div className="flex gap-2">
-                                                {['smtp', 'resend', 'sendgrid'].map((provider) => (
-                                                    <Button
-                                                        key={provider}
-                                                        type="button"
-                                                        variant={config.email_config?.provider === provider ? 'default' : 'outline'}
-                                                        size="sm"
-                                                        onClick={() => updateConfig('email_config', { ...config.email_config, provider })}
-                                                        className="flex-1 capitalize"
-                                                    >
-                                                        {provider === 'smtp' ? 'Custom SMTP' : provider}
-                                                    </Button>
-                                                ))}
+                                            <Select
+                                                value={config.email_config?.provider || 'smtp'}
+                                                onValueChange={(value) => updateConfig('email_config', { ...config.email_config, provider: value })}
+                                            >
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="选择服务商" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="smtp">Custom SMTP</SelectItem>
+                                                    <SelectItem value="resend">Resend</SelectItem>
+                                                    <SelectItem value="sendgrid">SendGrid</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+
+                                        {/* Environment Variable Status */}
+                                        <div className="bg-slate-50 p-3 rounded-md border text-sm space-y-2">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-gray-600 font-medium">环境变量状态</span>
+                                                {Object.keys(envConfig).length > 0 ? (
+                                                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                                                        已检测到环境变量
+                                                    </Badge>
+                                                ) : (
+                                                    <Badge variant="outline" className="bg-gray-50 text-gray-500">
+                                                        未检测到环境变量
+                                                    </Badge>
+                                                )}
                                             </div>
+
+                                            <div className="text-xs text-gray-500 space-y-1">
+                                                <p>系统优先使用下方手动配置。若手动配置为空，则自动使用环境变量。</p>
+                                                {envConfig.EMAIL_PROVIDER !== 'Not Set' && (
+                                                    <p>当前环境默认服务商: <span className="font-mono text-gray-700">{envConfig.EMAIL_PROVIDER}</span></p>
+                                                )}
+                                            </div>
+
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                className="w-full mt-2"
+                                                onClick={() => {
+                                                    // Clear manual config to fallback to env vars
+                                                    updateConfig('email_config', {
+                                                        ...config.email_config,
+                                                        host: '',
+                                                        port: 0,
+                                                        auth_user: '',
+                                                        auth_pass: '',
+                                                        apiKey: '',
+                                                    });
+                                                }}
+                                            >
+                                                清除手动配置 (使用环境变量)
+                                            </Button>
                                         </div>
 
                                         {config.email_config?.provider === 'smtp' ? (
-                                            <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-1">
+                                            <div className="grid grid-cols-2 gap-4 pt-2">
                                                 <div className="space-y-2">
-                                                    <Label htmlFor="smtp_host">SMTP 主机</Label>
+                                                    <Label htmlFor="smtp_host">SMTP Host</Label>
                                                     <Input
                                                         id="smtp_host"
                                                         value={config.email_config?.host || ''}
                                                         onChange={(e) => updateConfig('email_config', { ...config.email_config, host: e.target.value })}
-                                                        placeholder="smtp.example.com"
+                                                        placeholder={envConfig.SMTP_HOST !== 'Not Set' ? `Env: ${envConfig.SMTP_HOST}` : 'smtp.example.com'}
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label htmlFor="smtp_port">端口</Label>
+                                                    <Label htmlFor="smtp_port">Port</Label>
                                                     <Input
                                                         id="smtp_port"
                                                         type="number"
-                                                        value={config.email_config?.port || 465}
+                                                        value={config.email_config?.port || ''}
                                                         onChange={(e) => updateConfig('email_config', { ...config.email_config, port: parseInt(e.target.value) })}
-                                                        placeholder="465"
+                                                        placeholder={envConfig.SMTP_PORT !== 'Not Set' ? `Env: ${envConfig.SMTP_PORT}` : '465'}
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label htmlFor="auth_user">用户名 / 邮箱</Label>
+                                                    <Label htmlFor="smtp_user">Username</Label>
                                                     <Input
-                                                        id="auth_user"
+                                                        id="smtp_user"
                                                         value={config.email_config?.auth_user || ''}
                                                         onChange={(e) => updateConfig('email_config', { ...config.email_config, auth_user: e.target.value })}
-                                                        placeholder="user@example.com"
+                                                        placeholder={envConfig.SMTP_USER !== 'Not Set' ? `Env: ${envConfig.SMTP_USER}` : 'user@example.com'}
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label htmlFor="auth_pass">密码 / 授权码</Label>
+                                                    <Label htmlFor="smtp_pass">Password</Label>
                                                     <Input
-                                                        id="auth_pass"
+                                                        id="smtp_pass"
                                                         type="password"
                                                         value={config.email_config?.auth_pass || ''}
                                                         onChange={(e) => updateConfig('email_config', { ...config.email_config, auth_pass: e.target.value })}
-                                                        placeholder="********"
+                                                        placeholder={envConfig.SMTP_PASSWORD !== 'Not Set' ? 'Using Env Var' : '••••••••'}
                                                     />
                                                 </div>
-                                                <div className="flex items-center space-x-2 pt-8 col-span-2">
+                                                <div className="flex items-center space-x-2 pt-8">
                                                     <Switch
                                                         id="smtp_secure"
                                                         checked={config.email_config?.secure ?? true}
                                                         onCheckedChange={(checked) => updateConfig('email_config', { ...config.email_config, secure: checked })}
                                                     />
-                                                    <Label htmlFor="smtp_secure">启用 SSL/TLS</Label>
+                                                    <Label htmlFor="smtp_secure">Use SSL/TLS</Label>
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className="space-y-4 animate-in fade-in slide-in-from-top-1">
-                                                <div className="space-y-2">
-                                                    <Label htmlFor="api_key">API Key</Label>
-                                                    <Input
-                                                        id="api_key"
-                                                        type="password"
-                                                        value={config.email_config?.apiKey || ''}
-                                                        onChange={(e) => updateConfig('email_config', { ...config.email_config, apiKey: e.target.value })}
-                                                        placeholder={`Enter your ${config.email_config?.provider} API Key`}
-                                                    />
-                                                    <p className="text-xs text-gray-500">
-                                                        {config.email_config?.provider === 'resend' ? '从 resend.com 获取 API Key' : '从 sendgrid.com 获取 API Key'}
-                                                    </p>
-                                                </div>
+                                            <div className="space-y-2 pt-2">
+                                                <Label htmlFor="api_key">API Key</Label>
+                                                <Input
+                                                    id="api_key"
+                                                    type="password"
+                                                    value={config.email_config?.apiKey || ''}
+                                                    onChange={(e) => updateConfig('email_config', { ...config.email_config, apiKey: e.target.value })}
+                                                    placeholder={envConfig.EMAIL_API_KEY !== 'Not Set' ? 'Using Env Var' : 're_123456789'}
+                                                />
+                                                <p className="text-xs text-gray-500">
+                                                    {config.email_config?.provider === 'resend' ? 'Get your API key from resend.com' : 'Get your API key from sendgrid.com'}
+                                                </p>
                                             </div>
                                         )}
 
@@ -340,31 +387,17 @@ export default function ConfigManagementPage() {
                                                     id="from_email"
                                                     value={config.email_config?.from_email || ''}
                                                     onChange={(e) => updateConfig('email_config', { ...config.email_config, from_email: e.target.value })}
-                                                    placeholder="noreply@example.com"
+                                                    placeholder={envConfig.EMAIL_FROM !== 'Not Set' ? `Env: ${envConfig.EMAIL_FROM}` : 'noreply@example.com'}
                                                 />
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Environment Configuration Display */}
-                                    <div className="space-y-4 border p-4 rounded-lg bg-slate-50">
-                                        <h3 className="font-medium text-sm text-gray-900 border-b pb-2 mb-4">当前环境变量配置 (仅供参考)</h3>
-                                        <div className="grid grid-cols-2 gap-4 text-xs font-mono">
-                                            {Object.entries(envConfig).map(([key, value]) => (
-                                                <div key={key} className="flex flex-col">
-                                                    <span className="text-gray-500">{key}</span>
-                                                    <span className="text-gray-900 truncate" title={String(value)}>{String(value)}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <p className="text-xs text-gray-400 mt-2">
-                                            注意：如果上方手动配置已启用，将优先使用手动配置。环境变量仅作为默认值或备用。
-                                        </p>
-                                    </div>
-
                                     <div className="space-y-4">
                                         <h3 className="font-medium text-sm text-gray-900">邮件模板设置</h3>
-                                        <Tabs defaultValue="notification" className="w-full">
+                                        <Tabs defaultValue="notification" className="w-full" onValueChange={(val) => {
+                                            // We can use this to update the preview if needed, but the preview component handles it via config
+                                        }}>
                                             <TabsList className="w-full justify-start">
                                                 <TabsTrigger value="notification">新投喂通知 (给站长)</TabsTrigger>
                                                 <TabsTrigger value="confirmation">投喂成功 (给用户)</TabsTrigger>
@@ -376,105 +409,69 @@ export default function ConfigManagementPage() {
                                                 // @ts-ignore
                                                 const template = config.email_config?.templates?.[templateKey] || {};
 
-                                                // Dummy data for preview
-                                                const dummyData = {
-                                                    user_name: '张三',
-                                                    amount: '50.00',
-                                                    user_message: '加油！',
-                                                    reply_content: '谢谢支持！'
-                                                };
-
-                                                let previewBody = template.body || '';
-                                                Object.entries(dummyData).forEach(([key, value]) => {
-                                                    previewBody = previewBody.replace(new RegExp(`{${key}}`, 'g'), value);
-                                                });
-
                                                 return (
                                                     <TabsContent key={type} value={type} className="space-y-4 mt-2">
-                                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                                            {/* Editor */}
-                                                            <div className="space-y-4 border p-4 rounded-lg bg-white">
-                                                                <div className="flex items-center justify-between mb-4">
-                                                                    <div className="space-y-0.5">
-                                                                        <Label>启用此模板</Label>
-                                                                        <p className="text-xs text-gray-500">是否发送此类邮件</p>
-                                                                    </div>
-                                                                    <Switch
-                                                                        checked={template.enabled ?? true}
-                                                                        onCheckedChange={(checked) => {
-                                                                            const newConfig = { ...config.email_config };
-                                                                            // @ts-ignore
-                                                                            if (!newConfig.templates) newConfig.templates = {};
-                                                                            // @ts-ignore
-                                                                            if (!newConfig.templates[templateKey]) newConfig.templates[templateKey] = {};
-                                                                            // @ts-ignore
-                                                                            newConfig.templates[templateKey].enabled = checked;
-                                                                            updateConfig('email_config', newConfig);
-                                                                        }}
-                                                                    />
+                                                        <div className="space-y-4 border p-4 rounded-lg bg-white">
+                                                            <div className="flex items-center justify-between mb-4">
+                                                                <div className="space-y-0.5">
+                                                                    <Label>启用此模板</Label>
+                                                                    <p className="text-xs text-gray-500">是否发送此类邮件</p>
                                                                 </div>
-
-                                                                <div className="space-y-2">
-                                                                    <Label>邮件标题</Label>
-                                                                    <Input
-                                                                        value={template.subject || ''}
-                                                                        onChange={(e) => {
-                                                                            const newConfig = { ...config.email_config };
-                                                                            // @ts-ignore
-                                                                            if (!newConfig.templates) newConfig.templates = {};
-                                                                            // @ts-ignore
-                                                                            if (!newConfig.templates[templateKey]) newConfig.templates[templateKey] = {};
-                                                                            // @ts-ignore
-                                                                            newConfig.templates[templateKey].subject = e.target.value;
-                                                                            updateConfig('email_config', newConfig);
-                                                                        }}
-                                                                    />
-                                                                </div>
-
-                                                                <div className="space-y-2">
-                                                                    <Label>邮件内容 (支持 HTML)</Label>
-                                                                    <Textarea
-                                                                        value={template.body || ''}
-                                                                        onChange={(e) => {
-                                                                            const newConfig = { ...config.email_config };
-                                                                            // @ts-ignore
-                                                                            if (!newConfig.templates) newConfig.templates = {};
-                                                                            // @ts-ignore
-                                                                            if (!newConfig.templates[templateKey]) newConfig.templates[templateKey] = {};
-                                                                            // @ts-ignore
-                                                                            newConfig.templates[templateKey].body = e.target.value;
-                                                                            updateConfig('email_config', newConfig);
-                                                                        }}
-                                                                        rows={12}
-                                                                        className="font-mono text-sm"
-                                                                    />
-                                                                    <div className="text-xs text-gray-500 space-x-2">
-                                                                        <span>可用变量:</span>
-                                                                        <code className="bg-gray-100 px-1 rounded">{'{user_name}'}</code>
-                                                                        <code className="bg-gray-100 px-1 rounded">{'{amount}'}</code>
-                                                                        <code className="bg-gray-100 px-1 rounded">{'{user_message}'}</code>
-                                                                        {type === 'reply' && <code className="bg-gray-100 px-1 rounded">{'{reply_content}'}</code>}
-                                                                    </div>
-                                                                </div>
+                                                                <Switch
+                                                                    checked={template.enabled ?? true}
+                                                                    onCheckedChange={(checked) => {
+                                                                        const newConfig = { ...config.email_config };
+                                                                        // @ts-ignore
+                                                                        if (!newConfig.templates) newConfig.templates = {};
+                                                                        // @ts-ignore
+                                                                        if (!newConfig.templates[templateKey]) newConfig.templates[templateKey] = {};
+                                                                        // @ts-ignore
+                                                                        newConfig.templates[templateKey].enabled = checked;
+                                                                        updateConfig('email_config', newConfig);
+                                                                    }}
+                                                                />
                                                             </div>
 
-                                                            {/* Preview */}
-                                                            <div className="space-y-4 border p-4 rounded-lg bg-gray-50 h-full">
-                                                                <div className="flex items-center justify-between border-b pb-2">
-                                                                    <h4 className="font-medium text-sm text-gray-900">预览</h4>
-                                                                    <span className="text-xs text-gray-500">基于示例数据</span>
-                                                                </div>
-                                                                <div className="bg-white p-4 rounded border shadow-sm h-[400px] overflow-y-auto">
-                                                                    <div className="mb-4 border-b pb-2">
-                                                                        <p className="text-sm text-gray-500">Subject:</p>
-                                                                        <p className="font-medium">
-                                                                            {(template.subject || '').replace(/{user_name}/g, dummyData.user_name).replace(/{amount}/g, dummyData.amount)}
-                                                                        </p>
-                                                                    </div>
-                                                                    <div
-                                                                        className="prose prose-sm max-w-none"
-                                                                        dangerouslySetInnerHTML={{ __html: previewBody }}
-                                                                    />
+                                                            <div className="space-y-2">
+                                                                <Label>邮件标题</Label>
+                                                                <Input
+                                                                    value={template.subject || ''}
+                                                                    onChange={(e) => {
+                                                                        const newConfig = { ...config.email_config };
+                                                                        // @ts-ignore
+                                                                        if (!newConfig.templates) newConfig.templates = {};
+                                                                        // @ts-ignore
+                                                                        if (!newConfig.templates[templateKey]) newConfig.templates[templateKey] = {};
+                                                                        // @ts-ignore
+                                                                        newConfig.templates[templateKey].subject = e.target.value;
+                                                                        updateConfig('email_config', newConfig);
+                                                                    }}
+                                                                />
+                                                            </div>
+
+                                                            <div className="space-y-2">
+                                                                <Label>邮件内容 (支持 HTML)</Label>
+                                                                <Textarea
+                                                                    value={template.body || ''}
+                                                                    onChange={(e) => {
+                                                                        const newConfig = { ...config.email_config };
+                                                                        // @ts-ignore
+                                                                        if (!newConfig.templates) newConfig.templates = {};
+                                                                        // @ts-ignore
+                                                                        if (!newConfig.templates[templateKey]) newConfig.templates[templateKey] = {};
+                                                                        // @ts-ignore
+                                                                        newConfig.templates[templateKey].body = e.target.value;
+                                                                        updateConfig('email_config', newConfig);
+                                                                    }}
+                                                                    rows={12}
+                                                                    className="font-mono text-sm"
+                                                                />
+                                                                <div className="text-xs text-gray-500 space-x-2">
+                                                                    <span>可用变量:</span>
+                                                                    <code className="bg-gray-100 px-1 rounded">{'{user_name}'}</code>
+                                                                    <code className="bg-gray-100 px-1 rounded">{'{amount}'}</code>
+                                                                    <code className="bg-gray-100 px-1 rounded">{'{user_message}'}</code>
+                                                                    {type === 'reply' && <code className="bg-gray-100 px-1 rounded">{'{reply_content}'}</code>}
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -656,13 +653,6 @@ export default function ConfigManagementPage() {
                                         )}
                                     </div>
                                 )}
-                            </div>
-
-                            <div className="space-y-4 pt-4 border-t">
-                                <h2 className="text-lg font-semibold">预览</h2>
-                                <div className="border rounded-lg overflow-hidden bg-gray-50">
-                                    <SiteFooter config={previewConfig} />
-                                </div>
                             </div>
                         </TabsContent>
 
