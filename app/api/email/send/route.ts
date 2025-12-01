@@ -27,8 +27,12 @@ export async function POST(request: NextRequest) {
     let html = templateConfig.body;
 
     // Resolve avatar URL
-    let avatarUrl = getCreatorAvatarUrl(config.creator_avatar, config.creator_qq_number);
-    if (avatarUrl.startsWith('/')) {
+    let avatarUrl = config.creator_avatar;
+    if (config.creator_qq_number) {
+      // Prioritize QQ avatar if QQ number is set
+      avatarUrl = getCreatorAvatarUrl(config.creator_avatar, config.creator_qq_number);
+    } else if (avatarUrl.startsWith('/')) {
+      // Handle local path for default avatar
       const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
       avatarUrl = `${baseUrl}${avatarUrl}`;
     }

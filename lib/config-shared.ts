@@ -213,48 +213,38 @@ export const DEFAULT_CONFIG: SiteConfig = {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>New Donation</title>
-<style>
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #374151; background-color: #f3f4f6; margin: 0; padding: 0; }
-.container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
-.header { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); padding: 40px 32px; text-align: center; color: white; }
-.header h1 { margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.025em; }
-.content { padding: 40px 32px; }
-.amount-card { background: #eff6ff; border: 1px solid #dbeafe; border-radius: 16px; padding: 32px; text-align: center; margin-bottom: 32px; }
-.amount { font-size: 42px; font-weight: 800; color: #1e40af; margin: 8px 0; letter-spacing: -0.025em; }
-.label { font-size: 13px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
-.message-box { background: #f9fafb; border-radius: 12px; padding: 24px; margin-top: 24px; border-left: 4px solid #3b82f6; }
-.message-text { font-style: italic; color: #4b5563; margin: 0; font-size: 15px; }
-.footer { background: #f9fafb; padding: 32px; text-align: center; font-size: 13px; color: #9ca3af; border-top: 1px solid #e5e7eb; }
-.button { display: inline-block; background: #2563eb; color: white; padding: 14px 28px; border-radius: 12px; text-decoration: none; font-weight: 600; margin-top: 24px; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); transition: all 0.2s; }
-.avatar { width: 64px; height: 64px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.2); margin-bottom: 16px; object-fit: cover; }
-</style>
 </head>
-<body>
-<div class="container">
-<div class="header">
-<img src="{creator_avatar}" alt="Avatar" class="avatar">
-<h1>🎉 好消息！收到新的投喂</h1>
-</div>
-<div class="content">
-<p style="font-size: 16px; margin-bottom: 24px;">Hi <strong>{creator_name}</strong>，</p>
-<p style="color: #6b7280; margin-bottom: 32px;">刚刚收到了一笔新的支持！以下是详细信息：</p>
-<div class="amount-card">
-<div class="label">投喂金额</div>
-<div class="amount">¥ {amount}</div>
-<div class="label" style="margin-top: 16px;">来自</div>
-<div style="font-size: 18px; font-weight: 600; color: #1f2937; margin-top: 4px;">{user_name}</div>
-</div>
-<div class="message-box">
-<p class="message-text">"{user_message}"</p>
-</div>
-<div style="text-align: center;">
-<a href="#" class="button">前往后台查看</a>
-</div>
-</div>
-<div class="footer">
-<p>Powered by FundStack</p>
-</div>
-</div>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333333; background-color: #f9f9f9; margin: 0; padding: 0;">
+    <div style="max-width: 600px; margin: 20px auto; background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0;">
+        <div style="background-color: #3b82f6; padding: 24px; text-align: center;">
+            <h1 style="margin: 0; font-size: 20px; color: #ffffff; font-weight: bold;">🎉 收到新的投喂</h1>
+        </div>
+        <div style="padding: 32px 24px;">
+            <p style="margin-bottom: 24px;">Hi <strong>{creator_name}</strong>，</p>
+            <p style="color: #666666; margin-bottom: 24px;">刚刚收到了一笔新的支持！以下是详细信息：</p>
+            
+            <table style="width: 100%; background-color: #f0f7ff; border-radius: 8px; margin-bottom: 24px; border-collapse: collapse;">
+                <tr>
+                    <td style="padding: 24px; text-align: center;">
+                        <div style="font-size: 12px; color: #666666; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">投喂金额</div>
+                        <div style="font-size: 32px; font-weight: bold; color: #1e40af;">¥ {amount}</div>
+                        <div style="font-size: 14px; color: #333333; margin-top: 16px;">来自 <strong>{user_name}</strong></div>
+                    </td>
+                </tr>
+            </table>
+
+            <div style="background-color: #f9fafb; border-left: 4px solid #3b82f6; padding: 16px; margin-bottom: 24px;">
+                <p style="margin: 0; font-style: italic; color: #555555;">"{user_message}"</p>
+            </div>
+
+            <div style="text-align: center; margin-top: 32px;">
+                <a href="#" style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px;">前往后台查看</a>
+            </div>
+        </div>
+        <div style="background-color: #f9fafb; padding: 24px; text-align: center; font-size: 12px; color: #999999; border-top: 1px solid #eeeeee;">
+            <p style="margin: 0;">Powered by FundStack</p>
+        </div>
+    </div>
 </body>
 </html>`,
             },
@@ -268,38 +258,28 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Thank You</title>
-<style>
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #374151; background-color: #f3f4f6; margin: 0; padding: 0; }
-.container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
-.header { background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); padding: 48px 32px; text-align: center; color: white; }
-.header h1 { margin: 16px 0 0 0; font-size: 28px; font-weight: 800; letter-spacing: -0.025em; }
-.content { padding: 48px 32px; text-align: center; }
-.avatar { width: 80px; height: 80px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.3); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); object-fit: cover; }
-.message { font-size: 18px; color: #4b5563; margin-bottom: 32px; line-height: 1.8; }
-.amount-badge { display: inline-block; background: #fdf2f8; color: #be185d; padding: 12px 24px; border-radius: 9999px; font-weight: 800; font-size: 24px; margin-bottom: 32px; box-shadow: 0 2px 4px rgba(190, 24, 93, 0.1); }
-.footer { background: #f9fafb; padding: 32px; text-align: center; font-size: 13px; color: #9ca3af; border-top: 1px solid #e5e7eb; }
-.divider { height: 1px; background: #e5e7eb; width: 60px; margin: 0 auto 32px auto; }
-</style>
 </head>
-<body>
-<div class="container">
-<div class="header">
-<img src="{creator_avatar}" alt="{creator_name}" class="avatar">
-<h1>感谢你的支持！</h1>
-</div>
-<div class="content">
-<p class="message">Hi <strong>{user_name}</strong>，</p>
-<p class="message">收到了你的投喂！非常感谢你对 <strong>{creator_name}</strong> 的支持，这对我来说意义重大。</p>
-<div class="amount-badge">
-¥ {amount}
-</div>
-<div class="divider"></div>
-<p class="message" style="font-size: 16px; margin-bottom: 0;">我会继续努力创作更好的内容！</p>
-</div>
-<div class="footer">
-<p>Powered by FundStack</p>
-</div>
-</div>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333333; background-color: #f9f9f9; margin: 0; padding: 0;">
+    <div style="max-width: 600px; margin: 20px auto; background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0;">
+        <div style="background-color: #db2777; padding: 32px 24px; text-align: center;">
+            <img src="{creator_avatar}" alt="{creator_name}" style="width: 64px; height: 64px; border-radius: 50%; border: 2px solid #ffffff; margin-bottom: 16px; display: inline-block;">
+            <h1 style="margin: 0; font-size: 22px; color: #ffffff; font-weight: bold;">感谢你的支持！</h1>
+        </div>
+        <div style="padding: 32px 24px; text-align: center;">
+            <p style="margin-bottom: 16px; font-size: 16px;">Hi <strong>{user_name}</strong>，</p>
+            <p style="color: #555555; margin-bottom: 24px; line-height: 1.8;">收到了你的投喂！非常感谢你对 <strong>{creator_name}</strong> 的支持，这对我来说意义重大。</p>
+            
+            <div style="display: inline-block; background-color: #fdf2f8; color: #be185d; padding: 10px 20px; border-radius: 50px; font-weight: bold; font-size: 20px; margin-bottom: 24px;">
+                ¥ {amount}
+            </div>
+            
+            <div style="height: 1px; background-color: #eeeeee; width: 60px; margin: 0 auto 24px auto;"></div>
+            <p style="color: #666666; margin: 0;">我会继续努力创作更好的内容！</p>
+        </div>
+        <div style="background-color: #f9fafb; padding: 24px; text-align: center; font-size: 12px; color: #999999; border-top: 1px solid #eeeeee;">
+            <p style="margin: 0;">Powered by FundStack</p>
+        </div>
+    </div>
 </body>
 </html>`,
             },
@@ -313,41 +293,30 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>New Reply</title>
-<style>
-body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #374151; background-color: #f3f4f6; margin: 0; padding: 0; }
-.container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 24px; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
-.header { background: linear-gradient(135deg, #1f2937 0%, #0f172a 100%); padding: 40px 32px; text-align: center; color: white; }
-.header h1 { margin: 16px 0 0 0; font-size: 24px; font-weight: 800; letter-spacing: -0.025em; }
-.content { padding: 40px 32px; }
-.avatar { width: 72px; height: 72px; border-radius: 50%; border: 4px solid rgba(255,255,255,0.3); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); object-fit: cover; }
-.reply-box { background: #f8fafc; border-radius: 16px; padding: 32px; margin: 24px 0; border: 1px solid #e2e8f0; position: relative; }
-.reply-label { font-size: 12px; color: #475569; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; display: block; }
-.reply-text { font-size: 16px; color: #1f2937; margin: 0; white-space: pre-wrap; line-height: 1.8; }
-.original-message { margin-top: 40px; padding-top: 24px; border-top: 1px dashed #e5e7eb; color: #6b7280; font-size: 14px; }
-.footer { background: #f9fafb; padding: 32px; text-align: center; font-size: 13px; color: #9ca3af; border-top: 1px solid #e5e7eb; }
-</style>
 </head>
-<body>
-<div class="container">
-<div class="header">
-<img src="{creator_avatar}" alt="{creator_name}" class="avatar">
-<h1>收到新的回复</h1>
-</div>
-<div class="content">
-<p style="font-size: 16px;">Hi <strong>{user_name}</strong>，</p>
-<p style="font-size: 16px; color: #4b5563; margin-bottom: 24px;"><strong>{creator_name}</strong> 刚刚回复了你的投喂留言：</p>
-<div class="reply-box">
-<span class="reply-label">回复内容</span>
-<p class="reply-text">{reply_content}</p>
-</div>
-<div class="original-message">
-<p>你的留言："{user_message}"</p>
-</div>
-</div>
-<div class="footer">
-<p>Powered by FundStack</p>
-</div>
-</div>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333333; background-color: #f9f9f9; margin: 0; padding: 0;">
+    <div style="max-width: 600px; margin: 20px auto; background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e0e0e0;">
+        <div style="background-color: #1f2937; padding: 32px 24px; text-align: center;">
+            <img src="{creator_avatar}" alt="{creator_name}" style="width: 64px; height: 64px; border-radius: 50%; border: 2px solid #ffffff; margin-bottom: 16px; display: inline-block;">
+            <h1 style="margin: 0; font-size: 20px; color: #ffffff; font-weight: bold;">收到新的回复</h1>
+        </div>
+        <div style="padding: 32px 24px;">
+            <p style="margin-bottom: 16px;">Hi <strong>{user_name}</strong>，</p>
+            <p style="color: #555555; margin-bottom: 24px;"><strong>{creator_name}</strong> 刚刚回复了你的投喂留言：</p>
+            
+            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
+                <div style="font-size: 12px; color: #64748b; font-weight: bold; text-transform: uppercase; margin-bottom: 8px;">回复内容</div>
+                <div style="color: #333333; line-height: 1.6;">{reply_content}</div>
+            </div>
+            
+            <div style="border-top: 1px dashed #e5e7eb; padding-top: 16px; color: #9ca3af; font-size: 13px;">
+                <p style="margin: 0;">你的留言："{user_message}"</p>
+            </div>
+        </div>
+        <div style="background-color: #f9fafb; padding: 24px; text-align: center; font-size: 12px; color: #999999; border-top: 1px solid #eeeeee;">
+            <p style="margin: 0;">Powered by FundStack</p>
+        </div>
+    </div>
 </body>
 </html>`,
             },
