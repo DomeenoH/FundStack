@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { SiteConfig } from '@/lib/config';
+import { SiteConfig } from '@/lib/config-shared';
 
 interface SiteFooterProps {
     config: SiteConfig;

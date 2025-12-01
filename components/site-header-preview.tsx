@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
-import type { SiteConfig } from '@/lib/config';
+import type { SiteConfig } from '@/lib/config-shared';
 import { useMemo } from 'react';
 import { extractFirstEmoji } from '@/lib/emoji-utils';
 

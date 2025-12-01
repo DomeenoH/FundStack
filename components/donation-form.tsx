@@ -34,7 +34,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { JigsawCaptcha } from '@/components/ui/jigsaw-captcha';
-import type { SiteConfig } from '@/lib/config';
+import type { SiteConfig } from '@/lib/config-shared';
 
 interface DonationFormProps {
   config: SiteConfig;

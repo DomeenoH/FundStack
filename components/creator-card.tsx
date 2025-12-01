@@ -4,7 +4,7 @@
 import Image from 'next/image';
 import { Sparkles, WalletCards, Copy, Check } from 'lucide-react';
 import { useState } from 'react';
-import type { SiteConfig } from '@/lib/config';
+import type { SiteConfig } from '@/lib/config-shared';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';

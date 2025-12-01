@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from '@/components/ui/switch';
-import { type SiteConfig, type PaymentMethod, DEFAULT_CONFIG } from '@/lib/config';
+import { type SiteConfig, type PaymentMethod, DEFAULT_CONFIG } from '@/lib/config-shared';
 import { CreatorCard } from '@/components/creator-card';
 import DonationForm from '@/components/donation-form';
 import { SiteHeaderPreview } from '@/components/site-header-preview';

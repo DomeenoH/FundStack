@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import DonationForm from './donation-form';
 import { CreatorCard } from './creator-card';
-import type { SiteConfig } from '@/lib/config';
+import type { SiteConfig } from '@/lib/config-shared';
 import { motion } from 'framer-motion';
 
 interface DonationSectionProps {

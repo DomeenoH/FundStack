@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useEffect, useRef, useState } from 'react';
-import { SiteConfig } from '@/lib/config';
+import { SiteConfig } from '@/lib/config-shared';
 import { getCreatorAvatarUrl } from '@/lib/avatar-utils';
 
 const NAV_LINKS = [
