@@ -124,7 +124,7 @@ export function CreatorCard({ config, selectedPaymentMethod }: CreatorCardProps)
             >
               <div className="relative bg-white p-4 rounded-2xl shadow-sm border border-gray-200/60">
                 <Image
-                  src={`http://q.qlogo.cn/headimg_dl?dst_uin=${qqNumber}&spec=640&img_type=jpg`}
+                  src={`https://q.qlogo.cn/headimg_dl?dst_uin=${qqNumber}&spec=640&img_type=jpg`}
                   alt="QQ Avatar"
                   width={200}
                   height={200}

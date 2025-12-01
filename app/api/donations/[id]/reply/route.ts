@@ -39,7 +39,12 @@ export async function POST(
             return NextResponse.json({ error: 'Donation not found' }, { status: 404 });
         }
 
-        return NextResponse.json({ donation: data[0] });
+        return NextResponse.json({
+            donation: {
+                ...data[0],
+                amount: Number(data[0].amount)
+            }
+        });
     } catch (error) {
         console.error('Reply error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

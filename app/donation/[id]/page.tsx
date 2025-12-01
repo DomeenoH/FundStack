@@ -175,7 +175,7 @@ export default function DonationDetailPage() {
                                 </div>
                             </div>
                             <div className="text-right">
-                                <p className="text-3xl font-bold text-gray-900">¥{donation.amount.toFixed(2)}</p>
+                                <p className="text-3xl font-bold text-gray-900">¥{Number(donation.amount).toFixed(2)}</p>
                                 <div className="flex items-center justify-end gap-1.5 mt-1">
                                     <span className={`text-sm font-medium ${PAYMENT_METHOD_COLORS[donation.payment_method]}`}>
                                         {PAYMENT_METHOD_LABELS[donation.payment_method]}
