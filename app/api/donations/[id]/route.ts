@@ -24,12 +24,32 @@ export async function GET(
                 );
             }
 
+            // Check for admin authentication
+            const authHeader = request.headers.get('authorization');
+            let isAdmin = false;
+
+            if (authHeader) {
+                try {
+                    const token = authHeader.split(' ')[1];
+                    if (token) {
+                        const decoded = Buffer.from(token, 'base64').toString('utf-8');
+                        const [username, password] = decoded.split(':');
+                        if (username === 'admin' && password === (process.env.ADMIN_PASSWORD || 'admin123')) {
+                            isAdmin = true;
+                        }
+                    }
+                } catch (e) {
+                    // Ignore invalid token
+                }
+            }
+
             return NextResponse.json({
                 success: true,
                 donation: {
                     ...data[0],
                     amount: Number(data[0].amount)
-                }
+                },
+                is_admin: isAdmin
             });
         }
 

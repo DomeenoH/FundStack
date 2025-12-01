@@ -50,18 +50,30 @@ export default function DonationDetailPage() {
     const [submittingReply, setSubmittingReply] = useState(false);
 
     useEffect(() => {
-        // Check for admin token
-        const token = localStorage.getItem('adminToken');
-        if (token) {
-            setIsAdmin(true);
-        }
-
         const loadData = async () => {
             try {
-                const data = await fetchJson<{ donation: DonationDetail }>(
-                    `/api/donations/${params.id}`
+                const token = localStorage.getItem('adminToken');
+                const headers: HeadersInit = {};
+                if (token) {
+                    headers['Authorization'] = `Basic ${token}`;
+                }
+
+                const data = await fetchJson<{ donation: DonationDetail; is_admin?: boolean }>(
+                    `/api/donations/${params.id}`,
+                    { headers }
                 );
                 setDonation(data.donation);
+
+                // Update admin status based on backend verification
+                if (data.is_admin) {
+                    setIsAdmin(true);
+                } else {
+                    setIsAdmin(false);
+                    // If we had a token but backend says not admin, it's invalid/expired
+                    if (token) {
+                        localStorage.removeItem('adminToken');
+                    }
+                }
             } catch (err) {
                 console.error('Failed to fetch donation details:', err);
                 setError('加载投喂详情失败');
