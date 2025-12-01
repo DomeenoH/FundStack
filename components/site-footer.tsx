@@ -40,7 +40,17 @@ export function SiteFooter({ config }: SiteFooterProps) {
             {config.footer.text ? (
                 <p>{config.footer.text}</p>
             ) : (
-                <p>Powered by FundStack</p>
+                <p>
+                    Powered by{' '}
+                    <a
+                        href="https://github.com/DomeenoH/v0-hexo-donate-refactor"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-gray-700 underline transition-colors"
+                    >
+                        FundStack
+                    </a>
+                </p>
             )}
 
             {config.footer.show_copyright && (
