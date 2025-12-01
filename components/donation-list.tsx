@@ -284,7 +284,7 @@ const DonationList = forwardRef<DonationListRef, { limit?: number; merge?: boole
                           router.push(path);
                         }}
                       >
-                        <td className="px-8 py-5">
+                        <td className="px-8 py-5 whitespace-nowrap">
                           <div className="flex items-center gap-3">
                             <img src={getUserAvatarUrl(donation.user_email, 40)} alt="avatar" className="w-8 h-8 rounded-full shrink-0" />
                             <span className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
