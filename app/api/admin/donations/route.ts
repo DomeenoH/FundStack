@@ -28,7 +28,10 @@ export async function PUT(request: NextRequest) {
   try {
     const { id } = await request.json();
     const donation = await confirmDonation(id);
-    return NextResponse.json({ success: true, donation });
+    return NextResponse.json({
+      success: true,
+      donation: { ...donation, amount: Number(donation.amount) }
+    });
   } catch (error) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
@@ -42,7 +45,10 @@ export async function DELETE(request: NextRequest) {
   try {
     const { id } = await request.json();
     const data = await rejectDonation(id);
-    return NextResponse.json({ success: true, donation: data });
+    return NextResponse.json({
+      success: true,
+      donation: { ...data, amount: Number(data.amount) }
+    });
   } catch (error) {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
@@ -64,7 +70,10 @@ export async function PATCH(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
       }
       const donation = await updateDonationStatus(id, status);
-      return NextResponse.json({ success: true, donation });
+      return NextResponse.json({
+        success: true,
+        donation: { ...donation, amount: Number(donation.amount) }
+      });
     }
 
     // 更新投喂者信息
@@ -75,7 +84,10 @@ export async function PATCH(request: NextRequest) {
         user_email,
         user_url
       });
-      return NextResponse.json({ success: true, donation });
+      return NextResponse.json({
+        success: true,
+        donation: { ...donation, amount: Number(donation.amount) }
+      });
     }
 
     return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
