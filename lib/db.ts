@@ -217,3 +217,84 @@ export async function batchUpdateConfig(updates: Record<string, any>) {
     throw error;
   }
 }
+
+// ==================== Donation Management ====================
+
+export async function updateDonation(
+  id: number,
+  data: {
+    user_name?: string;
+    user_email?: string;
+    user_url?: string;
+  }
+) {
+  try {
+    const updates = [];
+    const values: any[] = [];
+    let paramIndex = 1;
+
+    if (data.user_name !== undefined) {
+      updates.push(`user_name = $${paramIndex++}`);
+      values.push(data.user_name);
+    }
+    if (data.user_email !== undefined) {
+      updates.push(`user_email = $${paramIndex++}`);
+      values.push(data.user_email || null);
+    }
+    if (data.user_url !== undefined) {
+      updates.push(`user_url = $${paramIndex++}`);
+      values.push(data.user_url || null);
+    }
+
+    if (updates.length === 0) {
+      throw new Error('No fields to update');
+    }
+
+    values.push(id);
+
+    const result = await sql`
+      UPDATE donations
+      SET ${sql.unsafe(updates.join(', '))}
+      WHERE id = ${id}
+      RETURNING *
+    `;
+
+    return result[0];
+  } catch (error) {
+    console.error('[投喂小站] Database error in updateDonation:', error);
+    throw error;
+  }
+}
+
+export async function deleteDonation(id: number) {
+  try {
+    const result = await sql`
+      DELETE FROM donations
+      WHERE id = ${id}
+      RETURNING *
+    `;
+    return result[0];
+  } catch (error) {
+    console.error('[投喂小站] Database error in deleteDonation:', error);
+    throw error;
+  }
+}
+
+export async function batchDeleteDonations(ids: number[]) {
+  try {
+    if (ids.length === 0) {
+      return [];
+    }
+
+    const result = await sql`
+      DELETE FROM donations
+      WHERE id = ANY(${ids})
+      RETURNING *
+    `;
+
+    return result;
+  } catch (error) {
+    console.error('[投喂小站] Database error in batchDeleteDonations:', error);
+    throw error;
+  }
+}

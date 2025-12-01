@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, LogOut, Check, X, Search, Download, Reply, MessageSquare, Settings, Wallet, Users, Clock } from 'lucide-react';
+import { Loader2, LogOut, Check, X, Search, Download, Reply, MessageSquare, Settings, Wallet, Users, Clock, Pencil, Trash2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getUserAvatarUrl } from '@/lib/avatar-utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 interface AdminDonation {
   id: number;
@@ -57,6 +59,21 @@ export default function AdminPage() {
   const [replyingId, setReplyingId] = useState<number | null>(null);
   const [replyContent, setReplyContent] = useState('');
   const [submittingReply, setSubmittingReply] = useState(false);
+
+  // Edit state
+  const [editingDonation, setEditingDonation] = useState<AdminDonation | null>(null);
+  const [editFormData, setEditFormData] = useState({
+    user_name: '',
+    user_email: '',
+    user_url: ''
+  });
+  const [submittingEdit, setSubmittingEdit] = useState(false);
+
+  // Delete state
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deletingIds, setDeletingIds] = useState<number[]>([]);
+  const [submittingDelete, setSubmittingDelete] = useState(false);
 
   // Check for existing session on mount
   useEffect(() => {
@@ -199,6 +216,102 @@ export default function AdminPage() {
   const openReplyDialog = (donation: AdminDonation) => {
     setReplyingId(donation.id);
     setReplyContent(donation.reply_content || '');
+  };
+
+  const openEditDialog = (donation: AdminDonation) => {
+    setEditingDonation(donation);
+    setEditFormData({
+      user_name: donation.user_name,
+      user_email: donation.user_email || '',
+      user_url: donation.user_url || ''
+    });
+  };
+
+  const handleEditSubmit = async () => {
+    if (!editingDonation) return;
+    setSubmittingEdit(true);
+    try {
+      const credentials = btoa(`admin:${password}`);
+      const response = await fetch('/api/admin/donations', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${credentials}`
+        },
+        body: JSON.stringify({
+          id: editingDonation.id,
+          action: 'update_info',
+          ...editFormData
+        })
+      });
+
+      if (response.ok) {
+        const { donation: updatedDonation } = await response.json();
+        setDonations(prev => prev.map(d => d.id === editingDonation.id ? { ...d, ...updatedDonation } : d));
+        setSuccessMessage('投喂者信息已更新');
+        setTimeout(() => setSuccessMessage(''), 3000);
+        setEditingDonation(null);
+      } else {
+        setError('更新失败');
+      }
+    } catch (error) {
+      console.error('Edit error:', error);
+      setError('更新出错');
+    } finally {
+      setSubmittingEdit(false);
+    }
+  };
+
+  const handleDeleteSelected = async () => {
+    if (deletingIds.length === 0) return;
+    setSubmittingDelete(true);
+    try {
+      const credentials = btoa(`admin:${password}`);
+      const response = await fetch('/api/admin/donations/delete', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${credentials}`
+        },
+        body: JSON.stringify({ ids: deletingIds })
+      });
+
+      if (response.ok) {
+        const { deleted } = await response.json();
+        setDonations(prev => prev.filter(d => !deletingIds.includes(d.id)));
+        setSelectedIds([]);
+        setSuccessMessage(`已删除 ${deleted} 条记录`);
+        setTimeout(() => setSuccessMessage(''), 3000);
+        setShowDeleteConfirm(false);
+        setDeletingIds([]);
+      } else {
+        setError('删除失败');
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      setError('删除出错');
+    } finally {
+      setSubmittingDelete(false);
+    }
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.length === filteredAndSearchedDonations.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(filteredAndSearchedDonations.map(d => d.id));
+    }
+  };
+
+  const toggleSelect = (id: number) => {
+    setSelectedIds(prev =>
+      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    );
+  };
+
+  const openDeleteConfirm = (ids: number[]) => {
+    setDeletingIds(ids);
+    setShowDeleteConfirm(true);
   };
 
   const exportToCSV = () => {
@@ -422,6 +535,20 @@ export default function AdminPage() {
                   </button>
                 </div>
               </div>
+              {selectedIds.length > 0 && selectedIds.every(id => {
+                const donation = donations.find(d => d.id === id);
+                return donation?.status === 'rejected';
+              }) && (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => openDeleteConfirm(selectedIds)}
+                    className="w-full sm:w-auto"
+                  >
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    删除选中 ({selectedIds.length})
+                  </Button>
+                )}
               <Button
                 variant="outline"
                 size="sm"
@@ -438,6 +565,12 @@ export default function AdminPage() {
               <table className="w-full text-sm text-left">
                 <thead className="bg-gray-50 text-gray-500 font-medium border-b">
                   <tr>
+                    <th className="px-4 py-3 w-12">
+                      <Checkbox
+                        checked={selectedIds.length === filteredAndSearchedDonations.length && filteredAndSearchedDonations.length > 0}
+                        onCheckedChange={toggleSelectAll}
+                      />
+                    </th>
                     <th className="px-6 py-3 w-16">头像</th>
                     <th className="px-6 py-3">投喂者信息</th>
                     <th className="px-6 py-3">金额</th>
@@ -449,7 +582,7 @@ export default function AdminPage() {
                 <tbody className="divide-y divide-gray-100">
                   {filteredAndSearchedDonations.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                      <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
                         <div className="flex flex-col items-center gap-2">
                           <Search className="w-8 h-8 text-gray-300" />
                           <p>{searchQuery ? '未找到匹配的记录' : '暂无投喂记录'}</p>
@@ -459,6 +592,12 @@ export default function AdminPage() {
                   ) : (
                     filteredAndSearchedDonations.map(donation => (
                       <tr key={donation.id} className="hover:bg-gray-50/50 transition-colors">
+                        <td className="px-4 py-4">
+                          <Checkbox
+                            checked={selectedIds.includes(donation.id)}
+                            onCheckedChange={() => toggleSelect(donation.id)}
+                          />
+                        </td>
                         <td className="px-6 py-4">
                           <img src={getUserAvatarUrl(donation.user_email, 40)} alt="avatar" className="w-10 h-10 rounded-full border border-gray-100 shadow-sm object-cover" />
                         </td>
@@ -516,6 +655,7 @@ export default function AdminPage() {
                         </td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex justify-end gap-2 items-center">
+                            {/* 回复按钮 */}
                             <Dialog open={replyingId === donation.id} onOpenChange={(open) => !open && setReplyingId(null)}>
                               <DialogTrigger asChild>
                                 <Button size="sm" variant="ghost" onClick={() => openReplyDialog(donation)} className="h-8 w-8 p-0">
@@ -546,6 +686,38 @@ export default function AdminPage() {
                                 </DialogFooter>
                               </DialogContent>
                             </Dialog>
+
+                            {/* 编辑按钮 */}
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => openEditDialog(donation)}
+                                  className="h-8 w-8 p-0 text-gray-500 hover:text-blue-600"
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>编辑投喂者信息</TooltipContent>
+                            </Tooltip>
+
+                            {/* 删除按钮 - 仅针对rejected状态 */}
+                            {donation.status === 'rejected' && (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => openDeleteConfirm([donation.id])}
+                                    className="h-8 w-8 p-0 text-gray-500 hover:text-red-600"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>删除此记录</TooltipContent>
+                              </Tooltip>
+                            )}
 
                             {filterStatus === 'all' ? (
                               <select
@@ -615,6 +787,86 @@ export default function AdminPage() {
               </table>
             </div>
           </Card>
+          {/* 编辑对话框 */}
+          <Dialog open={!!editingDonation} onOpenChange={(open) => !open && setEditingDonation(null)}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>编辑投喂者信息</DialogTitle>
+                <DialogDescription>
+                  修改投喂者的基本信息。请注意，修改后将立即生效。
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    姓名
+                  </Label>
+                  <Input
+                    id="name"
+                    value={editFormData.user_name}
+                    onChange={(e) => setEditFormData({ ...editFormData, user_name: e.target.value })}
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="email" className="text-right">
+                    邮箱
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={editFormData.user_email}
+                    onChange={(e) => setEditFormData({ ...editFormData, user_email: e.target.value })}
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="url" className="text-right">
+                    网址
+                  </Label>
+                  <Input
+                    id="url"
+                    value={editFormData.user_url}
+                    onChange={(e) => setEditFormData({ ...editFormData, user_url: e.target.value })}
+                    className="col-span-3"
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setEditingDonation(null)}>取消</Button>
+                <Button onClick={handleEditSubmit} disabled={submittingEdit}>
+                  {submittingEdit && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  保存修改
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* 删除确认对话框 */}
+          <Dialog open={showDeleteConfirm} onOpenChange={setShowDeleteConfirm}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>确认删除</DialogTitle>
+                <DialogDescription>
+                  您确定要删除这 {deletingIds.length} 条记录吗？此操作无法撤销。
+                </DialogDescription>
+              </DialogHeader>
+              <div className="py-4">
+                <Alert variant="destructive">
+                  <AlertDescription>
+                    注意：这将永久从数据库中删除这些投喂记录。
+                  </AlertDescription>
+                </Alert>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowDeleteConfirm(false)}>取消</Button>
+                <Button variant="destructive" onClick={handleDeleteSelected} disabled={submittingDelete}>
+                  {submittingDelete && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  确认删除
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </main>
     </TooltipProvider>
