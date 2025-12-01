@@ -52,17 +52,23 @@ export default function DonorDetailPage() {
     const [history, setHistory] = useState<DonationHistoryItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [creatorName, setCreatorName] = useState('创作者');
 
     useEffect(() => {
         const loadData = async () => {
             try {
-                const data = await fetchJson<{ donor: DonorDetails; history: DonationHistoryItem[] }>(
-                    `/api/donations/${params.donorId}`
-                );
-                setDonor(data.donor);
-                setHistory(data.history);
+                const [donorData, configData] = await Promise.all([
+                    fetchJson<{ donor: DonorDetails; history: DonationHistoryItem[] }>(`/api/donations/${params.donorId}`),
+                    fetchJson<{ success: boolean; data: { creator_name: string } }>('/api/config')
+                ]);
+
+                setDonor(donorData.donor);
+                setHistory(donorData.history);
+                if (configData.data?.creator_name) {
+                    setCreatorName(configData.data.creator_name);
+                }
             } catch (err) {
-                console.error('Failed to fetch donor details:', err);
+                console.error('Failed to fetch details:', err);
                 setError('加载投喂详情失败');
             } finally {
                 setLoading(false);
@@ -156,7 +162,7 @@ export default function DonorDetailPage() {
                                     <th className="px-6 py-3 text-left font-medium">方式</th>
                                     <th className="px-6 py-3 text-right font-medium">金额</th>
                                     <th className="px-6 py-3 text-left font-medium">留言</th>
-                                    <th className="px-6 py-3 text-left font-medium">创作者回复</th>
+                                    <th className="px-6 py-3 text-left font-medium">{creatorName}回复</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y bg-white">

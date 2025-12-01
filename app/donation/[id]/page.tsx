@@ -48,6 +48,7 @@ export default function DonationDetailPage() {
     const [isAdmin, setIsAdmin] = useState(false);
     const [replyContent, setReplyContent] = useState('');
     const [submittingReply, setSubmittingReply] = useState(false);
+    const [creatorName, setCreatorName] = useState('站长');
 
     useEffect(() => {
         const loadData = async () => {
@@ -58,14 +59,21 @@ export default function DonationDetailPage() {
                     headers['Authorization'] = `Basic ${token}`;
                 }
 
-                const data = await fetchJson<{ donation: DonationDetail; is_admin?: boolean }>(
-                    `/api/donations/${params.id}`,
-                    { headers }
-                );
-                setDonation(data.donation);
+                const [donationData, configData] = await Promise.all([
+                    fetchJson<{ donation: DonationDetail; is_admin?: boolean }>(
+                        `/api/donations/${params.id}`,
+                        { headers }
+                    ),
+                    fetchJson<{ success: boolean; data: { creator_name: string } }>('/api/config')
+                ]);
+
+                setDonation(donationData.donation);
+                if (configData.data?.creator_name) {
+                    setCreatorName(configData.data.creator_name);
+                }
 
                 // Update admin status based on backend verification
-                if (data.is_admin) {
+                if (donationData.is_admin) {
                     setIsAdmin(true);
                 } else {
                     setIsAdmin(false);
@@ -204,7 +212,7 @@ export default function DonationDetailPage() {
                                     <Reply className="w-5 h-5 text-blue-500 shrink-0 mt-1" />
                                     <div className="flex-1">
                                         <p className="text-sm font-medium text-blue-600 mb-2 uppercase tracking-wider">
-                                            站长回复
+                                            {creatorName}回复
                                             {donation.reply_at && (
                                                 <span className="text-blue-400 ml-2 text-xs normal-case">
                                                     {new Date(donation.reply_at).toLocaleString('zh-CN')}
