@@ -571,7 +571,7 @@ export default function AdminPage() {
                         onCheckedChange={toggleSelectAll}
                       />
                     </th>
-                    <th className="px-6 py-3 w-16">头像</th>
+                    <th className="px-6 py-3 w-16 min-w-[5rem] whitespace-nowrap">头像</th>
                     <th className="px-6 py-3">投喂者信息</th>
                     <th className="px-6 py-3">金额</th>
                     <th className="px-6 py-3">留言/回复</th>
