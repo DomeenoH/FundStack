@@ -40,7 +40,7 @@ export function SiteFooter({ config }: SiteFooterProps) {
             {config.footer.text ? (
                 <p>{config.footer.text}</p>
             ) : (
-                <p>Powered by v0-hexo-donate</p>
+                <p>Powered by FundStack</p>
             )}
 
             {config.footer.show_copyright && (

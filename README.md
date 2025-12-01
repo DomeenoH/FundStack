@@ -238,6 +238,10 @@ MIT
 
 > 这是人机协作在现代软件开发中的力量见证。整个代码库通过与 AI 助手的迭代对话创建,展示了 AI 如何在保持代码质量和最佳实践的同时加速开发过程。
 
+## 💡 致谢
+
+本项目灵感来源于 GitHub 项目 [hexo-donate](https://github.com/xingjiahui/Hexo-Donate)。
+
 ## 💬 支持
 
 - **问题**: 在 [GitHub Issues](https://github.com/DomeenoH/FundStack/issues) 提交问题

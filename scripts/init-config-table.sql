@@ -1,5 +1,6 @@
 -- Configuration table for dynamic site settings
--- Hexo-Donate v2.0 - Site Configuration Schema
+-- Configuration table for dynamic site settings
+-- FundStack - Site Configuration Schema
 
 -- Create site_config table
 CREATE TABLE IF NOT EXISTS site_config (

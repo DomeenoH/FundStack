@@ -236,6 +236,10 @@ This project was collaboratively developed through an innovative AI-powered work
 
 > A testament to the power of human-AI collaboration in modern software development. This entire codebase was created through iterative conversations with AI assistants, demonstrating how AI can accelerate development while maintaining code quality and best practices.
 
+## 💡 Acknowledgements
+
+This project is inspired by the GitHub project [hexo-donate](https://github.com/xingjiahui/Hexo-Donate).
+
 ## 💬 Support
 
 - **Issues**: 在 [GitHub Issues](https://github.com/DomeenoH/FundStack/issues) 提交问题

@@ -168,7 +168,7 @@ export const DEFAULT_CONFIG: SiteConfig = {
 
     footer: {
         enabled: true,
-        text: 'Powered by v0-hexo-donate',
+        text: 'Powered by FundStack',
         show_copyright: true,
         show_runtime: true,
         start_date: '2024-01-01',

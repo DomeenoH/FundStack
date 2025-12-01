@@ -622,7 +622,7 @@ export default function ConfigManagementPage() {
                                                 id="footer_text"
                                                 value={config.footer?.text || ''}
                                                 onChange={(e) => updateConfig('footer', { ...config.footer, text: e.target.value })}
-                                                placeholder="Powered by v0-hexo-donate"
+                                                placeholder="Powered by FundStack"
                                             />
                                         </div>
                                         <div className="grid grid-cols-2 gap-4">
@@ -907,200 +907,224 @@ export default function ConfigManagementPage() {
                                 </div>
 
                                 <div className="space-y-3 pt-2">
+                                    <div className="flex items-center justify-between">
+                                        <Label>投喂提示语 (随机显示)</Label>
+                                    </div>
+                                    <div className="space-y-2">
+                                        {((config.donation_tips || []) as string[]).map((tip, index) => (
+                                            <div key={index} className="flex gap-2">
+                                                <Input
+                                                    value={tip}
+                                                    onChange={(e) => {
+                                                        const items = [...((config.donation_tips || []) as string[])];
+                                                        items[index] = e.target.value;
+                                                        updateConfig('donation_tips', items);
+                                                    }}
+                                                    placeholder={`提示语 ${index + 1}`}
+                                                />
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => alert(`预览提示语：${tip}`)}
+                                                    title="预览"
+                                                >
+                                                    <Eye className="w-4 h-4 text-gray-500" />
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                    onClick={() => {
+                                                        const items = [...((config.donation_tips || []) as string[])];
+                                                        items.splice(index, 1);
+                                                        updateConfig('donation_tips', items);
+                                                    }}
+                                                >
+                                                    <span className="sr-only">删除</span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c0 1 1 2 2 2v2" /></svg>
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
                                     <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                        variant="outline"
+                                        size="sm"
                                         onClick={() => {
-                                            const tips = [...((config.donation_tips || []) as string[])];
-                                            tips.splice(index, 1);
-                                            updateConfig('donation_tips', tips);
+                                            const tips = (config.donation_tips || []) as string[];
+                                            updateConfig('donation_tips', [...tips, '']);
                                         }}
+                                        className="w-full border-dashed"
                                     >
-                                        <span className="sr-only">删除</span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c0 1 1 2 2 2v2" /></svg>
+                                        + 添加提示语
                                     </Button>
                                 </div>
-                                    ))}
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => {
-                                        const tips = (config.donation_tips || []) as string[];
-                                        updateConfig('donation_tips', [...tips, '']);
-                                    }}
-                                    className="w-full border-dashed"
-                                >
-                                    + 添加提示语
-                                </Button>
-                            </div>
-                        </div>
-
-                        <div className="space-y-4 pt-4 border-t">
-                            <h2 className="text-lg font-semibold">隐私与说明</h2>
-                            <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
-                                <div className="space-y-0.5">
-                                    <Label htmlFor="form_privacy_visible">显示隐私说明</Label>
-                                    <p className="text-xs text-gray-500">在表单底部显示隐私相关的提示文字</p>
-                                </div>
-                                <Switch
-                                    id="form_privacy_visible"
-                                    checked={config.form_privacy_visible ?? true}
-                                    onCheckedChange={(checked) => updateConfig('form_privacy_visible', checked)}
-                                />
                             </div>
 
-                            {config.form_privacy_visible && (
-                                <div className="space-y-2 animate-in fade-in slide-in-from-top-1">
-                                    <Label htmlFor="form_privacy_text">隐私说明内容</Label>
-                                    <Textarea
-                                        id="form_privacy_text"
-                                        value={config.form_privacy_text || ''}
-                                        onChange={(e) => updateConfig('form_privacy_text', e.target.value)}
-                                        rows={2}
+                            <div className="space-y-4 pt-4 border-t">
+                                <h2 className="text-lg font-semibold">隐私与说明</h2>
+                                <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
+                                    <div className="space-y-0.5">
+                                        <Label htmlFor="form_privacy_visible">显示隐私说明</Label>
+                                        <p className="text-xs text-gray-500">在表单底部显示隐私相关的提示文字</p>
+                                    </div>
+                                    <Switch
+                                        id="form_privacy_visible"
+                                        checked={config.form_privacy_visible ?? true}
+                                        onCheckedChange={(checked) => updateConfig('form_privacy_visible', checked)}
                                     />
                                 </div>
-                            )}
-                        </div>
-                    </TabsContent>
 
-                    {/* Content Configuration Tab */}
-                    <TabsContent value="content" className="space-y-6 animate-in fade-in slide-in-from-left-2 duration-300">
-                        <div className="space-y-4">
-                            <h2 className="text-lg font-semibold">投喂理由</h2>
-                            <div className="space-y-2">
-                                <Label htmlFor="reasons_title">板块标题</Label>
-                                <Input
-                                    id="reasons_title"
-                                    value={config.reasons_title || ''}
-                                    onChange={(e) => updateConfig('reasons_title', e.target.value)}
-                                />
-                            </div>
-
-                            <div className="space-y-3">
-                                <Label>理由列表</Label>
-                                {((config.reasons_items || []) as string[]).map((item, index) => (
-                                    <div key={index} className="flex gap-2">
-                                        <Input
-                                            value={item}
-                                            onChange={(e) => updateReasonItem(index, e.target.value)}
-                                            placeholder={`理由 ${index + 1}`}
-                                        />
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                                            onClick={() => removeReasonItem(index)}
-                                        >
-                                            <span className="sr-only">删除</span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c0 1 1 2 2 2v2" /></svg>
-                                        </Button>
-                                    </div>
-                                ))}
-                                <Button variant="outline" size="sm" onClick={addReasonItem} className="w-full border-dashed">
-                                    + 添加理由
-                                </Button>
-                            </div>
-                        </div>
-
-                        <div className="space-y-4 pt-4 border-t">
-                            <h2 className="text-lg font-semibold">安全说明</h2>
-                            <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
-                                <div className="space-y-0.5">
-                                    <Label htmlFor="security_visible">显示安全说明</Label>
-                                    <p className="text-xs text-gray-500">在首页底部显示防诈骗等安全提示</p>
-                                </div>
-                                <Switch
-                                    id="security_visible"
-                                    checked={config.security_visible ?? true}
-                                    onCheckedChange={(checked) => updateConfig('security_visible', checked)}
-                                />
-                            </div>
-
-                            {config.security_visible && (
-                                <div className="space-y-4 animate-in fade-in slide-in-from-top-1">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="security_title">标题</Label>
-                                        <Input
-                                            id="security_title"
-                                            value={config.security_title || ''}
-                                            onChange={(e) => updateConfig('security_title', e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="security_description">内容</Label>
+                                {config.form_privacy_visible && (
+                                    <div className="space-y-2 animate-in fade-in slide-in-from-top-1">
+                                        <Label htmlFor="form_privacy_text">隐私说明内容</Label>
                                         <Textarea
-                                            id="security_description"
-                                            value={config.security_description || ''}
-                                            onChange={(e) => updateConfig('security_description', e.target.value)}
-                                            rows={3}
+                                            id="form_privacy_text"
+                                            value={config.form_privacy_text || ''}
+                                            onChange={(e) => updateConfig('form_privacy_text', e.target.value)}
+                                            rows={2}
                                         />
                                     </div>
-                                </div>
-                            )}
-                        </div>
-                    </TabsContent>
-                </Tabs>
-            </div>
-
-            {/* Right Panel: Live Preview */}
-            <div className="hidden lg:block lg:w-1/2 xl:w-7/12 bg-slate-100 p-8 overflow-y-auto relative">
-                <div className="max-w-md mx-auto sticky top-8">
-                    <div className="flex items-center gap-2 mb-4 text-sm text-gray-500 font-medium uppercase tracking-wider">
-                        <Eye className="w-4 h-4" />
-                        实时预览
-                    </div>
-
-                    {activeTab === 'site' && (
-                        <div className="space-y-8 animate-in fade-in zoom-in-95 duration-300">
-                            <SiteHeaderPreview config={previewConfig} />
-                            <div className="text-center text-sm text-gray-400">
-                                此处仅预览 Header 和 Hero 区域，更多内容请切换其他标签页
+                                )}
                             </div>
-                        </div>
-                    )}
+                        </TabsContent>
 
-                    {activeTab === 'creator' && (
-                        <div className="min-h-[650px] flex items-center justify-center animate-in fade-in zoom-in-95 duration-300 pb-12">
-                            <div className="w-full max-w-[380px]">
-                                <CreatorCard config={previewConfig} />
-                            </div>
-                        </div>
-                    )}
-
-                    {activeTab === 'form' && (
-                        <div className="animate-in fade-in zoom-in-95 duration-300">
-                            <DonationForm config={previewConfig} />
-                        </div>
-                    )}
-
-                    {activeTab === 'content' && (
-                        <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
-                            <Card className="p-6">
-                                <h3 className="text-lg font-bold mb-4 text-center">{config.reasons_title || '为什么投喂?'}</h3>
+                        {/* Content Configuration Tab */}
+                        <TabsContent value="content" className="space-y-6 animate-in fade-in slide-in-from-left-2 duration-300">
+                            <div className="space-y-4">
+                                <h2 className="text-lg font-semibold">投喂理由</h2>
                                 <div className="space-y-2">
-                                    {((config.reasons_items || []) as string[]).map((item, i) => (
-                                        <div key={i} className="p-3 bg-slate-50 rounded-lg text-sm text-gray-600 text-center">
-                                            {item}
+                                    <Label htmlFor="reasons_title">板块标题</Label>
+                                    <Input
+                                        id="reasons_title"
+                                        value={config.reasons_title || ''}
+                                        onChange={(e) => updateConfig('reasons_title', e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="space-y-3">
+                                    <Label>理由列表</Label>
+                                    {((config.reasons_items || []) as string[]).map((item, index) => (
+                                        <div key={index} className="flex gap-2">
+                                            <Input
+                                                value={item}
+                                                onChange={(e) => updateReasonItem(index, e.target.value)}
+                                                placeholder={`理由 ${index + 1}`}
+                                            />
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                onClick={() => removeReasonItem(index)}
+                                            >
+                                                <span className="sr-only">删除</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c0 1 1 2 2 2v2" /></svg>
+                                            </Button>
                                         </div>
                                     ))}
-                                    {(!config.reasons_items || config.reasons_items.length === 0) && (
-                                        <div className="text-center text-gray-400 italic text-sm">暂无理由</div>
-                                    )}
+                                    <Button variant="outline" size="sm" onClick={addReasonItem} className="w-full border-dashed">
+                                        + 添加理由
+                                    </Button>
                                 </div>
-                            </Card>
+                            </div>
 
-                            {config.security_visible && (
-                                <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 text-center">
-                                    <h4 className="font-semibold text-blue-900 text-sm mb-1">{config.security_title}</h4>
-                                    <p className="text-xs text-blue-700">{config.security_description}</p>
+                            <div className="space-y-4 pt-4 border-t">
+                                <h2 className="text-lg font-semibold">安全说明</h2>
+                                <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
+                                    <div className="space-y-0.5">
+                                        <Label htmlFor="security_visible">显示安全说明</Label>
+                                        <p className="text-xs text-gray-500">在首页底部显示防诈骗等安全提示</p>
+                                    </div>
+                                    <Switch
+                                        id="security_visible"
+                                        checked={config.security_visible ?? true}
+                                        onCheckedChange={(checked) => updateConfig('security_visible', checked)}
+                                    />
                                 </div>
-                            )}
+
+                                {config.security_visible && (
+                                    <div className="space-y-4 animate-in fade-in slide-in-from-top-1">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="security_title">标题</Label>
+                                            <Input
+                                                id="security_title"
+                                                value={config.security_title || ''}
+                                                onChange={(e) => updateConfig('security_title', e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="security_description">内容</Label>
+                                            <Textarea
+                                                id="security_description"
+                                                value={config.security_description || ''}
+                                                onChange={(e) => updateConfig('security_description', e.target.value)}
+                                                rows={3}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </TabsContent>
+                    </Tabs>
+                </div>
+
+                {/* Right Panel: Live Preview */}
+                <div className="hidden lg:block lg:w-1/2 xl:w-7/12 bg-slate-100 p-8 overflow-y-auto relative">
+                    <div className="max-w-md mx-auto sticky top-8">
+                        <div className="flex items-center gap-2 mb-4 text-sm text-gray-500 font-medium uppercase tracking-wider">
+                            <Eye className="w-4 h-4" />
+                            实时预览
                         </div>
-                    )}
+
+                        {activeTab === 'site' && (
+                            <div className="space-y-8 animate-in fade-in zoom-in-95 duration-300">
+                                <SiteHeaderPreview config={previewConfig} />
+                                <div className="text-center text-sm text-gray-400">
+                                    此处仅预览 Header 和 Hero 区域，更多内容请切换其他标签页
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'creator' && (
+                            <div className="min-h-[650px] flex items-center justify-center animate-in fade-in zoom-in-95 duration-300 pb-12">
+                                <div className="w-full max-w-[380px]">
+                                    <CreatorCard config={previewConfig} />
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'form' && (
+                            <div className="animate-in fade-in zoom-in-95 duration-300">
+                                <DonationForm config={previewConfig} />
+                            </div>
+                        )}
+
+                        {activeTab === 'content' && (
+                            <div className="space-y-6 animate-in fade-in zoom-in-95 duration-300">
+                                <Card className="p-6">
+                                    <h3 className="text-lg font-bold mb-4 text-center">{config.reasons_title || '为什么投喂?'}</h3>
+                                    <div className="space-y-2">
+                                        {((config.reasons_items || []) as string[]).map((item, i) => (
+                                            <div key={i} className="p-3 bg-slate-50 rounded-lg text-sm text-gray-600 text-center">
+                                                {item}
+                                            </div>
+                                        ))}
+                                        {(!config.reasons_items || config.reasons_items.length === 0) && (
+                                            <div className="text-center text-gray-400 italic text-sm">暂无理由</div>
+                                        )}
+                                    </div>
+                                </Card>
+
+                                {config.security_visible && (
+                                    <div className="bg-blue-50 p-4 rounded-xl border border-blue-100 text-center">
+                                        <h4 className="font-semibold text-blue-900 text-sm mb-1">{config.security_title}</h4>
+                                        <p className="text-xs text-blue-700">{config.security_description}</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
         </div >
     );
 }
