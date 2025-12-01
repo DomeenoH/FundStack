@@ -240,21 +240,21 @@ const DonationList = forwardRef<DonationListRef, { limit?: number; merge?: boole
             <table className="w-full text-base">
               <thead className="bg-white/50 border-b border-gray-100/50">
                 <tr>
-                  <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs">投喂者</th>
-                  <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs">邮箱/QQ</th>
+                  <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs whitespace-nowrap">投喂者</th>
+                  <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs whitespace-nowrap">邮箱/QQ</th>
                   {merge ? (
                     <>
-                      <th className="px-8 py-5 text-center font-bold text-gray-500 uppercase tracking-wider text-xs">投喂次数</th>
-                      <th className="px-8 py-5 text-right font-bold text-gray-500 uppercase tracking-wider text-xs">总金额</th>
-                      <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs">最近时间</th>
+                      <th className="px-8 py-5 text-center font-bold text-gray-500 uppercase tracking-wider text-xs whitespace-nowrap">投喂次数</th>
+                      <th className="px-8 py-5 text-right font-bold text-gray-500 uppercase tracking-wider text-xs whitespace-nowrap">总金额</th>
+                      <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs whitespace-nowrap">最近时间</th>
                     </>
                   ) : (
                     <>
-                      <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs">支付方式</th>
-                      <th className="px-8 py-5 text-right font-bold text-gray-500 uppercase tracking-wider text-xs">金额</th>
-                      <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs">留言</th>
-                      <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs">状态</th>
-                      <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs">时间</th>
+                      <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs whitespace-nowrap">支付方式</th>
+                      <th className="px-8 py-5 text-right font-bold text-gray-500 uppercase tracking-wider text-xs whitespace-nowrap">金额</th>
+                      <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs whitespace-nowrap">留言</th>
+                      <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs whitespace-nowrap">状态</th>
+                      <th className="px-8 py-5 text-left font-bold text-gray-500 uppercase tracking-wider text-xs whitespace-nowrap">时间</th>
                     </>
                   )}
                 </tr>
@@ -292,30 +292,30 @@ const DonationList = forwardRef<DonationListRef, { limit?: number; merge?: boole
                             </span>
                           </div>
                         </td>
-                        <td className="px-8 py-5 text-sm text-gray-600">
+                        <td className="px-8 py-5 text-sm text-gray-600 whitespace-nowrap">
                           {maskContact(donation.user_email)}
                         </td>
 
                         {merge ? (
                           <>
-                            <td className="px-8 py-5 text-center text-gray-600 font-medium">
+                            <td className="px-8 py-5 text-center text-gray-600 font-medium whitespace-nowrap">
                               {donation.donation_count}
                             </td>
-                            <td className="px-8 py-5 text-right font-bold text-gray-900">
+                            <td className="px-8 py-5 text-right font-bold text-gray-900 whitespace-nowrap">
                               ¥{formatAmount(donation.amount)}
                             </td>
-                            <td className="px-8 py-5 text-gray-400 text-sm font-medium">
+                            <td className="px-8 py-5 text-gray-400 text-sm font-medium whitespace-nowrap">
                               {formatDateTime(donation.created_at)}
                             </td>
                           </>
                         ) : (
                           <>
-                            <td className="px-8 py-5">
+                            <td className="px-8 py-5 whitespace-nowrap">
                               <span className={cn("flex items-center gap-2 text-sm font-semibold", PAYMENT_METHOD_COLORS[donation.payment_method as keyof typeof PAYMENT_METHOD_COLORS])}>
                                 {PAYMENT_METHOD_LABELS[donation.payment_method as keyof typeof PAYMENT_METHOD_LABELS]}
                               </span>
                             </td>
-                            <td className="px-8 py-5 text-right font-bold text-gray-900">
+                            <td className="px-8 py-5 text-right font-bold text-gray-900 whitespace-nowrap">
                               ¥{formatAmount(donation.amount)}
                             </td>
                             <td className="px-8 py-5 text-gray-600 text-sm">
@@ -335,13 +335,13 @@ const DonationList = forwardRef<DonationListRef, { limit?: number; merge?: boole
                                 )}
                               </div>
                             </td>
-                            <td className="px-8 py-5">
+                            <td className="px-8 py-5 whitespace-nowrap">
                               <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide ${STATUS_BADGE_STYLES[donation.status as keyof typeof STATUS_BADGE_STYLES] || STATUS_BADGE_STYLES.pending
                                 }`}>
                                 {STATUS_LABELS[donation.status as keyof typeof STATUS_LABELS] || donation.status}
                               </span>
                             </td>
-                            <td className="px-8 py-5 text-gray-400 text-sm font-medium">
+                            <td className="px-8 py-5 text-gray-400 text-sm font-medium whitespace-nowrap">
                               {formatDateTime(donation.created_at)}
                             </td>
                           </>
