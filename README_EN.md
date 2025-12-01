@@ -36,8 +36,9 @@ When a supporter submits a donation:
 - **🔒 Secure Data Handling**: Input sanitization, SQL injection protection, XSS protection
 - **💳 Multiple Payment Methods**: Support for WeChat Pay, Alipay, QQ Pay, and more
 - **📧 Email Notifications**: Automatic notifications for donors and administrators
-- **🎛️ Admin Dashboard**: Comprehensive management panel with filtering and search
-- **⚙️ Dynamic Configuration**: Web-based site configuration without code changes
+- **🎛️ Admin Dashboard**: Comprehensive management panel with filtering, search, editing, and batch deletion
+- **🧩 CAPTCHA Verification**: Integrated sliding jigsaw CAPTCHA to prevent spam submissions
+- **⚙️ Dynamic Configuration**: Web-based site configuration with real-time email template preview
 - **📱 Mobile Optimized**: Fully responsive design with touch-friendly interactions
 
 ### Security

@@ -107,6 +107,21 @@ To enable automatic emails:
 - Adjust `RATE_LIMIT_PER_24H` to control max donations per IP per day
 - Set `RATE_LIMIT_ENABLED=false` to disable
 
+## Advanced Configuration
+
+### CAPTCHA Verification
+
+To prevent spam, you can enable CAPTCHA verification in the admin panel.
+1. Visit `http://localhost:3000/admin/config`
+2. Find "Donation Form Configuration"
+3. Enable "Enable CAPTCHA"
+
+### Email Template Preview
+
+You can preview email templates in real-time in the admin panel:
+1. Visit `http://localhost:3000/admin/config`
+2. In the "Email Configuration" section, click the "Preview Template" button
+
 ## Deployment
 
 ### Deploy to Vercel
