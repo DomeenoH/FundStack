@@ -19,11 +19,11 @@ export class EmailService {
       if (process.env.ADMIN_EMAIL) {
         await sendDonationNotification(process.env.ADMIN_EMAIL, donation);
       }
-      
+
       if (donation.user_email) {
         await sendDonationConfirmation(donation.user_email, donation);
       }
-      
+
       return true;
     } catch (error) {
       console.error('Failed to send donation alerts:', error);
@@ -34,7 +34,11 @@ export class EmailService {
   async sendConfirmationNotification(donation: any): Promise<boolean> {
     try {
       if (donation.user_email) {
-        const response = await fetch('/api/email/send', {
+        let baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+        if (!baseUrl.startsWith('http')) {
+          baseUrl = `https://${baseUrl}`;
+        }
+        const response = await fetch(`${baseUrl}/api/email/send`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -57,8 +61,12 @@ export class EmailService {
     try {
       const promises = donors
         .filter(d => d.user_email)
-        .map(d => 
-          fetch('/api/email/send', {
+        .map(d => {
+          let baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+          if (!baseUrl.startsWith('http')) {
+            baseUrl = `https://${baseUrl}`;
+          }
+          return fetch(`${baseUrl}/api/email/send`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -67,8 +75,8 @@ export class EmailService {
               template: 'bulk-message',
               data: { donor: d, message }
             })
-          })
-        );
+          });
+        });
 
       const results = await Promise.all(promises);
       return results.every(r => r.ok);

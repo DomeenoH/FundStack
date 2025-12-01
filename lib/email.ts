@@ -106,7 +106,10 @@ export async function sendDonationNotification(
 ): Promise<boolean> {
   try {
     // We use the absolute URL for server-side fetch
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    let baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    if (!baseUrl.startsWith('http')) {
+      baseUrl = `https://${baseUrl}`;
+    }
     const response = await fetch(`${baseUrl}/api/email/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -129,7 +132,10 @@ export async function sendDonationConfirmation(
   donationData: any
 ): Promise<boolean> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    let baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    if (!baseUrl.startsWith('http')) {
+      baseUrl = `https://${baseUrl}`;
+    }
     const response = await fetch(`${baseUrl}/api/email/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -152,7 +158,10 @@ export async function sendDonationReply(
   replyData: any
 ): Promise<boolean> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    let baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    if (!baseUrl.startsWith('http')) {
+      baseUrl = `https://${baseUrl}`;
+    }
     const response = await fetch(`${baseUrl}/api/email/send`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
