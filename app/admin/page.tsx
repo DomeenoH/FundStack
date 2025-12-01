@@ -67,6 +67,12 @@ export default function AdminPage() {
         localStorage.setItem('adminToken', credentials); // Store token
         const data = await response.json();
         setDonations(data.donations);
+
+        // Check if there are any pending donations
+        const hasPending = data.donations.some((d: AdminDonation) => d.status === 'pending');
+        if (!hasPending) {
+          setFilterStatus('all');
+        }
       } else {
         setError('密码错误');
       }

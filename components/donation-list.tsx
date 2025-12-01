@@ -318,20 +318,22 @@ const DonationList = forwardRef<DonationListRef, { limit?: number; merge?: boole
                             <td className="px-8 py-5 text-right font-bold text-gray-900">
                               ¥{formatAmount(donation.amount)}
                             </td>
-                            <td className="px-8 py-5 text-gray-600 truncate max-w-[240px] text-sm flex items-center gap-2">
-                              {donation.user_message || '-'}
-                              {donation.reply_content && (
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-600 cursor-help" title="已回复">
-                                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3"><polyline points="9 17 4 12 9 7" /><path d="M20 18v-2a4 4 0 0 0-4-4H4" /></svg>
-                                    </span>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p className="max-w-xs">{donation.reply_content}</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              )}
+                            <td className="px-8 py-5 text-gray-600 text-sm">
+                              <div className="max-w-[240px] break-words whitespace-normal">
+                                {donation.user_message || '-'}
+                                {donation.reply_content && (
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-600 cursor-help ml-2 align-middle" title="已回复">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3"><polyline points="9 17 4 12 9 7" /><path d="M20 18v-2a4 4 0 0 0-4-4H4" /></svg>
+                                      </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p className="max-w-xs">{donation.reply_content}</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                )}
+                              </div>
                             </td>
                             <td className="px-8 py-5">
                               <span className={`px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide ${STATUS_BADGE_STYLES[donation.status as keyof typeof STATUS_BADGE_STYLES] || STATUS_BADGE_STYLES.pending

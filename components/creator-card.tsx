@@ -66,13 +66,29 @@ export function CreatorCard({ config, selectedPaymentMethod }: CreatorCardProps)
             priority
             onError={() => setAvatarError(true)}
           />
-          <div className="absolute bottom-1 right-1 bg-blue-500 text-white p-1.5 rounded-full border-4 border-white shadow-sm flex items-center justify-center w-8 h-8">
-            {config.creator_avatar_badge ? (
-              <span className="text-sm leading-none">{config.creator_avatar_badge}</span>
-            ) : (
-              <Sparkles className="w-3 h-3" />
-            )}
-          </div>
+          {/* Avatar Badge */}
+          {(config.creator_avatar_badge || config.creator_avatar_badge_content) && (
+            <div
+              className="absolute -bottom-1 -right-1 w-8 h-8 flex items-center justify-center rounded-full border-2 border-white shadow-sm z-10 overflow-hidden"
+              style={{
+                backgroundColor: config.creator_avatar_badge_bg_visible !== false
+                  ? (config.creator_avatar_badge_bg_color || '#3b82f6')
+                  : 'transparent',
+              }}
+            >
+              {config.creator_avatar_badge_type === 'image' && config.creator_avatar_badge_content ? (
+                <img
+                  src={config.creator_avatar_badge_content}
+                  alt="Badge"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-sm leading-none select-none">
+                  {config.creator_avatar_badge_content || config.creator_avatar_badge}
+                </span>
+              )}
+            </div>
+          )}
         </motion.div>
 
         <h3 className="text-2xl font-bold text-gray-900 tracking-tight mb-2">{config.creator_name}</h3>

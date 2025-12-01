@@ -50,8 +50,20 @@ export function SiteHeaderPreview({ config }: SiteHeaderPreviewProps) {
             <div className="bg-gradient-to-b from-slate-50 to-white px-8 py-12">
                 <div className="text-center mb-8">
                     <div className="flex items-center justify-center mb-3">
-                        {config.site_hero_emoji_visible !== false && (
-                            <span className="text-3xl animate-bounce">{config.site_hero_emoji || '❤️'}</span>
+                        {config.site_hero_emoji_visible && (
+                            <div className="mb-4 animate-bounce">
+                                {config.site_hero_content_type === 'image' && config.site_hero_content ? (
+                                    <img
+                                        src={config.site_hero_content}
+                                        alt="Hero Decoration"
+                                        className="w-12 h-12 object-contain mx-auto"
+                                    />
+                                ) : (
+                                    <span className="text-4xl filter drop-shadow-md">
+                                        {config.site_hero_content || config.site_hero_emoji || '❤️'}
+                                    </span>
+                                )}
+                            </div>
                         )}
                     </div>
                     <h1 className="text-3xl font-bold mb-3 text-gray-900">{config.site_heading || '感谢你的支持'}</h1>

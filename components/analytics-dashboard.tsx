@@ -192,7 +192,7 @@ export function AnalyticsDashboard() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <Card className="p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+          <Card className="p-6 shadow-lg hover:shadow-xl transition-all duration-300 h-full">
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-bold">投喂趋势</h3>
               <Tabs value={trendPeriod} onValueChange={setTrendPeriod}>
@@ -203,7 +203,7 @@ export function AnalyticsDashboard() {
                 </TabsList>
               </Tabs>
             </div>
-            <div className="h-[300px] w-full">
+            <div className="h-[350px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={analytics.trends[trendPeriod as keyof typeof analytics.trends]}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
@@ -273,54 +273,57 @@ export function AnalyticsDashboard() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.5 }}
         >
-          <Card className="p-6 shadow-lg hover:shadow-xl transition-all duration-300">
+          <Card className="p-6 shadow-lg hover:shadow-xl transition-all duration-300 h-full flex flex-col">
             <h3 className="text-xl font-bold mb-4">支付方式占比</h3>
-            <div className="h-[380px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={paymentData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={65}
-                    outerRadius={95}
-                    paddingAngle={3}
-                    dataKey="value"
-                    label={({ name, percent }) => `${name} ${((percent ?? 0) * 100).toFixed(1)}%`}
-                    labelLine={{ stroke: '#94a3b8', strokeWidth: 1 }}
-                  >
-                    {paymentData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={entry.color}
-                        stroke="#fff"
-                        strokeWidth={2}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    formatter={(value: number, name: string, props: any) => [
-                      `¥${value.toFixed(2)} (${((value / totalAmount) * 100).toFixed(1)}%)`,
-                      `${props.payload.count} 笔`
-                    ]}
-                    contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb' }}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="mt-4 space-y-2">
-              {paymentData.map((item, idx) => (
-                <div key={idx} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: item.color }}
+            <div className="flex-1 flex flex-col justify-center">
+              <div className="h-[200px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={paymentData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={80}
+                      paddingAngle={3}
+                      dataKey="value"
+                    >
+                      {paymentData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={entry.color}
+                          stroke="#fff"
+                          strokeWidth={2}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      formatter={(value: number, name: string, props: any) => [
+                        `¥${value.toFixed(2)} (${((value / totalAmount) * 100).toFixed(1)}%)`,
+                        `${props.payload.count} 笔`
+                      ]}
+                      contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb' }}
                     />
-                    <span className="font-medium">{item.name}</span>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="mt-4 space-y-3 px-2">
+                {paymentData.map((item, idx) => (
+                  <div key={idx} className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="w-3 h-3 rounded-full shrink-0"
+                        style={{ backgroundColor: item.color }}
+                      />
+                      <span className="font-medium text-gray-700">{item.name}</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-bold text-gray-900 block">¥{item.value.toFixed(0)}</span>
+                      <span className="text-xs text-gray-500">{item.count} 笔</span>
+                    </div>
                   </div>
-                  <span className="text-gray-600">{item.count} 笔</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </Card>
         </motion.div>
@@ -330,27 +333,29 @@ export function AnalyticsDashboard() {
         <Card className="p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
           <h3 className="text-xl font-bold mb-4">投喂榜单</h3>
           <div className="space-y-3">
-            {analytics.top_donors.length > 0 ? (
-              analytics.top_donors.map((donor, idx) => (
-                <div key={idx} className="flex items-center justify-between border-b pb-3 hover:bg-gray-50 rounded px-2 -mx-2 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <span className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold ${idx === 0 ? 'bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900' :
-                      idx === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-gray-800' :
-                        idx === 2 ? 'bg-gradient-to-br from-orange-300 to-orange-400 text-orange-900' :
-                          'bg-gray-100 text-gray-600'
-                      }`}>
-                      {idx + 1}
-                    </span>
-                    <div>
-                      <p className="font-medium">{donor.name}</p>
-                      <p className="text-xs text-gray-500">
-                        最近: {new Date(donor.date).toLocaleDateString('zh-CN')}
-                      </p>
+            {analytics.top_donors.filter(d => d.name !== '-').length > 0 ? (
+              analytics.top_donors
+                .filter(d => d.name !== '-')
+                .map((donor, idx) => (
+                  <div key={idx} className="flex items-center justify-between border-b pb-3 hover:bg-gray-50 rounded px-2 -mx-2 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <span className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold ${idx === 0 ? 'bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900' :
+                        idx === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-gray-800' :
+                          idx === 2 ? 'bg-gradient-to-br from-orange-300 to-orange-400 text-orange-900' :
+                            'bg-gray-100 text-gray-600'
+                        }`}>
+                        {idx + 1}
+                      </span>
+                      <div>
+                        <p className="font-medium">{donor.name}</p>
+                        <p className="text-xs text-gray-500">
+                          最近: {new Date(donor.date).toLocaleDateString('zh-CN')}
+                        </p>
+                      </div>
                     </div>
+                    <p className="font-bold text-lg text-blue-600">¥{donor.amount.toFixed(2)}</p>
                   </div>
-                  <p className="font-bold text-lg text-blue-600">¥{donor.amount.toFixed(2)}</p>
-                </div>
-              ))
+                ))
             ) : (
               <p className="text-gray-500 text-center py-4">还没有上榜的小伙伴</p>
             )}
