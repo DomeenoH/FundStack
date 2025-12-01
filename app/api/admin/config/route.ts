@@ -7,7 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAuth } from '@/lib/auth';
 import { getSiteConfig, batchUpdateConfig } from '@/lib/db';
-import { clearConfigCache } from '@/lib/config';
+import { clearConfigCache, DEFAULT_CONFIG, SiteConfig } from '@/lib/config';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,7 +23,13 @@ export async function GET(request: NextRequest) {
             );
         }
 
-        const config = await getSiteConfig();
+        const rawConfig = await getSiteConfig();
+
+        // Merge with defaults to ensure all fields exist
+        const config: SiteConfig = {
+            ...DEFAULT_CONFIG,
+            ...rawConfig,
+        };
 
         return NextResponse.json({
             success: true,

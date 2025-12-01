@@ -28,23 +28,56 @@ export async function sendEmail(
     const siteConfig = config || await getConfig();
     const emailConfig = siteConfig.email_config;
 
-    if (!emailConfig?.enabled) {
-      console.log('Email disabled in config');
+    async function createTransporter(config: SiteConfig) {
+      const emailConfig = config.email_config;
+      if (!emailConfig?.enabled) return null;
+
+      let transportConfig: any = {};
+
+      if (emailConfig.provider === 'resend') {
+        transportConfig = {
+          host: 'smtp.resend.com',
+          port: 465,
+          secure: true,
+          auth: {
+            user: 'resend',
+            pass: emailConfig.apiKey || emailConfig.auth_pass,
+          },
+        };
+      } else if (emailConfig.provider === 'sendgrid') {
+        transportConfig = {
+          host: 'smtp.sendgrid.net',
+          port: 587,
+          secure: false, // SendGrid recommends port 587 with STARTTLS
+          auth: {
+            user: 'apikey',
+            pass: emailConfig.apiKey || emailConfig.auth_pass,
+          },
+        };
+      } else {
+        // Default SMTP
+        transportConfig = {
+          host: emailConfig.host,
+          port: emailConfig.port,
+          secure: emailConfig.secure,
+          auth: {
+            user: emailConfig.auth_user,
+            pass: emailConfig.auth_pass,
+          },
+        };
+      }
+
+      return nodemailer.createTransport(transportConfig);
+    }
+    const transporter = await createTransporter(siteConfig);
+
+    if (!transporter) {
+      console.log('Email disabled in config or transporter could not be created.');
       return false;
     }
 
-    const transporter = nodemailer.createTransport({
-      host: emailConfig.host,
-      port: emailConfig.port,
-      secure: emailConfig.secure, // true for 465, false for other ports
-      auth: {
-        user: emailConfig.auth_user,
-        pass: emailConfig.auth_pass,
-      },
-    });
-
     await transporter.sendMail({
-      from: `"${emailConfig.from_name}" <${emailConfig.from_email}>`,
+      from: `"${emailConfig?.from_name}" <${emailConfig?.from_email}>`,
       to,
       subject,
       html,

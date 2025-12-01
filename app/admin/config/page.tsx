@@ -15,6 +15,7 @@ import type { SiteConfig, PaymentMethod } from '@/lib/config';
 import { CreatorCard } from '@/components/creator-card';
 import DonationForm from '@/components/donation-form';
 import { SiteHeaderPreview } from '@/components/site-header-preview';
+import { SiteFooter } from '@/components/site-footer';
 import { cn } from '@/lib/utils';
 
 export default function ConfigManagementPage() {
@@ -194,7 +195,7 @@ export default function ConfigManagementPage() {
                     )}
 
                     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-                        <TabsList className="grid w-full grid-cols-4 p-1 bg-slate-100/80">
+                        <TabsList className="grid w-full grid-cols-5 p-1 bg-slate-100/80">
                             <TabsTrigger value="site" className="data-[state=active]:bg-white data-[state=active]:shadow-sm">
                                 <LayoutTemplate className="w-4 h-4 mr-2" />
                                 网站
@@ -234,46 +235,94 @@ export default function ConfigManagementPage() {
                             {config.email_config?.enabled && (
                                 <div className="space-y-6 animate-in fade-in slide-in-from-top-1">
                                     <div className="space-y-4 border p-4 rounded-lg bg-white">
-                                        <h3 className="font-medium text-sm text-gray-900 border-b pb-2 mb-4">SMTP 服务器设置</h3>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="space-y-2">
-                                                <Label htmlFor="smtp_host">SMTP 主机</Label>
-                                                <Input
-                                                    id="smtp_host"
-                                                    value={config.email_config?.host || ''}
-                                                    onChange={(e) => updateConfig('email_config', { ...config.email_config, host: e.target.value })}
-                                                    placeholder="smtp.example.com"
-                                                />
+                                        <h3 className="font-medium text-sm text-gray-900 border-b pb-2 mb-4">服务商设置</h3>
+
+                                        <div className="space-y-2">
+                                            <Label>邮件服务商</Label>
+                                            <div className="flex gap-2">
+                                                {['smtp', 'resend', 'sendgrid'].map((provider) => (
+                                                    <Button
+                                                        key={provider}
+                                                        type="button"
+                                                        variant={config.email_config?.provider === provider ? 'default' : 'outline'}
+                                                        size="sm"
+                                                        onClick={() => updateConfig('email_config', { ...config.email_config, provider })}
+                                                        className="flex-1 capitalize"
+                                                    >
+                                                        {provider === 'smtp' ? 'Custom SMTP' : provider}
+                                                    </Button>
+                                                ))}
                                             </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="smtp_port">端口</Label>
-                                                <Input
-                                                    id="smtp_port"
-                                                    type="number"
-                                                    value={config.email_config?.port || 465}
-                                                    onChange={(e) => updateConfig('email_config', { ...config.email_config, port: parseInt(e.target.value) })}
-                                                    placeholder="465"
-                                                />
+                                        </div>
+
+                                        {config.email_config?.provider === 'smtp' ? (
+                                            <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-1">
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="smtp_host">SMTP 主机</Label>
+                                                    <Input
+                                                        id="smtp_host"
+                                                        value={config.email_config?.host || ''}
+                                                        onChange={(e) => updateConfig('email_config', { ...config.email_config, host: e.target.value })}
+                                                        placeholder="smtp.example.com"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="smtp_port">端口</Label>
+                                                    <Input
+                                                        id="smtp_port"
+                                                        type="number"
+                                                        value={config.email_config?.port || 465}
+                                                        onChange={(e) => updateConfig('email_config', { ...config.email_config, port: parseInt(e.target.value) })}
+                                                        placeholder="465"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="auth_user">用户名 / 邮箱</Label>
+                                                    <Input
+                                                        id="auth_user"
+                                                        value={config.email_config?.auth_user || ''}
+                                                        onChange={(e) => updateConfig('email_config', { ...config.email_config, auth_user: e.target.value })}
+                                                        placeholder="user@example.com"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="auth_pass">密码 / 授权码</Label>
+                                                    <Input
+                                                        id="auth_pass"
+                                                        type="password"
+                                                        value={config.email_config?.auth_pass || ''}
+                                                        onChange={(e) => updateConfig('email_config', { ...config.email_config, auth_pass: e.target.value })}
+                                                        placeholder="********"
+                                                    />
+                                                </div>
+                                                <div className="flex items-center space-x-2 pt-8 col-span-2">
+                                                    <Switch
+                                                        id="smtp_secure"
+                                                        checked={config.email_config?.secure ?? true}
+                                                        onCheckedChange={(checked) => updateConfig('email_config', { ...config.email_config, secure: checked })}
+                                                    />
+                                                    <Label htmlFor="smtp_secure">启用 SSL/TLS</Label>
+                                                </div>
                                             </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="auth_user">用户名 / 邮箱</Label>
-                                                <Input
-                                                    id="auth_user"
-                                                    value={config.email_config?.auth_user || ''}
-                                                    onChange={(e) => updateConfig('email_config', { ...config.email_config, auth_user: e.target.value })}
-                                                    placeholder="user@example.com"
-                                                />
+                                        ) : (
+                                            <div className="space-y-4 animate-in fade-in slide-in-from-top-1">
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="api_key">API Key</Label>
+                                                    <Input
+                                                        id="api_key"
+                                                        type="password"
+                                                        value={config.email_config?.apiKey || ''}
+                                                        onChange={(e) => updateConfig('email_config', { ...config.email_config, apiKey: e.target.value })}
+                                                        placeholder={`Enter your ${config.email_config?.provider} API Key`}
+                                                    />
+                                                    <p className="text-xs text-gray-500">
+                                                        {config.email_config?.provider === 'resend' ? '从 resend.com 获取 API Key' : '从 sendgrid.com 获取 API Key'}
+                                                    </p>
+                                                </div>
                                             </div>
-                                            <div className="space-y-2">
-                                                <Label htmlFor="auth_pass">密码 / 授权码</Label>
-                                                <Input
-                                                    id="auth_pass"
-                                                    type="password"
-                                                    value={config.email_config?.auth_pass || ''}
-                                                    onChange={(e) => updateConfig('email_config', { ...config.email_config, auth_pass: e.target.value })}
-                                                    placeholder="********"
-                                                />
-                                            </div>
+                                        )}
+
+                                        <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                                             <div className="space-y-2">
                                                 <Label htmlFor="from_name">发件人名称</Label>
                                                 <Input
@@ -291,14 +340,6 @@ export default function ConfigManagementPage() {
                                                     onChange={(e) => updateConfig('email_config', { ...config.email_config, from_email: e.target.value })}
                                                     placeholder="noreply@example.com"
                                                 />
-                                            </div>
-                                            <div className="flex items-center space-x-2 pt-8">
-                                                <Switch
-                                                    id="smtp_secure"
-                                                    checked={config.email_config?.secure ?? true}
-                                                    onCheckedChange={(checked) => updateConfig('email_config', { ...config.email_config, secure: checked })}
-                                                />
-                                                <Label htmlFor="smtp_secure">启用 SSL/TLS</Label>
                                             </div>
                                         </div>
                                     </div>
@@ -559,6 +600,13 @@ export default function ConfigManagementPage() {
                                         )}
                                     </div>
                                 )}
+                            </div>
+
+                            <div className="space-y-4 pt-4 border-t">
+                                <h2 className="text-lg font-semibold">预览</h2>
+                                <div className="border rounded-lg overflow-hidden bg-gray-50">
+                                    <SiteFooter config={previewConfig} />
+                                </div>
                             </div>
                         </TabsContent>
 

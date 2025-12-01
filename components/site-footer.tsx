@@ -37,12 +37,14 @@ export function SiteFooter({ config }: SiteFooterProps) {
 
     return (
         <footer className="py-8 text-center text-sm text-gray-500 space-y-2">
-            {config.footer.text && (
+            {config.footer.text ? (
                 <p>{config.footer.text}</p>
+            ) : (
+                <p>Powered by v0-hexo-donate</p>
             )}
 
             {config.footer.show_copyright && (
-                <p>&copy; {new Date().getFullYear()} {config.site_title}. All rights reserved.</p>
+                <p>&copy; {new Date().getFullYear()} {config.site_title || '投喂小站'}. All rights reserved.</p>
             )}
 
             {config.footer.show_runtime && runtime && (

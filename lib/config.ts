@@ -92,6 +92,8 @@ export interface EmailTemplate {
 
 export interface EmailConfig {
     enabled: boolean;
+    provider: 'smtp' | 'resend' | 'sendgrid';
+    apiKey?: string; // For Resend/SendGrid
     host: string;
     port: number;
     secure: boolean;
@@ -178,6 +180,8 @@ export const DEFAULT_CONFIG: SiteConfig = {
 
     email_config: {
         enabled: false,
+        provider: 'smtp',
+        apiKey: '',
         host: 'smtp.example.com',
         port: 465,
         secure: true,
