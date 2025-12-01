@@ -50,11 +50,18 @@ export function SiteNav({ config }: SiteNavProps) {
   const showAvatar = config?.site_nav_show_avatar || false;
 
   // Resolve avatar URL
-  let avatarUrl = config?.creator_avatar || '/placeholder-user.jpg';
+  // Resolve avatar URL
+  let avatarUrl = '/placeholder-user.jpg';
+
+  // Priority: Custom Avatar > Creator QQ > Payment QQ > Placeholder
+  if (config?.payment_qq_number) {
+    avatarUrl = getQQAvatarUrl(config.payment_qq_number);
+  }
   if (config?.creator_qq_number) {
     avatarUrl = getQQAvatarUrl(config.creator_qq_number);
-  } else if (config?.payment_qq_number) {
-    avatarUrl = getQQAvatarUrl(config.payment_qq_number);
+  }
+  if (config?.creator_avatar && config.creator_avatar !== '/placeholder-user.jpg') {
+    avatarUrl = config.creator_avatar;
   }
 
   return (
