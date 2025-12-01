@@ -25,6 +25,7 @@ import DonationForm from '@/components/donation-form';
 import { SiteHeaderPreview } from '@/components/site-header-preview';
 import { SiteFooter } from '@/components/site-footer';
 import { cn } from '@/lib/utils';
+import { getCreatorAvatarUrl } from '@/lib/avatar-utils';
 
 export default function ConfigManagementPage() {
     const router = useRouter();
@@ -1236,7 +1237,12 @@ export default function ConfigManagementPage() {
                                                 user_name: '张三',
                                                 amount: '50.00',
                                                 user_message: '加油！',
-                                                reply_content: '谢谢支持！'
+                                                reply_content: '谢谢支持！',
+                                                creator_name: config.creator_name || '站长',
+                                                creator_avatar: getCreatorAvatarUrl(
+                                                    config.creator_avatar || '/placeholder-user.jpg',
+                                                    config.creator_qq_number || config.payment_qq_number
+                                                )
                                             };
 
                                             let previewBody = template.body || '';
