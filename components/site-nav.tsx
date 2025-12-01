@@ -46,7 +46,7 @@ export function SiteNav({ config }: SiteNavProps) {
     return () => window.removeEventListener('resize', updateTabPosition);
   }, [activeIndex]);
 
-  const siteTitle = config?.site_nav_title || '投喂小站';
+  const siteTitle = config?.site_title || '投喂小站';
   const showAvatar = config?.site_nav_show_avatar || false;
 
   // Resolve avatar URL
