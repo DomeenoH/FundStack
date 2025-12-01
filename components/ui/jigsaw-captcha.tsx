@@ -84,13 +84,35 @@ export function JigsawCaptcha({
         ctx.fill();
 
         // Draw block
-        drawPath(blockCtx, x, y, 'clip');
-        blockCtx.drawImage(img, 0, 0, width, height);
+        // 1. Draw the full image on block canvas
+        // 2. Clip the path at (x, y)
+        // 3. Extract the clipped part
+        // 4. Clear block canvas and put the extracted part at (0, y)
 
-        // Extract block
-        const y_offset = y - r * 2 + 2;
-        const ImageData = blockCtx.getImageData(x, y_offset, L, L);
-        block.width = L;
+        // Alternative: Draw path at (0, y) on block canvas, clip, then draw image shifted by -x
+
+        // Let's stick to the extraction method but be careful with coordinates
+
+        // Temp canvas for block
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = width;
+        tempCanvas.height = height;
+        const tempCtx = tempCanvas.getContext('2d');
+        if (!tempCtx) return;
+
+        drawPath(tempCtx, x, y, 'clip');
+        tempCtx.drawImage(img, 0, 0, width, height);
+
+        // Extract the piece
+        const y_offset = y - r * 2; // Adjust for top ear
+        // Ensure we capture enough height
+        const ImageData = tempCtx.getImageData(x, y_offset, L, L + r * 2);
+
+        // Resize block canvas to match piece size?
+        // No, let's keep block canvas full size but transparent, and draw the piece at x=0
+        block.width = width; // Reset width to clear
+
+        // Put data at x=0, y=y_offset
         blockCtx.putImageData(ImageData, 0, y_offset);
     };
 
@@ -160,32 +182,9 @@ export function JigsawCaptcha({
                     ref={blockRef}
                     width={width}
                     height={height}
-                    className="absolute top-0 left-0"
-                    style={{ left: sliderValue[0] - targetX }} // Move relative to target position? No, we need to move the block from 0 to width
-                // Actually, the block is drawn at targetX. We need to display it at sliderValue.
-                // But we extracted it.
-                // Let's rethink:
-                // We draw the block at (x, y).
-                // We want to show it at (sliderValue, y).
-                // So we should extract it from (x, y) but display it at (0, y) initially?
-                // Wait, the standard way is:
-                // 1. Draw full image on bg canvas.
-                // 2. Draw hole on bg canvas.
-                // 3. Draw block on another canvas (block canvas).
-                // 4. Move block canvas with slider.
-                />
-                {/* Correct implementation for block movement */}
-                <canvas
-                    ref={blockRef}
-                    width={width}
-                    height={height}
                     className="absolute top-0 left-0 pointer-events-none"
                     style={{
                         transform: `translateX(${sliderValue[0]}px)`,
-                        // We need to offset it so it starts at left edge?
-                        // If we extracted it at targetX, and we want it to start at 0...
-                        // We need to shift it by -targetX.
-                        left: -targetX
                     }}
                 />
 
