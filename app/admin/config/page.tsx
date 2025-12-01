@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from '@/components/ui/switch';
-import type { SiteConfig, PaymentMethod } from '@/lib/config';
+import { type SiteConfig, type PaymentMethod, DEFAULT_CONFIG } from '@/lib/config';
 import { CreatorCard } from '@/components/creator-card';
 import DonationForm from '@/components/donation-form';
 import { SiteHeaderPreview } from '@/components/site-header-preview';
@@ -411,7 +411,25 @@ export default function ConfigManagementPage() {
                                     </div>
 
                                     <div className="space-y-4">
-                                        <h3 className="font-medium text-sm text-gray-900">邮件模板设置</h3>
+                                        <div className="flex items-center justify-between">
+                                            <h3 className="font-medium text-sm text-gray-900">邮件模板设置</h3>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() => {
+                                                    if (confirm('确定要重置所有邮件模板为默认值吗？这将覆盖当前的自定义设置。')) {
+                                                        updateConfig('email_config', {
+                                                            ...config.email_config,
+                                                            templates: DEFAULT_CONFIG.email_config?.templates
+                                                        });
+                                                    }
+                                                }}
+                                                className="h-8 text-xs"
+                                            >
+                                                <RotateCcw className="w-3 h-3 mr-1" />
+                                                重置为默认模板
+                                            </Button>
+                                        </div>
                                         <Tabs defaultValue="notification" className="w-full" onValueChange={(val) => {
                                             // We can use this to update the preview if needed, but the preview component handles it via config
                                         }}>
