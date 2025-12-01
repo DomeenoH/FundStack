@@ -24,6 +24,10 @@ export interface SiteConfig {
     creator_description: string;
     creator_avatar: string;
     creator_avatar_badge?: string;
+    creator_avatar_badge_bg_visible?: boolean;
+    creator_avatar_badge_bg_color?: string;
+    creator_avatar_badge_type?: 'emoji' | 'image';
+    creator_avatar_badge_content?: string;
     creator_qq_number?: string;
     payment_alipay_qr: string;
     payment_wechat_qr: string;
@@ -36,6 +40,7 @@ export interface SiteConfig {
     form_amount_max: number;
     form_message_max_length: number;
     form_name_max_length: number;
+    donation_tips?: string[];
 
     // Payment methods
     payment_methods: PaymentMethod[];
@@ -56,6 +61,17 @@ export interface SiteConfig {
     // Hero section emoji
     site_hero_emoji: string;
     site_hero_emoji_visible: boolean;
+    site_hero_content_type?: 'emoji' | 'image';
+    site_hero_content?: string;
+
+    // Footer configuration
+    footer?: {
+        enabled: boolean;
+        text: string;
+        show_copyright: boolean;
+        show_runtime: boolean;
+        start_date: string;
+    };
 
     // Other text
     form_privacy_text: string;
@@ -77,6 +93,10 @@ export const DEFAULT_CONFIG: SiteConfig = {
     creator_description: '热爱分享的代码种田人，用键盘播种快乐，用故事陪伴每一个夜晚。',
     creator_avatar: '/placeholder-user.jpg',
     creator_avatar_badge: '⚡',
+    creator_avatar_badge_bg_visible: true,
+    creator_avatar_badge_bg_color: '#3b82f6', // blue-500
+    creator_avatar_badge_type: 'emoji',
+    creator_avatar_badge_content: '⚡',
     creator_qq_number: '',
     payment_alipay_qr: '/placeholder.svg',
     payment_wechat_qr: '/placeholder.svg',
@@ -88,6 +108,7 @@ export const DEFAULT_CONFIG: SiteConfig = {
     form_amount_max: 99999.99,
     form_message_max_length: 500,
     form_name_max_length: 50,
+    donation_tips: ['祝老板身体健康！', '加油，看好你！', '一点心意，不成敬意', '催更催更！'],
 
     payment_methods: [
         { value: 'wechat', label: '微信支付' },
@@ -113,6 +134,16 @@ export const DEFAULT_CONFIG: SiteConfig = {
 
     site_hero_emoji: '❤️',
     site_hero_emoji_visible: true,
+    site_hero_content_type: 'emoji',
+    site_hero_content: '❤️',
+
+    footer: {
+        enabled: true,
+        text: 'Powered by v0-hexo-donate',
+        show_copyright: true,
+        show_runtime: true,
+        start_date: '2024-01-01',
+    },
 
     form_privacy_text: '数据仅用于确认投喂，隐私我们会好好守护。',
     form_privacy_visible: true,

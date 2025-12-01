@@ -251,8 +251,8 @@ export default function ConfigManagementPage() {
                                 <div className="grid gap-4">
                                     <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
                                         <div className="space-y-0.5">
-                                            <Label htmlFor="site_hero_emoji_visible">显示装饰 Emoji</Label>
-                                            <p className="text-xs text-gray-500">在主标题上方显示一个装饰性的 Emoji 图标</p>
+                                            <Label htmlFor="site_hero_emoji_visible">显示装饰元素</Label>
+                                            <p className="text-xs text-gray-500">在主标题上方显示一个装饰性的 Emoji 或图片</p>
                                         </div>
                                         <Switch
                                             id="site_hero_emoji_visible"
@@ -262,15 +262,44 @@ export default function ConfigManagementPage() {
                                     </div>
 
                                     {config.site_hero_emoji_visible && (
-                                        <div className="space-y-2 animate-in fade-in slide-in-from-top-1">
-                                            <Label htmlFor="site_hero_emoji">装饰 Emoji</Label>
-                                            <Input
-                                                id="site_hero_emoji"
-                                                value={config.site_hero_emoji || '❤️'}
-                                                onChange={(e) => updateConfig('site_hero_emoji', e.target.value)}
-                                                placeholder="e.g. ❤️, 🚀, ✨"
-                                                className="font-emoji text-lg"
-                                            />
+                                        <div className="space-y-4 animate-in fade-in slide-in-from-top-1 border p-4 rounded-lg bg-slate-50">
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <Label>类型</Label>
+                                                    <div className="flex gap-2">
+                                                        <Button
+                                                            type="button"
+                                                            variant={config.site_hero_content_type === 'emoji' ? 'default' : 'outline'}
+                                                            size="sm"
+                                                            onClick={() => updateConfig('site_hero_content_type', 'emoji')}
+                                                            className="flex-1"
+                                                        >
+                                                            Emoji
+                                                        </Button>
+                                                        <Button
+                                                            type="button"
+                                                            variant={config.site_hero_content_type === 'image' ? 'default' : 'outline'}
+                                                            size="sm"
+                                                            onClick={() => updateConfig('site_hero_content_type', 'image')}
+                                                            className="flex-1"
+                                                        >
+                                                            图片
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="site_hero_content">
+                                                        {config.site_hero_content_type === 'image' ? '图片地址' : 'Emoji 字符'}
+                                                    </Label>
+                                                    <Input
+                                                        id="site_hero_content"
+                                                        value={config.site_hero_content || (config.site_hero_content_type === 'image' ? '' : '❤️')}
+                                                        onChange={(e) => updateConfig('site_hero_content', e.target.value)}
+                                                        placeholder={config.site_hero_content_type === 'image' ? 'https://... or /images/...' : 'e.g. ❤️'}
+                                                        className={config.site_hero_content_type === 'emoji' ? 'font-emoji text-lg' : ''}
+                                                    />
+                                                </div>
+                                            </div>
                                         </div>
                                     )}
 
@@ -295,6 +324,64 @@ export default function ConfigManagementPage() {
                                         />
                                     </div>
                                 </div>
+                            </div>
+
+                            <div className="space-y-4 pt-4 border-t">
+                                <h2 className="text-lg font-semibold">页脚设置</h2>
+                                <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
+                                    <div className="space-y-0.5">
+                                        <Label htmlFor="footer_enabled">显示页脚</Label>
+                                        <p className="text-xs text-gray-500">在页面底部显示版权、运行时间等信息</p>
+                                    </div>
+                                    <Switch
+                                        id="footer_enabled"
+                                        checked={config.footer?.enabled ?? true}
+                                        onCheckedChange={(checked) => updateConfig('footer', { ...config.footer, enabled: checked })}
+                                    />
+                                </div>
+
+                                {config.footer?.enabled && (
+                                    <div className="grid gap-4 animate-in fade-in slide-in-from-top-1 border p-4 rounded-lg bg-slate-50">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="footer_text">自定义文本</Label>
+                                            <Input
+                                                id="footer_text"
+                                                value={config.footer?.text || ''}
+                                                onChange={(e) => updateConfig('footer', { ...config.footer, text: e.target.value })}
+                                                placeholder="Powered by v0-hexo-donate"
+                                            />
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="flex items-center justify-between border p-3 rounded bg-white">
+                                                <Label htmlFor="footer_copyright" className="text-sm cursor-pointer">显示版权信息</Label>
+                                                <Switch
+                                                    id="footer_copyright"
+                                                    checked={config.footer?.show_copyright ?? true}
+                                                    onCheckedChange={(checked) => updateConfig('footer', { ...config.footer, show_copyright: checked })}
+                                                />
+                                            </div>
+                                            <div className="flex items-center justify-between border p-3 rounded bg-white">
+                                                <Label htmlFor="footer_runtime" className="text-sm cursor-pointer">显示运行时间</Label>
+                                                <Switch
+                                                    id="footer_runtime"
+                                                    checked={config.footer?.show_runtime ?? true}
+                                                    onCheckedChange={(checked) => updateConfig('footer', { ...config.footer, show_runtime: checked })}
+                                                />
+                                            </div>
+                                        </div>
+                                        {config.footer?.show_runtime && (
+                                            <div className="space-y-2">
+                                                <Label htmlFor="footer_start_date">站点启动日期</Label>
+                                                <Input
+                                                    id="footer_start_date"
+                                                    type="date"
+                                                    value={config.footer?.start_date || ''}
+                                                    onChange={(e) => updateConfig('footer', { ...config.footer, start_date: e.target.value })}
+                                                />
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </TabsContent>
 
@@ -358,16 +445,75 @@ export default function ConfigManagementPage() {
                                         />
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <Label htmlFor="creator_avatar_badge">头像角标 (Emoji)</Label>
-                                        <Input
-                                            id="creator_avatar_badge"
-                                            value={config.creator_avatar_badge || '⚡'}
-                                            onChange={(e) => updateConfig('creator_avatar_badge', e.target.value)}
-                                            placeholder="e.g. ⚡, 👑, 🎨"
-                                            className="font-emoji text-lg"
-                                        />
-                                        <p className="text-xs text-gray-500">显示在头像右下角的装饰性图标</p>
+                                    <div className="space-y-4 border p-4 rounded-lg bg-slate-50">
+                                        <h3 className="font-medium text-sm text-gray-900">头像角标设置</h3>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="space-y-2">
+                                                <Label>类型</Label>
+                                                <div className="flex gap-2">
+                                                    <Button
+                                                        type="button"
+                                                        variant={config.creator_avatar_badge_type === 'emoji' ? 'default' : 'outline'}
+                                                        size="sm"
+                                                        onClick={() => updateConfig('creator_avatar_badge_type', 'emoji')}
+                                                        className="flex-1"
+                                                    >
+                                                        Emoji
+                                                    </Button>
+                                                    <Button
+                                                        type="button"
+                                                        variant={config.creator_avatar_badge_type === 'image' ? 'default' : 'outline'}
+                                                        size="sm"
+                                                        onClick={() => updateConfig('creator_avatar_badge_type', 'image')}
+                                                        className="flex-1"
+                                                    >
+                                                        图片
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="creator_avatar_badge_content">
+                                                    {config.creator_avatar_badge_type === 'image' ? '图片地址' : 'Emoji 字符'}
+                                                </Label>
+                                                <Input
+                                                    id="creator_avatar_badge_content"
+                                                    value={config.creator_avatar_badge_content || (config.creator_avatar_badge_type === 'image' ? '' : '⚡')}
+                                                    onChange={(e) => updateConfig('creator_avatar_badge_content', e.target.value)}
+                                                    placeholder={config.creator_avatar_badge_type === 'image' ? 'https://...' : 'e.g. ⚡'}
+                                                    className={config.creator_avatar_badge_type === 'emoji' ? 'font-emoji text-lg' : ''}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex items-center justify-between">
+                                            <Label htmlFor="creator_avatar_badge_bg_visible" className="cursor-pointer">显示背景色</Label>
+                                            <Switch
+                                                id="creator_avatar_badge_bg_visible"
+                                                checked={config.creator_avatar_badge_bg_visible ?? true}
+                                                onCheckedChange={(checked) => updateConfig('creator_avatar_badge_bg_visible', checked)}
+                                            />
+                                        </div>
+
+                                        {config.creator_avatar_badge_bg_visible && (
+                                            <div className="space-y-2">
+                                                <Label htmlFor="creator_avatar_badge_bg_color">背景颜色</Label>
+                                                <div className="flex gap-2">
+                                                    <Input
+                                                        id="creator_avatar_badge_bg_color"
+                                                        type="color"
+                                                        value={config.creator_avatar_badge_bg_color || '#3b82f6'}
+                                                        onChange={(e) => updateConfig('creator_avatar_badge_bg_color', e.target.value)}
+                                                        className="w-12 h-10 p-1 cursor-pointer"
+                                                    />
+                                                    <Input
+                                                        value={config.creator_avatar_badge_bg_color || '#3b82f6'}
+                                                        onChange={(e) => updateConfig('creator_avatar_badge_bg_color', e.target.value)}
+                                                        className="flex-1 font-mono uppercase"
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">
@@ -466,6 +612,47 @@ export default function ConfigManagementPage() {
                                             onChange={(e) => updateConfig('form_message_max_length', parseInt(e.target.value))}
                                         />
                                     </div>
+                                </div>
+
+                                <div className="space-y-3 pt-2">
+                                    <Label>投喂提示语 (随机显示)</Label>
+                                    {((config.donation_tips || []) as string[]).map((tip, index) => (
+                                        <div key={index} className="flex gap-2">
+                                            <Input
+                                                value={tip}
+                                                onChange={(e) => {
+                                                    const tips = [...((config.donation_tips || []) as string[])];
+                                                    tips[index] = e.target.value;
+                                                    updateConfig('donation_tips', tips);
+                                                }}
+                                                placeholder={`提示语 ${index + 1}`}
+                                            />
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                onClick={() => {
+                                                    const tips = [...((config.donation_tips || []) as string[])];
+                                                    tips.splice(index, 1);
+                                                    updateConfig('donation_tips', tips);
+                                                }}
+                                            >
+                                                <span className="sr-only">删除</span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c0 1 1 2 2 2v2" /></svg>
+                                            </Button>
+                                        </div>
+                                    ))}
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                            const tips = (config.donation_tips || []) as string[];
+                                            updateConfig('donation_tips', [...tips, '']);
+                                        }}
+                                        className="w-full border-dashed"
+                                    >
+                                        + 添加提示语
+                                    </Button>
                                 </div>
                             </div>
 
