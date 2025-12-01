@@ -940,6 +940,18 @@ export default function ConfigManagementPage() {
                                     </div>
                                 </div>
 
+                                <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
+                                    <div className="space-y-0.5">
+                                        <Label htmlFor="enable_captcha">启用人机验证</Label>
+                                        <p className="text-xs text-gray-500">在提交投喂前要求用户完成滑块拼图验证，防止垃圾信息</p>
+                                    </div>
+                                    <Switch
+                                        id="enable_captcha"
+                                        checked={config.enable_captcha ?? false}
+                                        onCheckedChange={(checked) => updateConfig('enable_captcha', checked)}
+                                    />
+                                </div>
+
                                 <div className="space-y-2">
                                     <Label htmlFor="form_success_message">投喂成功提示语</Label>
                                     <Input
