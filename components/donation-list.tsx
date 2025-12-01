@@ -63,8 +63,8 @@ export interface DonationListRef {
   refresh: () => void;
 }
 
-const DonationList = forwardRef<DonationListRef, { limit?: number; merge?: boolean }>(
-  ({ limit, merge = false }, ref) => {
+const DonationList = forwardRef<DonationListRef, { limit?: number; merge?: boolean; creatorName?: string }>(
+  ({ limit, merge = false, creatorName = '创作者' }, ref) => {
     const [donations, setDonations] = useState<Donation[]>([]);
     const [stats, setStats] = useState<Stats | null>(null);
     const [loading, setLoading] = useState(true);
@@ -379,6 +379,7 @@ const DonationList = forwardRef<DonationListRef, { limit?: number; merge?: boole
                                         </span>
                                       </TooltipTrigger>
                                       <TooltipContent>
+                                        <p className="max-w-xs font-medium text-xs text-gray-500 mb-1">{creatorName}回复：</p>
                                         <p className="max-w-xs">{donation.reply_content}</p>
                                       </TooltipContent>
                                     </Tooltip>

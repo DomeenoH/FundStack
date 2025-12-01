@@ -543,6 +543,16 @@ export default function ConfigManagementPage() {
                                             placeholder="用于SEO搜索引擎抓取的描述信息"
                                         />
                                     </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="list_home_subtitle">投喂墙副标题</Label>
+                                        <Input
+                                            id="list_home_subtitle"
+                                            value={config.list_home_subtitle || ''}
+                                            onChange={(e) => updateConfig('list_home_subtitle', e.target.value)}
+                                            placeholder="显示在最新投喂标题下方的副标题"
+                                        />
+                                    </div>
                                 </div>
                             </div>
 

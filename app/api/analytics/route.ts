@@ -108,6 +108,25 @@ export async function GET() {
       };
     });
 
+    // Yearly Trends (Last 5 years)
+    const yearlyTrends = Array.from({ length: 5 }).map((_, i) => {
+      const date = subMonths(now, (4 - i) * 12); // Approximate year steps
+      const yearStart = new Date(date.getFullYear(), 0, 1);
+      const nextYearStart = new Date(date.getFullYear() + 1, 0, 1);
+      const label = date.getFullYear().toString();
+
+      const periodDonations = confirmedDonations.filter(d => {
+        const dDate = new Date(d.created_at);
+        return dDate >= yearStart && dDate < nextYearStart;
+      });
+
+      return {
+        date: label,
+        amount: periodDonations.reduce((sum, d) => sum + d.amount, 0),
+        count: periodDonations.length
+      };
+    });
+
     return NextResponse.json({
       success: true,
       analytics: {
@@ -130,7 +149,8 @@ export async function GET() {
         trends: {
           daily: dailyTrends,
           weekly: weeklyTrends,
-          monthly: monthlyTrends
+          monthly: monthlyTrends,
+          yearly: yearlyTrends
         },
         top_donors: topDonors.map(d => ({
           name: d.user_name,

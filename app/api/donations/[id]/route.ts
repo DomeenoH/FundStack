@@ -100,7 +100,9 @@ export async function GET(
                 d.created_at instanceof Date
                     ? d.created_at.toISOString()
                     : d.created_at?.toString() || '',
-            status: d.status
+            status: d.status,
+            reply_content: d.reply_content,
+            reply_at: d.reply_at
         }));
 
         return NextResponse.json({

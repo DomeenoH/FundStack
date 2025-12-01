@@ -39,6 +39,7 @@ interface Analytics {
     daily: Array<{ date: string; count: number; amount: number }>;
     weekly: Array<{ date: string; count: number; amount: number }>;
     monthly: Array<{ date: string; count: number; amount: number }>;
+    yearly: Array<{ date: string; count: number; amount: number }>;
   };
   top_donors: Array<{ name: string; amount: number; date: string }>;
 }
@@ -200,6 +201,7 @@ export function AnalyticsDashboard() {
                   <TabsTrigger value="daily">日</TabsTrigger>
                   <TabsTrigger value="weekly">周</TabsTrigger>
                   <TabsTrigger value="monthly">月</TabsTrigger>
+                  <TabsTrigger value="yearly">年</TabsTrigger>
                 </TabsList>
               </Tabs>
             </div>

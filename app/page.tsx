@@ -117,8 +117,13 @@ export default function DonationPage() {
         <DonationSection config={config} onSubmitSuccess={handleSubmitSuccess} />
 
         <div className="max-w-6xl mx-auto bg-white/60 backdrop-blur-xl rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/20">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 tracking-tight">{config.list_home_title}</h2>
-          <DonationList ref={donationListRef} limit={config.list_home_limit} merge={false} />
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 tracking-tight">{config.list_home_title}</h2>
+            {config.list_home_subtitle && (
+              <p className="text-gray-500 mt-1">{config.list_home_subtitle}</p>
+            )}
+          </div>
+          <DonationList ref={donationListRef} limit={config.list_home_limit} merge={false} creatorName={config.creator_name} />
         </div>
       </main>
       <SiteFooter config={config} />

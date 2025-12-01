@@ -9,6 +9,8 @@ export interface Donation {
     payment_method: string;
     status: string;
     created_at: Date | string;
+    reply_content?: string;
+    reply_at?: Date | string;
 }
 
 export interface MergedDonor {

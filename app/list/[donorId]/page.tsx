@@ -17,6 +17,8 @@ interface DonationHistoryItem {
     user_message?: string;
     created_at: string;
     status: string;
+    reply_content?: string;
+    reply_at?: string;
 }
 
 interface DonorDetails {
@@ -154,6 +156,7 @@ export default function DonorDetailPage() {
                                     <th className="px-6 py-3 text-left font-medium">方式</th>
                                     <th className="px-6 py-3 text-right font-medium">金额</th>
                                     <th className="px-6 py-3 text-left font-medium">留言</th>
+                                    <th className="px-6 py-3 text-left font-medium">创作者回复</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y bg-white">
@@ -178,6 +181,13 @@ export default function DonorDetailPage() {
                                         </td>
                                         <td className="px-6 py-4 text-gray-600">
                                             {item.user_message || '-'}
+                                        </td>
+                                        <td className="px-6 py-4 text-gray-600">
+                                            {item.reply_content ? (
+                                                <div className="flex items-center gap-1 text-blue-600 bg-blue-50 px-2 py-1 rounded text-xs w-fit">
+                                                    <span>{item.reply_content}</span>
+                                                </div>
+                                            ) : '-'}
                                         </td>
                                     </tr>
                                 ))}

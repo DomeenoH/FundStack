@@ -53,6 +53,7 @@ export interface SiteConfig {
     // List display configuration
     list_home_limit: number;
     list_home_title: string;
+    list_home_subtitle: string;
 
     // Reasons section
     reasons_title: string;
@@ -160,6 +161,7 @@ export const DEFAULT_CONFIG: SiteConfig = {
 
     list_home_limit: 5,
     list_home_title: '最新投喂（取最近 5 位）',
+    list_home_subtitle: '感谢每一位支持者',
 
     reasons_title: '为什么要投喂？',
     reasons_items: [
