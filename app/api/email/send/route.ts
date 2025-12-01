@@ -25,8 +25,14 @@ export async function POST(request: NextRequest) {
     let subject = templateConfig.subject;
     let html = templateConfig.body;
 
-    Object.keys(data).forEach(key => {
-      const value = data[key];
+    // Merge config variables
+    const substitutionData = {
+      ...data,
+      creator_name: config.creator_name
+    };
+
+    Object.keys(substitutionData).forEach(key => {
+      const value = substitutionData[key];
       const regex = new RegExp(`{${key}}`, 'g');
       subject = subject.replace(regex, String(value));
       html = html.replace(regex, String(value));

@@ -237,7 +237,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
 <h1>🎉 好消息！收到新的投喂</h1>
 </div>
 <div class="content">
-<p>Hi 站长，</p>
+<p>Hi {creator_name}，</p>
 <p>刚刚收到了一笔新的支持！以下是详细信息：</p>
 <div class="amount-card">
 <div class="label">投喂金额</div>
@@ -331,7 +331,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helv
 </div>
 <div class="content">
 <p>Hi <strong>{user_name}</strong>，</p>
-<p>站长刚刚回复了你的投喂留言：</p>
+<p>{creator_name}刚刚回复了你的投喂留言：</p>
 <div class="reply-box">
 <span class="reply-label">回复内容</span>
 <p class="reply-text">{reply_content}</p>

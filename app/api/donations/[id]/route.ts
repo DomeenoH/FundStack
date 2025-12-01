@@ -64,7 +64,9 @@ export async function GET(
             amount: Number(d.amount || 0),
             payment_method: d.payment_method,
             status: d.status || 'pending',
-            created_at: d.created_at
+            created_at: d.created_at,
+            reply_content: d.reply_content,
+            reply_at: d.reply_at
         }));
 
         const validDonations = donations.filter(d => d.status !== 'rejected');

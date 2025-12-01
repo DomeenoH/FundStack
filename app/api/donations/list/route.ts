@@ -19,7 +19,9 @@ export async function GET(request: NextRequest) {
       amount: Number(d.amount || 0),
       payment_method: d.payment_method,
       status: d.status || 'pending',
-      created_at: d.created_at
+      created_at: d.created_at,
+      reply_content: d.reply_content,
+      reply_at: d.reply_at
     }));
 
     // Filter confirmed/pending for public list (usually we show all non-rejected)
@@ -61,8 +63,8 @@ export async function GET(request: NextRequest) {
             ? d.created_at.toISOString()
             : d.created_at?.toString() || '',
         status: d.status,
-        reply_content: (d as any).reply_content,
-        reply_at: (d as any).reply_at
+        reply_content: d.reply_content,
+        reply_at: d.reply_at
       }));
 
       return NextResponse.json({
