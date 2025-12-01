@@ -3,10 +3,11 @@
 import DonationList, { DonationListRef } from '@/components/donation-list';
 import { Heart, Loader2 } from 'lucide-react';
 import { DonationSection } from '@/components/donation-section';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import type { SiteConfig } from '@/lib/config';
 import { fetchJson } from '@/lib/api';
 import { SiteFooter } from '@/components/site-footer';
+import { extractFirstEmoji } from '@/lib/emoji-utils';
 
 export default function DonationPage() {
   const [config, setConfig] = useState<SiteConfig | null>(null);
@@ -35,6 +36,32 @@ export default function DonationPage() {
         setLoading(false);
       });
   }, []);
+
+  // Extract emoji from subtitle and determine display values
+  const { displaySubtitle, heroEmoji } = useMemo(() => {
+    if (!subtitle || !config?.site_hero_emoji_visible) {
+      return {
+        displaySubtitle: subtitle,
+        heroEmoji: config?.site_hero_content || config?.site_hero_emoji || '❤️'
+      };
+    }
+
+    const { emoji, textWithoutEmoji } = extractFirstEmoji(subtitle);
+
+    if (emoji) {
+      // If subtitle contains emoji and decorative element is visible,
+      // use emoji from subtitle as hero emoji and hide it in subtitle
+      return {
+        displaySubtitle: textWithoutEmoji,
+        heroEmoji: emoji
+      };
+    }
+
+    return {
+      displaySubtitle: subtitle,
+      heroEmoji: config?.site_hero_content || config?.site_hero_emoji || '❤️'
+    };
+  }, [subtitle, config]);
 
   const handleSubmitSuccess = () => {
     // Refresh the donation list after successful submission
@@ -74,7 +101,7 @@ export default function DonationPage() {
                 />
               ) : (
                 <span className="text-6xl filter drop-shadow-lg">
-                  {config.site_hero_content || config.site_hero_emoji || '❤️'}
+                  {heroEmoji}
                 </span>
               )}
             </div>
@@ -82,7 +109,7 @@ export default function DonationPage() {
           <div className="space-y-4">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">{config.site_heading}</h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              {subtitle}
+              {displaySubtitle}
             </p>
           </div>
         </section>

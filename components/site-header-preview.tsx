@@ -3,6 +3,8 @@
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import type { SiteConfig } from '@/lib/config';
+import { useMemo } from 'react';
+import { extractFirstEmoji } from '@/lib/emoji-utils';
 
 interface SiteHeaderPreviewProps {
     config: SiteConfig;
@@ -16,6 +18,40 @@ const NAV_LINKS = [
 ];
 
 export function SiteHeaderPreview({ config }: SiteHeaderPreviewProps) {
+    // Get a subtitle to preview (use first one from array or fallback to old field)
+    const subtitle = useMemo(() => {
+        if (config.site_subtitles && config.site_subtitles.length > 0) {
+            return config.site_subtitles[0];
+        }
+        return config.site_subheading || '每一份投喂都是对我们最大的鼓励，支持我们继续创作更多优质内容。';
+    }, [config.site_subtitles, config.site_subheading]);
+
+    // Extract emoji from subtitle if decorative element is visible
+    const { displaySubtitle, heroEmoji } = useMemo(() => {
+        if (!subtitle || !config.site_hero_emoji_visible) {
+            return {
+                displaySubtitle: subtitle,
+                heroEmoji: config.site_hero_content || config.site_hero_emoji || '❤️'
+            };
+        }
+
+        const { emoji, textWithoutEmoji } = extractFirstEmoji(subtitle);
+
+        if (emoji) {
+            // If subtitle contains emoji and decorative element is visible,
+            // use emoji from subtitle as hero emoji and hide it in subtitle
+            return {
+                displaySubtitle: textWithoutEmoji,
+                heroEmoji: emoji
+            };
+        }
+
+        return {
+            displaySubtitle: subtitle,
+            heroEmoji: config.site_hero_content || config.site_hero_emoji || '❤️'
+        };
+    }, [subtitle, config.site_hero_emoji_visible, config.site_hero_content, config.site_hero_emoji]);
+
     return (
         <div className="w-full bg-white/95 backdrop-blur-lg shadow-sm border-b rounded-t-xl overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3">
@@ -60,7 +96,7 @@ export function SiteHeaderPreview({ config }: SiteHeaderPreviewProps) {
                                     />
                                 ) : (
                                     <span className="text-4xl filter drop-shadow-md">
-                                        {config.site_hero_content || config.site_hero_emoji || '❤️'}
+                                        {heroEmoji}
                                     </span>
                                 )}
                             </div>
@@ -68,7 +104,7 @@ export function SiteHeaderPreview({ config }: SiteHeaderPreviewProps) {
                     </div>
                     <h1 className="text-3xl font-bold mb-3 text-gray-900">{config.site_heading || '感谢你的支持'}</h1>
                     <p className="text-base text-gray-600 max-w-md mx-auto leading-relaxed">
-                        {config.site_subheading || '每一份投喂都是对我们最大的鼓励，支持我们继续创作更多优质内容。'}
+                        {displaySubtitle}
                     </p>
                 </div>
             </div>
