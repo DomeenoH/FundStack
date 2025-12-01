@@ -142,7 +142,12 @@ export default function DonationForm({ config, onPaymentMethodChange, onSubmitSu
               <FormItem className="space-y-3">
                 <FormLabel className="text-sm font-medium text-gray-700">选择支付方式</FormLabel>
                 <div className="grid grid-cols-2 gap-4">
-                  {config.payment_methods.map((method) => (
+                  {config.payment_methods.filter(method => {
+                    if (method.value === 'qq') {
+                      return !!(config.payment_qq_number || config.creator_qq_number);
+                    }
+                    return true;
+                  }).map((method) => (
                     <div
                       key={method.value}
                       onClick={() => {

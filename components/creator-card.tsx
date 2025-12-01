@@ -30,9 +30,12 @@ export function CreatorCard({ config, selectedPaymentMethod }: CreatorCardProps)
       config.creator_qq_number || config.payment_qq_number
     );
 
+  // Use payment QQ number if set, otherwise fallback to creator QQ number
+  const qqNumber = config.payment_qq_number || config.creator_qq_number;
+
   const handleCopyQQ = () => {
-    if (config.payment_qq_number) {
-      navigator.clipboard.writeText(config.payment_qq_number);
+    if (qqNumber) {
+      navigator.clipboard.writeText(qqNumber);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
@@ -121,7 +124,7 @@ export function CreatorCard({ config, selectedPaymentMethod }: CreatorCardProps)
             >
               <div className="relative bg-white p-4 rounded-2xl shadow-sm border border-gray-200/60">
                 <Image
-                  src={`http://q.qlogo.cn/headimg_dl?dst_uin=${config.payment_qq_number}&spec=640&img_type=jpg`}
+                  src={`http://q.qlogo.cn/headimg_dl?dst_uin=${qqNumber}&spec=640&img_type=jpg`}
                   alt="QQ Avatar"
                   width={200}
                   height={200}
@@ -135,7 +138,7 @@ export function CreatorCard({ config, selectedPaymentMethod }: CreatorCardProps)
                 </div>
                 <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm">
                   <span className="text-lg font-mono font-bold text-gray-900">
-                    {config.payment_qq_number || '未设置'}
+                    {qqNumber || '未设置'}
                   </span>
                   <Button
                     variant="ghost"
