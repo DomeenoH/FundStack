@@ -66,8 +66,12 @@ export function CreatorCard({ config, selectedPaymentMethod }: CreatorCardProps)
             priority
             onError={() => setAvatarError(true)}
           />
-          <div className="absolute bottom-1 right-1 bg-blue-500 text-white p-1.5 rounded-full border-4 border-white shadow-sm">
-            <Sparkles className="w-3 h-3" />
+          <div className="absolute bottom-1 right-1 bg-blue-500 text-white p-1.5 rounded-full border-4 border-white shadow-sm flex items-center justify-center w-8 h-8">
+            {config.creator_avatar_badge ? (
+              <span className="text-sm leading-none">{config.creator_avatar_badge}</span>
+            ) : (
+              <Sparkles className="w-3 h-3" />
+            )}
           </div>
         </motion.div>
 
@@ -86,7 +90,7 @@ export function CreatorCard({ config, selectedPaymentMethod }: CreatorCardProps)
           {/* Case 1: QR Code Methods (Alipay / WeChat) */}
           {(activeMethod === 'alipay' || activeMethod === 'wechat') && (
             <motion.div
-              key="qr-code"
+              key={`qr-${activeMethod}`}
               initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
               animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               exit={{ opacity: 0, y: -20, filter: 'blur(10px)' }}

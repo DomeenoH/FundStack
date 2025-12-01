@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, RefreshCcw } from 'lucide-react';
 import { getUserAvatarUrl, maskContact } from '@/lib/avatar-utils';
-import { Tooltip } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { fetchJson } from '@/lib/api';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
@@ -235,7 +235,8 @@ const DonationList = forwardRef<DonationListRef, { limit?: number; merge?: boole
         )}
 
         <div className="overflow-hidden rounded-3xl border border-white/40 bg-white/40 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-          <div className="overflow-x-auto">
+          {/* Desktop View: Table */}
+          <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-base">
               <thead className="bg-white/50 border-b border-gray-100/50">
                 <tr>
@@ -279,7 +280,6 @@ const DonationList = forwardRef<DonationListRef, { limit?: number; merge?: boole
                         transition={{ delay: index * 0.05 }}
                         className="hover:bg-white/60 transition-all duration-200 cursor-pointer group"
                         onClick={() => {
-                          // If merged, go to donor profile page; otherwise go to donation detail
                           const path = merge ? `/list/${donation.id}` : `/donation/${donation.id}`;
                           router.push(path);
                         }}
@@ -321,8 +321,15 @@ const DonationList = forwardRef<DonationListRef, { limit?: number; merge?: boole
                             <td className="px-8 py-5 text-gray-600 truncate max-w-[240px] text-sm flex items-center gap-2">
                               {donation.user_message || '-'}
                               {donation.reply_content && (
-                                <Tooltip content={donation.reply_content}>
-                                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-600" title="已回复"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3"><polyline points="9 17 4 12 9 7" /><path d="M20 18v-2a4 4 0 0 0-4-4H4" /></svg></span>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-600 cursor-help" title="已回复">
+                                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3"><polyline points="9 17 4 12 9 7" /><path d="M20 18v-2a4 4 0 0 0-4-4H4" /></svg>
+                                    </span>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p className="max-w-xs">{donation.reply_content}</p>
+                                  </TooltipContent>
                                 </Tooltip>
                               )}
                             </td>
@@ -343,6 +350,75 @@ const DonationList = forwardRef<DonationListRef, { limit?: number; merge?: boole
                 </AnimatePresence>
               </tbody>
             </table>
+          </div>
+
+          {/* Mobile View: Cards */}
+          <div className="md:hidden">
+            <AnimatePresence mode="popLayout">
+              {filteredDonations.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="p-8 text-center text-gray-400 font-medium"
+                >
+                  还没有投喂记录，欢迎成为第一位支持者！
+                </motion.div>
+              ) : (
+                <div className="divide-y divide-gray-100/50">
+                  {visibleDonations.map((donation, index) => (
+                    <motion.div
+                      key={donation.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.05 }}
+                      className="p-4 hover:bg-white/60 transition-all duration-200 active:bg-white/80"
+                      onClick={() => {
+                        const path = merge ? `/list/${donation.id}` : `/donation/${donation.id}`;
+                        router.push(path);
+                      }}
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <img src={getUserAvatarUrl(donation.user_email, 40)} alt="avatar" className="w-10 h-10 rounded-full shrink-0 border border-white shadow-sm" />
+                          <div>
+                            <div className="font-bold text-gray-900">{donation.user_name}</div>
+                            <div className="text-xs text-gray-500">{formatDateTime(donation.created_at)}</div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-bold text-lg text-gray-900">¥{formatAmount(donation.amount)}</div>
+                          <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${STATUS_BADGE_STYLES[donation.status as keyof typeof STATUS_BADGE_STYLES] || STATUS_BADGE_STYLES.pending
+                            }`}>
+                            {STATUS_LABELS[donation.status as keyof typeof STATUS_LABELS] || donation.status}
+                          </span>
+                        </div>
+                      </div>
+
+                      {!merge && (
+                        <div className="pl-[52px]">
+                          {donation.user_message && (
+                            <div className="text-sm text-gray-600 bg-gray-50/50 p-2 rounded-lg mb-2">
+                              "{donation.user_message}"
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between text-xs text-gray-400">
+                            <span className={cn("font-medium", PAYMENT_METHOD_COLORS[donation.payment_method as keyof typeof PAYMENT_METHOD_COLORS])}>
+                              {PAYMENT_METHOD_LABELS[donation.payment_method as keyof typeof PAYMENT_METHOD_LABELS]}
+                            </span>
+                            {donation.reply_content && (
+                              <span className="flex items-center gap-1 text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-3 h-3"><polyline points="9 17 4 12 9 7" /><path d="M20 18v-2a4 4 0 0 0-4-4H4" /></svg>
+                                已回复
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>

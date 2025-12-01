@@ -249,6 +249,31 @@ export default function ConfigManagementPage() {
                             <div className="space-y-4 pt-4 border-t">
                                 <h2 className="text-lg font-semibold">Hero 区域</h2>
                                 <div className="grid gap-4">
+                                    <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
+                                        <div className="space-y-0.5">
+                                            <Label htmlFor="site_hero_emoji_visible">显示装饰 Emoji</Label>
+                                            <p className="text-xs text-gray-500">在主标题上方显示一个装饰性的 Emoji 图标</p>
+                                        </div>
+                                        <Switch
+                                            id="site_hero_emoji_visible"
+                                            checked={config.site_hero_emoji_visible ?? true}
+                                            onCheckedChange={(checked) => updateConfig('site_hero_emoji_visible', checked)}
+                                        />
+                                    </div>
+
+                                    {config.site_hero_emoji_visible && (
+                                        <div className="space-y-2 animate-in fade-in slide-in-from-top-1">
+                                            <Label htmlFor="site_hero_emoji">装饰 Emoji</Label>
+                                            <Input
+                                                id="site_hero_emoji"
+                                                value={config.site_hero_emoji || '❤️'}
+                                                onChange={(e) => updateConfig('site_hero_emoji', e.target.value)}
+                                                placeholder="e.g. ❤️, 🚀, ✨"
+                                                className="font-emoji text-lg"
+                                            />
+                                        </div>
+                                    )}
+
                                     <div className="space-y-2">
                                         <Label htmlFor="site_heading">主标题</Label>
                                         <Input
@@ -331,6 +356,18 @@ export default function ConfigManagementPage() {
                                             onChange={(e) => updateConfig('creator_avatar', e.target.value)}
                                             placeholder="/placeholder-user.jpg"
                                         />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="creator_avatar_badge">头像角标 (Emoji)</Label>
+                                        <Input
+                                            id="creator_avatar_badge"
+                                            value={config.creator_avatar_badge || '⚡'}
+                                            onChange={(e) => updateConfig('creator_avatar_badge', e.target.value)}
+                                            placeholder="e.g. ⚡, 👑, 🎨"
+                                            className="font-emoji text-lg"
+                                        />
+                                        <p className="text-xs text-gray-500">显示在头像右下角的装饰性图标</p>
                                     </div>
 
                                     <div className="grid grid-cols-2 gap-4">
@@ -557,8 +594,10 @@ export default function ConfigManagementPage() {
                         )}
 
                         {activeTab === 'creator' && (
-                            <div className="h-[600px] animate-in fade-in zoom-in-95 duration-300">
-                                <CreatorCard config={previewConfig} />
+                            <div className="min-h-[650px] flex items-center justify-center animate-in fade-in zoom-in-95 duration-300 pb-12">
+                                <div className="w-full max-w-[380px]">
+                                    <CreatorCard config={previewConfig} />
+                                </div>
                             </div>
                         )}
 

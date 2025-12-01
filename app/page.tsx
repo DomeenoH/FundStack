@@ -52,7 +52,9 @@ export default function DonationPage() {
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-4">
-            <Heart className="w-8 h-8 text-red-500 fill-red-500" />
+            {config.site_hero_emoji_visible !== false && (
+              <span className="text-4xl md:text-5xl animate-bounce">{config.site_hero_emoji || '❤️'}</span>
+            )}
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">{config.site_heading}</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">

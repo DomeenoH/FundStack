@@ -47,13 +47,18 @@ export function SiteHeaderPreview({ config }: SiteHeaderPreviewProps) {
             </div>
 
             {/* Hero Section Preview */}
-            <div className="bg-gradient-to-b from-slate-50 to-white px-8 py-12 text-center">
-                <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-4">
-                    {config.site_heading || '感谢你的支持'}
-                </h1>
-                <p className="text-lg text-slate-600 max-w-lg mx-auto leading-relaxed">
-                    {config.site_subheading || '每一份投喂都是对我们最大的鼓励，支持我们继续创作更多优质内容。'}
-                </p>
+            <div className="bg-gradient-to-b from-slate-50 to-white px-8 py-12">
+                <div className="text-center mb-8">
+                    <div className="flex items-center justify-center mb-3">
+                        {config.site_hero_emoji_visible !== false && (
+                            <span className="text-3xl animate-bounce">{config.site_hero_emoji || '❤️'}</span>
+                        )}
+                    </div>
+                    <h1 className="text-3xl font-bold mb-3 text-gray-900">{config.site_heading || '感谢你的支持'}</h1>
+                    <p className="text-base text-gray-600 max-w-md mx-auto leading-relaxed">
+                        {config.site_subheading || '每一份投喂都是对我们最大的鼓励，支持我们继续创作更多优质内容。'}
+                    </p>
+                </div>
             </div>
         </div>
     );
