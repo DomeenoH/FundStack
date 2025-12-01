@@ -17,6 +17,8 @@ export interface SiteConfig {
     site_description: string;
     site_heading: string;
     site_subheading: string;
+    site_nav_title: string;
+    site_nav_show_avatar: boolean;
 
     // Creator information
     creator_name: string;
@@ -115,6 +117,8 @@ export const DEFAULT_CONFIG: SiteConfig = {
     site_description: '用一份贴心的投喂陪伴创作，快速、安全又安心。',
     site_heading: '来一份暖心的投喂吧',
     site_subheading: '你的支持是我们继续创作的能量，谢谢每一位一路相伴的守护者！',
+    site_nav_title: '投喂小站',
+    site_nav_show_avatar: false,
 
     creator_name: '小宇航员',
     creator_role: '站长 / 创作者',

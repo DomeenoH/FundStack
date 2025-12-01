@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useEffect, useRef, useState } from 'react';
+import { SiteConfig } from '@/lib/config';
+import { getQQAvatarUrl } from '@/lib/avatar-utils';
 
 const NAV_LINKS = [
   { href: '/', label: '投喂首页' },
@@ -13,7 +15,11 @@ const NAV_LINKS = [
   { href: '/admin', label: '管理面板' },
 ];
 
-export function SiteNav() {
+interface SiteNavProps {
+  config?: SiteConfig;
+}
+
+export function SiteNav({ config }: SiteNavProps) {
   const pathname = usePathname();
   const activeIndex = NAV_LINKS.findIndex((link) => link.href === pathname);
   const navRef = useRef<HTMLElement>(null);
@@ -40,14 +46,32 @@ export function SiteNav() {
     return () => window.removeEventListener('resize', updateTabPosition);
   }, [activeIndex]);
 
+  const siteTitle = config?.site_nav_title || '投喂小站';
+  const showAvatar = config?.site_nav_show_avatar || false;
+
+  // Resolve avatar URL
+  let avatarUrl = config?.creator_avatar || '/placeholder-user.jpg';
+  if (config?.creator_qq_number) {
+    avatarUrl = getQQAvatarUrl(config.creator_qq_number);
+  } else if (config?.payment_qq_number) {
+    avatarUrl = getQQAvatarUrl(config.payment_qq_number);
+  }
+
   return (
     <header className="sticky top-0 z-30 border-b bg-white/95 backdrop-blur-lg shadow-sm">
       <div className="container mx-auto flex items-center justify-between px-3 md:px-4 py-3">
         <Link
           href="/"
-          className="font-bold text-lg md:text-xl tracking-tight text-slate-800 hover:text-slate-600 transition-colors duration-300 shrink-0"
+          className="font-bold text-lg md:text-xl tracking-tight text-slate-800 hover:text-slate-600 transition-colors duration-300 shrink-0 flex items-center gap-2"
         >
-          投喂小站
+          {showAvatar && (
+            <img
+              src={avatarUrl}
+              alt="Logo"
+              className="w-8 h-8 rounded-full border border-slate-200 object-cover"
+            />
+          )}
+          {siteTitle}
         </Link>
         <nav ref={navRef} className="relative flex items-center gap-0.5 md:gap-1 text-xs md:text-sm font-medium">
           {NAV_LINKS.map((link, index) => (

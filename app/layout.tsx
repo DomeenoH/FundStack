@@ -37,15 +37,17 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const config = await getConfig();
+
   return (
     <html lang="zh-CN">
       <body className={`font-sans antialiased`}>
-        <SiteNav />
+        <SiteNav config={config} />
         {children}
       </body>
     </html>

@@ -518,6 +518,34 @@ export default function ConfigManagementPage() {
                             </div>
 
                             <div className="space-y-4 pt-4 border-t">
+                                <h2 className="text-lg font-semibold">导航栏设置</h2>
+                                <div className="grid gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="site_nav_title">导航栏标题</Label>
+                                        <Input
+                                            id="site_nav_title"
+                                            value={config.site_nav_title || ''}
+                                            onChange={(e) => updateConfig('site_nav_title', e.target.value)}
+                                            placeholder="投喂小站"
+                                        />
+                                        <p className="text-xs text-gray-500">显示在导航栏左上角的站点名称</p>
+                                    </div>
+
+                                    <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
+                                        <div className="space-y-0.5">
+                                            <Label htmlFor="site_nav_show_avatar">显示头像 Logo</Label>
+                                            <p className="text-xs text-gray-500">在导航栏标题左侧显示头像</p>
+                                        </div>
+                                        <Switch
+                                            id="site_nav_show_avatar"
+                                            checked={config.site_nav_show_avatar ?? false}
+                                            onCheckedChange={(checked) => updateConfig('site_nav_show_avatar', checked)}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4 pt-4 border-t">
                                 <h2 className="text-lg font-semibold">Hero 区域</h2>
                                 <div className="grid gap-4">
                                     <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
