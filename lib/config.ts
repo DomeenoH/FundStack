@@ -74,7 +74,7 @@ export const DEFAULT_CONFIG: SiteConfig = {
     creator_qq_number: '',
     payment_alipay_qr: '/placeholder.svg',
     payment_wechat_qr: '/placeholder.svg',
-    payment_qq_number: '123456789',
+    payment_qq_number: '',
 
     form_title: '给创作者一口能量',
     form_description: '每一份投喂都是继续前进的动力，谢谢你的支持与陪伴',

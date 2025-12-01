@@ -2,10 +2,17 @@ import type { Metadata } from 'next'
 import './globals.css'
 import { SiteNav } from '@/components/site-nav'
 
-export const metadata: Metadata = {
-  title: '温暖投喂小站',
-  description: '用贴心的投喂支持创作，快速、安全又安心。',
-  icons: {
+import { getConfig } from '@/lib/config'
+import { getQQAvatarUrl } from '@/lib/avatar-utils'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const config = await getConfig()
+  const qq = config.creator_qq_number || config.payment_qq_number
+
+  const icons = qq ? {
+    icon: getQQAvatarUrl(qq, 640),
+    apple: getQQAvatarUrl(qq, 640),
+  } : {
     icon: [
       {
         url: '/icon-light-32x32.png',
@@ -21,7 +28,13 @@ export const metadata: Metadata = {
       },
     ],
     apple: '/apple-icon.png',
-  },
+  }
+
+  return {
+    title: config.site_title || '温暖投喂小站',
+    description: config.site_description || '用贴心的投喂支持创作，快速、安全又安心。',
+    icons,
+  }
 }
 
 export default function RootLayout({
