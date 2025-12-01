@@ -16,7 +16,8 @@ export interface SiteConfig {
     site_title: string;
     site_description: string;
     site_heading: string;
-    site_subheading: string;
+    site_subheading: string; // Deprecated, kept for backward compatibility
+    site_subtitles: string[]; // New field for multiple subtitles
     site_nav_title: string;
     site_nav_show_avatar: boolean;
 
@@ -117,6 +118,11 @@ export const DEFAULT_CONFIG: SiteConfig = {
     site_description: '用一份贴心的投喂陪伴创作，快速、安全又安心。',
     site_heading: '来一份暖心的投喂吧',
     site_subheading: '你的支持是我们继续创作的能量，谢谢每一位一路相伴的守护者！',
+    site_subtitles: [
+        '你的支持是我们继续创作的能量，谢谢每一位一路相伴的守护者！',
+        '投喂是爱的表达，感谢有你！',
+        '每一份心意都将被铭记。'
+    ],
     site_nav_title: '投喂小站',
     site_nav_show_avatar: false,
 
@@ -366,6 +372,11 @@ export async function getConfig(): Promise<SiteConfig> {
             ...DEFAULT_CONFIG,
             ...rawConfig,
         };
+
+        // Backward compatibility: If site_subtitles is empty but site_subheading exists, use it
+        if ((!config.site_subtitles || config.site_subtitles.length === 0) && config.site_subheading) {
+            config.site_subtitles = [config.site_subheading];
+        }
 
         // Update cache
         configCache = config;

@@ -58,6 +58,43 @@ export default function AdminPage() {
   const [replyContent, setReplyContent] = useState('');
   const [submittingReply, setSubmittingReply] = useState(false);
 
+  // Check for existing session on mount
+  useEffect(() => {
+    const checkSession = async () => {
+      const token = localStorage.getItem('adminToken');
+      if (token) {
+        setLoading(true);
+        try {
+          const response = await fetch('/api/admin/donations', {
+            headers: { 'Authorization': `Basic ${token}` }
+          });
+
+          if (response.ok) {
+            setAuthenticated(true);
+            const data = await response.json();
+            setDonations(data.donations);
+
+            // Check if there are any pending donations
+            const hasPending = data.donations.some((d: AdminDonation) => d.status === 'pending');
+            if (!hasPending) {
+              setFilterStatus('all');
+            }
+          } else {
+            // Token invalid or expired
+            localStorage.removeItem('adminToken');
+          }
+        } catch (err) {
+          console.error('Session check error:', err);
+          // Don't clear token on network error, just let user try to login manually if they want
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    checkSession();
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);

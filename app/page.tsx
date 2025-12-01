@@ -11,12 +11,23 @@ import { SiteFooter } from '@/components/site-footer';
 export default function DonationPage() {
   const [config, setConfig] = useState<SiteConfig | null>(null);
   const [loading, setLoading] = useState(true);
+  const [subtitle, setSubtitle] = useState('');
   const donationListRef = useRef<DonationListRef>(null);
 
   useEffect(() => {
     fetchJson<{ success: boolean; data: SiteConfig }>('/api/config')
       .then(response => {
-        setConfig(response.data);
+        const data = response.data;
+        setConfig(data);
+
+        // Randomly select a subtitle
+        if (data.site_subtitles && data.site_subtitles.length > 0) {
+          const randomIndex = Math.floor(Math.random() * data.site_subtitles.length);
+          setSubtitle(data.site_subtitles[randomIndex]);
+        } else {
+          setSubtitle(data.site_subheading || '');
+        }
+
         setLoading(false);
       })
       .catch(err => {
@@ -71,7 +82,7 @@ export default function DonationPage() {
           <div className="space-y-4">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">{config.site_heading}</h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              {config.site_subheading}
+              {subtitle}
             </p>
           </div>
         </section>

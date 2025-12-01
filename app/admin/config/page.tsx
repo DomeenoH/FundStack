@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Loader2, Save, RotateCcw, Settings, Eye, LayoutTemplate, User, CreditCard, FileText, Mail } from 'lucide-react';
+import { Loader2, Save, RotateCcw, Settings, Eye, LayoutTemplate, User, CreditCard, FileText, Mail, Plus, Trash2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
     Select,
@@ -142,6 +142,23 @@ export default function ConfigManagementPage() {
         const items = [...((config.reasons_items || []) as string[])];
         items.splice(index, 1);
         updateConfig('reasons_items', items);
+    };
+
+    const updateSubtitle = (index: number, value: string) => {
+        const items = [...((config.site_subtitles || []) as string[])];
+        items[index] = value;
+        updateConfig('site_subtitles', items);
+    };
+
+    const addSubtitle = () => {
+        const items = (config.site_subtitles || []) as string[];
+        updateConfig('site_subtitles', [...items, '']);
+    };
+
+    const removeSubtitle = (index: number) => {
+        const items = [...((config.site_subtitles || []) as string[])];
+        items.splice(index, 1);
+        updateConfig('site_subtitles', items);
     };
 
     if (loading) {
@@ -504,6 +521,18 @@ export default function ConfigManagementPage() {
                                         <p className="text-xs text-gray-500">显示在浏览器标签页和导航栏左侧</p>
                                     </div>
 
+                                    <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
+                                        <div className="space-y-0.5">
+                                            <Label htmlFor="site_nav_show_avatar">显示头像 Logo</Label>
+                                            <p className="text-xs text-gray-500">在导航栏标题左侧显示头像</p>
+                                        </div>
+                                        <Switch
+                                            id="site_nav_show_avatar"
+                                            checked={config.site_nav_show_avatar ?? false}
+                                            onCheckedChange={(checked) => updateConfig('site_nav_show_avatar', checked)}
+                                        />
+                                    </div>
+
                                     <div className="space-y-2">
                                         <Label htmlFor="site_description">网站描述 (Meta)</Label>
                                         <Textarea
@@ -517,33 +546,7 @@ export default function ConfigManagementPage() {
                                 </div>
                             </div>
 
-                            <div className="space-y-4 pt-4 border-t">
-                                <h2 className="text-lg font-semibold">导航栏设置</h2>
-                                <div className="grid gap-4">
-                                    <div className="space-y-2">
-                                        <Label htmlFor="site_nav_title">导航栏标题</Label>
-                                        <Input
-                                            id="site_nav_title"
-                                            value={config.site_nav_title || ''}
-                                            onChange={(e) => updateConfig('site_nav_title', e.target.value)}
-                                            placeholder="投喂小站"
-                                        />
-                                        <p className="text-xs text-gray-500">显示在导航栏左上角的站点名称</p>
-                                    </div>
 
-                                    <div className="flex items-center justify-between space-x-2 border p-4 rounded-lg bg-slate-50">
-                                        <div className="space-y-0.5">
-                                            <Label htmlFor="site_nav_show_avatar">显示头像 Logo</Label>
-                                            <p className="text-xs text-gray-500">在导航栏标题左侧显示头像</p>
-                                        </div>
-                                        <Switch
-                                            id="site_nav_show_avatar"
-                                            checked={config.site_nav_show_avatar ?? false}
-                                            onCheckedChange={(checked) => updateConfig('site_nav_show_avatar', checked)}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
 
                             <div className="space-y-4 pt-4 border-t">
                                 <h2 className="text-lg font-semibold">Hero 区域</h2>
@@ -613,14 +616,38 @@ export default function ConfigManagementPage() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="site_subheading">副标题</Label>
-                                        <Textarea
-                                            id="site_subheading"
-                                            value={config.site_subheading || ''}
-                                            onChange={(e) => updateConfig('site_subheading', e.target.value)}
-                                            rows={3}
-                                            placeholder="显示在主标题下方的欢迎语或说明文字"
-                                        />
+                                        <div className="flex items-center justify-between">
+                                            <Label>副标题 (随机显示)</Label>
+                                            <Button variant="outline" size="sm" onClick={addSubtitle} type="button">
+                                                <Plus className="w-4 h-4 mr-1" />
+                                                添加
+                                            </Button>
+                                        </div>
+                                        <div className="space-y-2">
+                                            {(config.site_subtitles || []).map((subtitle, index) => (
+                                                <div key={index} className="flex gap-2">
+                                                    <Input
+                                                        value={subtitle}
+                                                        onChange={(e) => updateSubtitle(index, e.target.value)}
+                                                        placeholder="输入副标题..."
+                                                    />
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => removeSubtitle(index)}
+                                                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
+                                            ))}
+                                            {(!config.site_subtitles || config.site_subtitles.length === 0) && (
+                                                <div className="text-center p-4 border-2 border-dashed rounded-lg text-gray-400 text-sm">
+                                                    暂无副标题，请点击添加
+                                                </div>
+                                            )}
+                                        </div>
+                                        <p className="text-xs text-gray-500">每次进入页面时会随机显示其中一条</p>
                                     </div>
                                 </div>
                             </div>
