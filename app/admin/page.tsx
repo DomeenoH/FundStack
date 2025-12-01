@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, LogOut, Check, X, Search, Download, Reply, MessageSquare } from 'lucide-react';
+import { Loader2, LogOut, Check, X, Search, Download, Reply, MessageSquare, Settings, Wallet, Users, Clock } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { getUserAvatarUrl } from '@/lib/avatar-utils';
-import { Tooltip } from '@/components/ui/tooltip';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Textarea } from '@/components/ui/textarea';
 import {
   Dialog,
@@ -18,6 +18,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 interface AdminDonation {
   id: number;
@@ -190,15 +192,24 @@ export default function AdminPage() {
     );
   });
 
+  const stats = {
+    total: donations.length,
+    pending: donations.filter(d => d.status === 'pending').length,
+    confirmed: donations.filter(d => d.status === 'confirmed').length,
+    totalAmount: donations.filter(d => d.status === 'confirmed').reduce((acc, curr) => acc + curr.amount, 0)
+  };
+
   if (!authenticated) {
     return (
       <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md p-8">
-          <h1 className="text-3xl font-bold mb-2">管理面板</h1>
-          <p className="text-gray-600 mb-6">输入您的管理员密码</p>
+        <Card className="w-full max-w-md p-8 shadow-lg">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-900">管理面板</h1>
+            <p className="text-gray-500 mt-2">请输入管理员密码以继续</p>
+          </div>
 
           {error && (
-            <Alert className="mb-4 bg-red-50 border-red-200">
+            <Alert className="mb-6 bg-red-50 border-red-200">
               <AlertDescription className="text-red-800">{error}</AlertDescription>
             </Alert>
           )}
@@ -210,8 +221,9 @@ export default function AdminPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="管理员密码"
               required
+              className="h-11"
             />
-            <Button disabled={loading} className="w-full">
+            <Button disabled={loading} className="w-full h-11 text-base">
               {loading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -228,166 +240,236 @@ export default function AdminPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold">投喂管理仪表板</h1>
-          <div className="flex gap-2 md:gap-3">
-            <Button
-              variant="outline"
-              onClick={() => window.location.href = '/admin/config'}
-            >
-              站点配置
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setAuthenticated(false);
-                setPassword('');
-                setDonations([]);
-                localStorage.removeItem('adminToken');
-              }}
-            >
-              <LogOut className="mr-2 h-4 w-4" />
-              退出登录
-            </Button>
+    <TooltipProvider>
+      <main className="min-h-screen bg-slate-50/50">
+        {/* Header */}
+        <header className="bg-white border-b sticky top-0 z-20 px-6 py-4 shadow-sm">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900">投喂管理仪表板</h1>
+              <p className="text-sm text-gray-500 mt-1">管理所有的投喂记录和站点配置</p>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                onClick={() => window.location.href = '/admin/config'}
+                className="bg-blue-600 hover:bg-blue-700 text-white shadow-sm"
+              >
+                <Settings className="mr-2 h-4 w-4" />
+                站点配置
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setAuthenticated(false);
+                  setPassword('');
+                  setDonations([]);
+                  localStorage.removeItem('adminToken');
+                }}
+                className="text-gray-600"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                退出
+              </Button>
+            </div>
           </div>
-        </div>
+        </header>
 
-        {successMessage && (
-          <Alert className="mb-6 bg-green-50 border-green-200">
-            <AlertDescription className="text-green-800">{successMessage}</AlertDescription>
-          </Alert>
-        )}
-
-        {error && (
-          <Alert className="mb-6 bg-red-50 border-red-200">
-            <AlertDescription className="text-red-800">{error}</AlertDescription>
-          </Alert>
-        )}
-
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-6 border-b">
-            <div className="flex justify-between items-start mb-4">
+        <div className="max-w-7xl mx-auto p-6 space-y-6">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card className="p-4 flex items-center gap-4 shadow-sm border-blue-100 bg-blue-50/50">
+              <div className="p-3 bg-blue-100 rounded-full text-blue-600">
+                <Wallet className="w-6 h-6" />
+              </div>
               <div>
-                <h2 className="text-xl font-semibold">投喂管理</h2>
-                <p className="text-sm text-gray-600 mt-1">
-                  记录：{donations.length} |
-                  待处理：{donations.filter(d => d.status === 'pending').length} |
-                  已确认：{donations.filter(d => d.status === 'confirmed').length}
-                </p>
+                <p className="text-sm font-medium text-blue-600/80">总收入 (已确认)</p>
+                <p className="text-2xl font-bold text-blue-700">¥{stats.totalAmount.toFixed(2)}</p>
+              </div>
+            </Card>
+            <Card className="p-4 flex items-center gap-4 shadow-sm">
+              <div className="p-3 bg-orange-100 rounded-full text-orange-600">
+                <Clock className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">待处理</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.pending}</p>
+              </div>
+            </Card>
+            <Card className="p-4 flex items-center gap-4 shadow-sm">
+              <div className="p-3 bg-green-100 rounded-full text-green-600">
+                <Check className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">已确认</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.confirmed}</p>
+              </div>
+            </Card>
+            <Card className="p-4 flex items-center gap-4 shadow-sm">
+              <div className="p-3 bg-gray-100 rounded-full text-gray-600">
+                <Users className="w-6 h-6" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-500">总记录</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+              </div>
+            </Card>
+          </div>
+
+          {successMessage && (
+            <Alert className="bg-green-50 border-green-200 text-green-800 animate-in fade-in slide-in-from-top-2">
+              <Check className="h-4 w-4" />
+              <AlertDescription>{successMessage}</AlertDescription>
+            </Alert>
+          )}
+
+          {error && (
+            <Alert className="bg-red-50 border-red-200 text-red-800 animate-in fade-in slide-in-from-top-2">
+              <X className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+
+          <Card className="shadow-sm border-gray-200 overflow-hidden">
+            <div className="p-4 border-b bg-gray-50/50 flex flex-col sm:flex-row justify-between gap-4 items-center">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <div className="relative w-full sm:w-64">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder="搜索..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9 bg-white"
+                  />
+                </div>
+                <div className="flex bg-gray-100 p-1 rounded-lg">
+                  <button
+                    onClick={() => setFilterStatus('pending')}
+                    className={cn(
+                      "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
+                      filterStatus === 'pending' ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                    )}
+                  >
+                    待处理
+                  </button>
+                  <button
+                    onClick={() => setFilterStatus('confirmed')}
+                    className={cn(
+                      "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
+                      filterStatus === 'confirmed' ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                    )}
+                  >
+                    已确认
+                  </button>
+                  <button
+                    onClick={() => setFilterStatus('all')}
+                    className={cn(
+                      "px-3 py-1.5 text-sm font-medium rounded-md transition-all",
+                      filterStatus === 'all' ? "bg-white text-gray-900 shadow-sm" : "text-gray-500 hover:text-gray-700"
+                    )}
+                  >
+                    全部
+                  </button>
+                </div>
               </div>
               <Button
-                size="sm"
                 variant="outline"
+                size="sm"
                 onClick={exportToCSV}
                 disabled={filteredAndSearchedDonations.length === 0}
+                className="w-full sm:w-auto"
               >
                 <Download className="mr-2 h-4 w-4" />
                 导出 CSV
               </Button>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 mb-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="搜索投喂者名称、邮箱、留言或回复..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant={filterStatus === 'pending' ? 'default' : 'outline'}
-                onClick={() => setFilterStatus('pending')}
-              >
-                待处理
-              </Button>
-              <Button
-                size="sm"
-                variant={filterStatus === 'confirmed' ? 'default' : 'outline'}
-                onClick={() => setFilterStatus('confirmed')}
-              >
-                已确认
-              </Button>
-              <Button
-                size="sm"
-                variant={filterStatus === 'all' ? 'default' : 'outline'}
-                onClick={() => setFilterStatus('all')}
-              >
-                全部
-              </Button>
-            </div>
-          </div>
-
-          <div className="overflow-x-auto -mx-6 md:mx-0">
-            <div className="inline-block min-w-full align-middle px-6 md:px-0">
-              <table className="min-w-full text-sm">
-                <thead className="bg-gray-50 border-b">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="bg-gray-50 text-gray-500 font-medium border-b">
                   <tr>
-                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">头像</th>
-                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">投喂者</th>
-                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">金额</th>
-                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">方式</th>
-                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">留言/回复</th>
-                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">状态</th>
-                    <th className="px-4 md:px-6 py-3 text-left font-medium whitespace-nowrap">操作</th>
+                    <th className="px-6 py-3 w-16">头像</th>
+                    <th className="px-6 py-3">投喂者信息</th>
+                    <th className="px-6 py-3">金额</th>
+                    <th className="px-6 py-3">留言/回复</th>
+                    <th className="px-6 py-3">状态</th>
+                    <th className="px-6 py-3 text-right">操作</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y">
+                <tbody className="divide-y divide-gray-100">
                   {filteredAndSearchedDonations.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
-                        {searchQuery ? '未找到匹配的记录' : '暂无投喂记录'}
+                      <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
+                        <div className="flex flex-col items-center gap-2">
+                          <Search className="w-8 h-8 text-gray-300" />
+                          <p>{searchQuery ? '未找到匹配的记录' : '暂无投喂记录'}</p>
+                        </div>
                       </td>
                     </tr>
                   ) : (
                     filteredAndSearchedDonations.map(donation => (
-                      <tr key={donation.id} className="hover:bg-gray-50">
+                      <tr key={donation.id} className="hover:bg-gray-50/50 transition-colors">
                         <td className="px-6 py-4">
-                          <img src={getUserAvatarUrl(donation.user_email, 40)} alt="avatar" className="w-8 h-8 rounded-full" />
+                          <img src={getUserAvatarUrl(donation.user_email, 40)} alt="avatar" className="w-10 h-10 rounded-full border border-gray-100 shadow-sm" />
                         </td>
                         <td className="px-6 py-4">
-                          <div className="font-medium">{donation.user_name}</div>
-                          <div className="text-xs text-gray-500">{donation.user_email || '-'}</div>
+                          <div className="font-semibold text-gray-900">{donation.user_name}</div>
+                          <div className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
+                            {donation.user_email || '无邮箱'}
+                            <span className="w-1 h-1 rounded-full bg-gray-300 mx-1" />
+                            {donation.payment_method}
+                          </div>
+                          <div className="text-xs text-gray-400 mt-0.5">
+                            {new Date(donation.created_at).toLocaleString('zh-CN')}
+                          </div>
                         </td>
-                        <td className="px-6 py-4 font-semibold">¥{donation.amount.toFixed(2)}</td>
-                        <td className="px-6 py-4 text-sm">{donation.payment_method}</td>
-                        <td className="px-6 py-4 text-sm max-w-xs">
-                          <div className="flex flex-col gap-1">
-                            <div className="text-gray-800 truncate" title={donation.user_message}>
-                              {donation.user_message || <span className="text-gray-400 italic">无留言</span>}
-                            </div>
+                        <td className="px-6 py-4">
+                          <span className="font-bold text-gray-900">¥{donation.amount.toFixed(2)}</span>
+                        </td>
+                        <td className="px-6 py-4 max-w-xs">
+                          <div className="flex flex-col gap-2">
+                            {donation.user_message ? (
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <div className="text-gray-700 truncate cursor-help border-l-2 border-gray-200 pl-2 text-xs">
+                                    {donation.user_message}
+                                  </div>
+                                </TooltipTrigger>
+                                <TooltipContent className="max-w-xs">
+                                  <p>{donation.user_message}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            ) : (
+                              <span className="text-gray-400 text-xs italic">无留言</span>
+                            )}
+
                             {donation.reply_content && (
-                              <div className="text-blue-600 text-xs flex items-center gap-1 truncate" title={donation.reply_content}>
-                                <Reply className="w-3 h-3" />
-                                {donation.reply_content}
+                              <div className="flex items-start gap-1.5 text-blue-600 text-xs bg-blue-50 p-2 rounded-md">
+                                <Reply className="w-3 h-3 mt-0.5 shrink-0" />
+                                <span className="truncate" title={donation.reply_content}>{donation.reply_content}</span>
                               </div>
                             )}
                           </div>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`px-3 py-1 rounded-full text-xs font-medium ${donation.status === 'confirmed'
-                            ? 'bg-green-100 text-green-800'
-                            : donation.status === 'rejected'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-yellow-100 text-yellow-800'
-                            }`}>
+                          <Badge
+                            variant="secondary"
+                            className={cn(
+                              "font-medium",
+                              donation.status === 'confirmed' && "bg-green-100 text-green-700 hover:bg-green-100",
+                              donation.status === 'rejected' && "bg-red-100 text-red-700 hover:bg-red-100",
+                              donation.status === 'pending' && "bg-yellow-100 text-yellow-700 hover:bg-yellow-100"
+                            )}
+                          >
                             {donation.status === 'confirmed' ? '已确认' : donation.status === 'rejected' ? '已拒绝' : '待确认'}
-                          </span>
+                          </Badge>
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="flex gap-2 items-center">
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex justify-end gap-2 items-center">
                             <Dialog open={replyingId === donation.id} onOpenChange={(open) => !open && setReplyingId(null)}>
                               <DialogTrigger asChild>
-                                <Button size="sm" variant="outline" onClick={() => openReplyDialog(donation)}>
-                                  <MessageSquare className="w-4 h-4" />
+                                <Button size="sm" variant="ghost" onClick={() => openReplyDialog(donation)} className="h-8 w-8 p-0">
+                                  <MessageSquare className="w-4 h-4 text-gray-500" />
                                 </Button>
                               </DialogTrigger>
                               <DialogContent>
@@ -417,7 +499,7 @@ export default function AdminPage() {
 
                             {filterStatus === 'all' ? (
                               <select
-                                className="rounded border px-3 py-2 text-sm"
+                                className="h-8 rounded-md border border-gray-200 text-xs px-2 bg-white"
                                 value={donation.status}
                                 disabled={actioningId === donation.id}
                                 onChange={(e) =>
@@ -435,36 +517,42 @@ export default function AdminPage() {
                             ) : (
                               donation.status === 'pending' && (
                                 <>
-                                  <Button
-                                    size="sm"
-                                    onClick={() => updateDonationStatus(donation.id, 'confirmed', '投喂已通过')}
-                                    disabled={actioningId === donation.id}
-                                    className="bg-green-600 hover:bg-green-700"
-                                  >
-                                    {actioningId === donation.id ? (
-                                      <Loader2 className="h-4 w-4 animate-spin" />
-                                    ) : (
-                                      <>
-                                        <Check className="mr-1 h-4 w-4" />
-                                        确认
-                                      </>
-                                    )}
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    variant="destructive"
-                                    onClick={() => updateDonationStatus(donation.id, 'rejected', '投喂已标记为拒绝')}
-                                    disabled={actioningId === donation.id}
-                                  >
-                                    {actioningId === donation.id ? (
-                                      <Loader2 className="h-4 w-4 animate-spin" />
-                                    ) : (
-                                      <>
-                                        <X className="mr-1 h-4 w-4" />
-                                        拒绝
-                                      </>
-                                    )}
-                                  </Button>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button
+                                        size="sm"
+                                        onClick={() => updateDonationStatus(donation.id, 'confirmed', '投喂已通过')}
+                                        disabled={actioningId === donation.id}
+                                        className="h-8 w-8 p-0 bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-700 border-green-200 border"
+                                      >
+                                        {actioningId === donation.id ? (
+                                          <Loader2 className="h-4 w-4 animate-spin" />
+                                        ) : (
+                                          <Check className="h-4 w-4" />
+                                        )}
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>确认通过</TooltipContent>
+                                  </Tooltip>
+
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => updateDonationStatus(donation.id, 'rejected', '投喂已标记为拒绝')}
+                                        disabled={actioningId === donation.id}
+                                        className="h-8 w-8 p-0 text-red-500 hover:bg-red-50 hover:text-red-600"
+                                      >
+                                        {actioningId === donation.id ? (
+                                          <Loader2 className="h-4 w-4 animate-spin" />
+                                        ) : (
+                                          <X className="h-4 w-4" />
+                                        )}
+                                      </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>拒绝</TooltipContent>
+                                  </Tooltip>
                                 </>
                               )
                             )}
@@ -476,9 +564,9 @@ export default function AdminPage() {
                 </tbody>
               </table>
             </div>
-          </div>
+          </Card>
         </div>
-      </div>
-    </main>
+      </main>
+    </TooltipProvider>
   );
 }
