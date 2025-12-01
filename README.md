@@ -1,248 +1,250 @@
-# FundStack - The Next Generation of Sponsorship
+# FundStack - 为创作者打造的次世代赞助基础设施
 
-> The next generation of sponsorship.
+> 为创作者打造的次世代赞助基础设施。
 
-[English](README.md) | [简体中文](README_CN.md)
+[English](README_EN.md) | [简体中文](README.md)
 
-**FundStack** is a production-ready, high-performance self-hosted sponsorship solution. Rebuilt on the Next.js 19 architecture with native Serverless support, it features real-time analytics, multi-channel payment management, automated notifications, and robust security. Designed for developers who demand full data ownership.
+**FundStack** 是一套生产级、高性能的自托管赞助管理解决方案。
 
-## 🚀 Why FundStack?
+基于最新的 Next.js 19 架构重构,原生支持 Serverless 部署。它集成了实时数据分析、多渠道支付管理(微信/支付宝/QQ)、自动化邮件通知以及高强度的安全防护。专为那些希望完全掌控数据、拒绝平台抽成的开发者和创作者设计。
 
-### Instant Visibility - The Game Changer
+## 🚀 为什么选择 FundStack?
 
-> **Unlike traditional sponsorship platforms**, FundStack displays donations **immediately** after submission - no waiting, no delays.
+### 即时展示 - 改变游戏规则的特性
 
-When a supporter submits a donation:
-- ✅ **Instant Display**: Their contribution appears on the public list immediately (marked as "Pending")
-- ✅ **Real-time Feedback**: Supporters see their message and amount right away
-- ✅ **Transparent Process**: Status updates from "Pending" → "Confirmed" after admin verification
-- ✅ **Better Engagement**: Supporters feel acknowledged instantly, not hours or days later
+> **与传统赞助平台不同**,FundStack 在提交后**立即**展示赞助信息 - 无需等待,零延迟。
 
-**Traditional platforms** make donors wait until manual approval - sometimes hours or days. **FundStack** shows appreciation instantly while maintaining admin control.
+当赞助者提交打赏时:
+- ✅ **即时展示**: 提交信息立即出现在公开列表中(标记为"待确认")
+- ✅ **实时反馈**: 赞助者马上就能看到自己的留言和金额
+- ✅ **透明流程**: 状态从"待确认" → "已确认"(站长审核后)
+- ✅ **更好的互动**: 赞助者立即获得认可,而不是等待数小时甚至数天
 
-### Full Control, Zero Commission
-- 💰 **No Platform Fees**: Keep 100% of your donations
-- 🔒 **Your Data, Your Rules**: Complete ownership of donor information
-- ⚙️ **Customizable**: Adapt every aspect to your needs
-- 🌐 **Self-Hosted**: Deploy anywhere - Vercel, your own server, or any cloud platform
+**传统平台**让赞助者等到人工审核通过才显示 - 有时需要几小时甚至几天。**FundStack** 在保持管理员控制的同时,立即表达感谢。
+
+### 完全掌控,零抽成
+- 💰 **零平台费用**: 100% 保留您的赞助收入
+- 🔒 **数据自主**: 完全拥有赞助者信息
+- ⚙️ **高度定制**: 根据需求调整每个细节
+- 🌐 **自主部署**: 部署到任何地方 - Vercel、自有服务器或任何云平台
 
 ---
 
-## ✨ Features
+## ✨ 功能特性
 
-### Core Features
-- **⚡ Instant Display**: Donations appear immediately on public list (marked as pending until confirmed)
-- **📱 Modern Donation Form**: Clean, responsive interface with real-time validation
-- **🔒 Secure Data Handling**: Input sanitization, SQL injection protection, XSS protection
-- **💳 Multiple Payment Methods**: Support for WeChat Pay, Alipay, QQ Pay, and more
-- **📧 Email Notifications**: Automatic notifications for donors and administrators
-- **🎛️ Admin Dashboard**: Comprehensive management panel with filtering and search
-- **⚙️ Dynamic Configuration**: Web-based site configuration without code changes
-- **📱 Mobile Optimized**: Fully responsive design with touch-friendly interactions
+### 核心功能
+- **⚡ 即时展示**: 赞助信息提交后立即显示在公开列表(待确认状态,审核后变为已确认)
+- **📱 现代赞助表单**: 简洁、响应式界面,实时验证
+- **🔒 安全数据处理**: 输入清理、SQL注入防护、XSS防护
+- **💳 多种支付方式**: 支持微信支付、支付宝、QQ支付等
+- **📧 邮件通知**: 为赞助者和管理员提供自动通知
+- **🎛️ 管理仪表板**: 带有过滤和搜索的综合管理面板
+- **⚙️ 动态配置**: 基于Web的站点配置,无需修改代码
+- **📱 移动端优化**: 完全响应式设计,触摸友好的交互
 
-### Security
-- TypeScript for type safety and code quality
-- Comprehensive input validation and sanitization  
-- SQL injection and XSS protection
-- CORS security configuration
-- Rate limiting to prevent abuse
-- Secure admin authentication
+### 安全性
+- TypeScript提供类型安全和代码质量保障
+- 全面的输入验证和清理
+- SQL注入和XSS攻击防护
+- CORS安全配置
+- 速率限制防止滥用
+- 安全的管理员认证
 
-### User Experience
-- Modern UI with Tailwind CSS and Shadcn UI components
-- Fully responsive mobile-optimized layouts
-- Real-time form validation with helpful error messages
-- Loading states and smooth transitions
-- Accessible design patterns (WCAG compliant)
-- Touch-friendly mobile interactions
+### 用户体验
+- 使用Tailwind CSS和Shadcn UI组件的现代界面
+- 完全响应式的移动端优化布局
+- 实时表单验证，提供有用的错误提示
+- 加载状态和流畅过渡效果
+- 可访问性设计模式（符合WCAG标准）
+- 触摸友好的移动端交互
 
-### Analytics & Reporting  
-- Real-time donation statistics dashboard
-- Donor count and total amount tracking  
-- Payment method distribution charts
-- Trend analysis with customizable periods
-- CSV export functionality for reports
-- Individual donor history tracking
+### 数据分析与报告
+- 实时赞助统计仪表板
+- 赞助者数量和总金额跟踪
+- 支付方式分布图表
+- 可自定义周期的趋势分析
+- CSV导出功能用于报告
+- 个人赞助者历史记录跟踪
 
-## 🔧 Tech Stack
+## 🔧 技术栈
 
-- **Frontend**: React 19, TypeScript, Tailwind CSS 4.1, Shadcn UI
-- **Backend**: Next.js 16 API Routes  
-- **Database**: PostgreSQL (Neon Serverless)
-- **Email**: Resend / SendGrid API integration
-- **Charts**: Recharts for data visualization
-- **Deployment**: Vercel (recommended)
+- **前端**: React 19, TypeScript, Tailwind CSS 4.1, Shadcn UI
+- **后端**: Next.js 16 API Routes  
+- **数据库**: PostgreSQL (Neon Serverless)
+- **邮件**: Resend / SendGrid API集成
+- **图表**: Recharts数据可视化
+- **部署**: Vercel (推荐)
 
-## 📦 Quick Start
+## 📦 快速开始
 
-### Prerequisites
+### 前置要求
 - Node.js 18+ 
-- PostgreSQL database or Neon account
-- Email service API key (optional, for notifications)
+- PostgreSQL数据库或Neon账户
+- 邮件服务API密钥（可选，用于通知）
 
-### Installation
+### 安装
 
 ```bash
-# Clone the repository
+# 克隆仓库
 git clone https://github.com/DomeenoH/FundStack.git
 cd FundStack
 
-# Install dependencies
+# 安装依赖
 pnpm install
 
-# Set up environment variables
+# 设置环境变量
 cp .env.example .env.local
-# Edit .env.local with your configuration
+# 编辑.env.local填入您的配置
 
-# Initialize database
-# Execute scripts/init-database.sql in your PostgreSQL instance
+# 初始化数据库
+# 在PostgreSQL实例中执行scripts/init-database.sql
 
-# Run development server
+# 运行开发服务器
 pnpm dev
 ```
 
-Visit `http://localhost:3000` to see the donation page.
+访问 `http://localhost:3000` 查看赞助页面。
 
-## ⚙️ Configuration
+## ⚙️ 配置
 
-### Environment Variables
+### 环境变量
 
-Create `.env.local` with the following variables:
+创建`.env.local`文件并填入以下变量：
 
 ```env
-# Database
+# 数据库
 DATABASE_URL=postgresql://user:password@host/database
 
-# Admin Credentials
+# 管理员凭据
 ADMIN_PASSWORD=your_secure_password_here
 ADMIN_EMAIL=admin@example.com
 
-# Email Service (Optional)
-EMAIL_PROVIDER=resend  # or sendgrid
+# 邮件服务（可选）
+EMAIL_PROVIDER=resend  # 或 sendgrid
 EMAIL_API_KEY=your_api_key_here
 EMAIL_FROM=noreply@yourdomain.com
 
-# Site URLs
+# 站点URL
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_ADMIN_URL=http://localhost:3000/admin
 
-# Security
+# 安全
 RATE_LIMIT_ENABLED=true
 ```
 
-### Email Service Setup
+### 邮件服务设置
 
-**Recommended: Resend**
-1. Sign up at [resend.com](https://resend.com)
-2. Add and verify your domain
-3. Generate API key
-4. Set `EMAIL_PROVIDER=resend` and `EMAIL_API_KEY`
+**推荐：Resend**
+1. 在[resend.com](https://resend.com)注册
+2. 添加并验证您的域名
+3. 生成API密钥
+4. 设置`EMAIL_PROVIDER=resend`和`EMAIL_API_KEY`
 
-**Alternative: SendGrid**
-1. Sign up at [sendgrid.com](https://sendgrid.com)
-2. Generate API key
-3. Set `EMAIL_PROVIDER=sendgrid` and `EMAIL_API_KEY`
+**备选：SendGrid**
+1. 在[sendgrid.com](https://sendgrid.com)注册
+2. 生成API密钥
+3. 设置`EMAIL_PROVIDER=sendgrid`和`EMAIL_API_KEY`
 
-## 📱 Mobile Optimization
+## 📱 移动端优化
 
-This project is fully optimized for mobile devices with:
+本项目针对移动设备进行了全面优化：
 
-- **Responsive layouts** that adapt  to all screen sizes
-- **Touch-friendly** buttons and form controls (44x44px minimum)
-- **Mobile-optimized** virtual keyboards (`inputMode` attributes)
-- **Horizontal scrolling** tables with visual indicators
-- **Adaptive grid layouts** for statistics and data cards
-- **Optimized font sizes** and spacing for small screens
+- **响应式布局**：适应所有屏幕尺寸
+- **触摸友好**：按钮和表单控件符合44x44px最小标准
+- **移动端优化**：虚拟键盘优化（`inputMode`属性）
+- **横向滚动**：带有视觉指示器的表格
+- **自适应网格**：统计和数据卡片布局
+- **优化的字体大小**：和小屏幕间距
 
-## 📚 Documentation
+## 📚 文档
 
-- **[Setup Guide](SETUP_GUIDE.md)**: Detailed installation and configuration
-- **[Setup Guide (CN)](SETUP_GUIDE_CN.md)**: 中文安装配置指南
-- **[Deployment Guide](DEPLOYMENT_GUIDE.md)**: Production deployment instructions
-- **[Deployment Guide (CN)](DEPLOYMENT_GUIDE_CN.md)**: 生产环境部署说明
-- **[API Documentation](#api-endpoints)**: API reference below
+- **[安装指南](SETUP_GUIDE.md)**: 中文详细安装配置指南
+- **[安装指南(英文)](SETUP_GUIDE_EN.md)**: 英文详细安装和配置说明
+- **[部署指南](DEPLOYMENT_GUIDE.md)**: 生产环境部署说明
+- **[部署指南(英文)](DEPLOYMENT_GUIDE_EN.md)**: Production deployment instructions
+- **[API文档](#api-endpoints)**: API参考见下文
 
-## 🔗 API Endpoints
+## 🔗 API 端点
 
-### Public Endpoints
-
-```
-GET  /api/donations        # Get donation statistics
-POST /api/donations        # Submit new donation
-GET  /api/donations/list   # Get public donation list
-GET  /api/donations/[id]   # Get donor details and history
-GET  /api/analytics        # Get analytics data
-GET  /api/config           # Get site configuration
-```
-
-### Admin Endpoints (Authentication Required)
+### 公开端点
 
 ```
-GET   /api/admin/donations      # List all donations
-PATCH /api/admin/donations      # Update donation status
-GET   /api/admin/config         # Get current configuration
-PATCH /api/admin/config         # Update site configuration
+GET  /api/donations        # 获取赞助统计
+POST /api/donations        # 提交新赞助
+GET  /api/donations/list   # 获取公开赞助列表
+GET  /api/donations/[id]   # 获取赞助者详情和历史
+GET  /api/analytics        # 获取分析数据
+GET  /api/config           # 获取站点配置
 ```
 
-## 🎯 Key Improvements
+### 管理端点（需要认证）
 
-| Feature | Previous | Current |
-|---------|----------|---------|
-| Framework | Vanilla JS | React + TypeScript |
-| Type Safety | None | Full TypeScript |
-| Validation | Basic | Comprehensive |
-| Security | Basic | Production-ready |
-| Admin Panel | None | Full Web UI |
-| Configuration | Hardcoded | Dynamic Web-based |
-| Email | Simple | Template-based |
-| Analytics | None | Comprehensive |
-| Mobile | Basic | Fully Optimized |
-| Code Quality | Mixed | Modular & Tested |
+```
+GET   /api/admin/donations      # 列出所有赞助
+PATCH /api/admin/donations      # 更新赞助状态
+GET   /api/admin/config         # 获取当前配置
+PATCH /api/admin/config         # 更新站点配置
+```
 
-## 🚀 Deployment
+## 🎯 主要改进
 
-### Deploy to Vercel
+| 功能 | 之前 | 现在 |
+|------|------|------|
+| 框架 | 原生JS | React + TypeScript |
+| 类型安全 | 无 | 完整TypeScript |
+| 验证 | 基础 | 全面 |
+| 安全性 | 基础 | 生产就绪 |
+| 管理面板 | 无 | 完整Web界面 |
+| 配置 | 硬编码 | 动态Web配置 |
+| 邮件 | 简单 | 基于模板 |
+| 数据分析 | 无 | 全面 |
+| 移动端 | 基础 | 完全优化 |
+| 代码质量 | 混杂 | 模块化测试 |
+
+## 🚀 部署
+
+### 部署到Vercel
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
 
-1. Push code to GitHub
-2. Import repository in Vercel
-3. Configure environment variables
-4. Deploy!
+1. 推送代码到GitHub
+2. 在Vercel中导入仓库
+3. 配置环境变量
+4. 部署！
 
-See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for detailed instructions.
+详细说明请参见 [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)。
 
-## 🔐 Security Best Practices
+## 🔐 安全最佳实践
 
-1. Always use HTTPS in production
-2. Set strong `ADMIN_PASSWORD` (20+ characters)
-3. Configure CORS properly for your domain
-4. Enable rate limiting in production
-5. Keep dependencies updated: `pnpm audit`
-6. Backup database regularly
-7. Use environment-specific credentials
+1. 生产环境始终使用HTTPS
+2. 设置强壮的`ADMIN_PASSWORD`（20+字符）
+3. 为您的域名正确配置CORS
+4. 生产环境启用速率限制
+5. 保持依赖更新：`pnpm audit`
+6. 定期备份数据库
+7. 使用环境专用的凭据
 
-## 📄 License
+## 📄 许可证
 
 MIT
 
-## 🤖 Built with AI
+## 🤖 AI 协作开发
 
-This project was collaboratively developed through an innovative AI-powered workflow:
+本项目通过创新的 AI 驱动工作流协作开发完成:
 
-- **[v0.dev](https://v0.dev)** - Initial UI prototyping and component generation
-- **[Google Gemini 3 Pro](https://deepmind.google/technologies/gemini/)** - Architecture design and code implementation
-- **[Claude Sonnet 4.5](https://www.anthropic.com/claude)** - Code refinement and optimization
+- **[v0.dev](https://v0.dev)** - 初始 UI 原型设计和组件生成
+- **[Google Gemini 3 Pro](https://deepmind.google/technologies/gemini/)** - 架构设计和代码实现
+- **[Claude Sonnet 4.5](https://www.anthropic.com/claude)** - 代码优化和精炼
 
-> A testament to the power of human-AI collaboration in modern software development. This entire codebase was created through iterative conversations with AI assistants, demonstrating how AI can accelerate development while maintaining code quality and best practices.
+> 这是人机协作在现代软件开发中的力量见证。整个代码库通过与 AI 助手的迭代对话创建,展示了 AI 如何在保持代码质量和最佳实践的同时加速开发过程。
 
-## 💬 Support
+## 💬 支持
 
-- **Issues**: 在 [GitHub Issues](https://github.com/DomeenoH/FundStack/issues) 提交问题
-- **Discussions**: 加入 [GitHub Discussions](https://github.com/DomeenoH/FundStack/discussions)
-- **Email**: domino@dominoh.com
+- **问题**: 在 [GitHub Issues](https://github.com/DomeenoH/FundStack/issues) 提交问题
+- **讨论**: 加入 [GitHub Discussions](https://github.com/DomeenoH/FundStack/discussions)
+- **邮件**: domino@dominoh.com
 
 ---
 
-Made with ❤️ using Next.js, TypeScript, and AI
+使用 Next.js、TypeScript 和 AI 用 ❤️ 制作
 
