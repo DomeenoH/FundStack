@@ -35,6 +35,13 @@ interface AdminDonation {
   reply_at?: string;
 }
 
+const PAYMENT_METHOD_LABELS = {
+  wechat: '微信',
+  alipay: '支付宝',
+  qq: 'QQ支付',
+  other: '其他',
+};
+
 export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
@@ -416,14 +423,14 @@ export default function AdminPage() {
                     filteredAndSearchedDonations.map(donation => (
                       <tr key={donation.id} className="hover:bg-gray-50/50 transition-colors">
                         <td className="px-6 py-4">
-                          <img src={getUserAvatarUrl(donation.user_email, 40)} alt="avatar" className="w-10 h-10 rounded-full border border-gray-100 shadow-sm" />
+                          <img src={getUserAvatarUrl(donation.user_email, 40)} alt="avatar" className="w-10 h-10 rounded-full border border-gray-100 shadow-sm object-cover" />
                         </td>
                         <td className="px-6 py-4">
                           <div className="font-semibold text-gray-900">{donation.user_name}</div>
                           <div className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
                             {donation.user_email || '无邮箱'}
                             <span className="w-1 h-1 rounded-full bg-gray-300 mx-1" />
-                            {donation.payment_method}
+                            {PAYMENT_METHOD_LABELS[donation.payment_method as keyof typeof PAYMENT_METHOD_LABELS] || donation.payment_method}
                           </div>
                           <div className="text-xs text-gray-400 mt-0.5">
                             {new Date(donation.created_at).toLocaleString('zh-CN')}
