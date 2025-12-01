@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useEffect, useRef, useState } from 'react';
 import { SiteConfig } from '@/lib/config';
-import { getQQAvatarUrl } from '@/lib/avatar-utils';
+import { getCreatorAvatarUrl } from '@/lib/avatar-utils';
 
 const NAV_LINKS = [
   { href: '/', label: '投喂首页' },
@@ -49,20 +49,11 @@ export function SiteNav({ config }: SiteNavProps) {
   const siteTitle = config?.site_title || '投喂小站';
   const showAvatar = config?.site_nav_show_avatar || false;
 
-  // Resolve avatar URL
-  // Resolve avatar URL
-  let avatarUrl = '/placeholder-user.jpg';
-
-  // Priority: Custom Avatar > Creator QQ > Payment QQ > Placeholder
-  if (config?.payment_qq_number) {
-    avatarUrl = getQQAvatarUrl(config.payment_qq_number);
-  }
-  if (config?.creator_qq_number) {
-    avatarUrl = getQQAvatarUrl(config.creator_qq_number);
-  }
-  if (config?.creator_avatar && config.creator_avatar !== '/placeholder-user.jpg') {
-    avatarUrl = config.creator_avatar;
-  }
+  // 使用统一的头像逻辑：自定义 URL → QQ 头像 → 缺省值
+  const avatarUrl = getCreatorAvatarUrl(
+    config?.creator_avatar || '/placeholder-user.jpg',
+    config?.creator_qq_number || config?.payment_qq_number
+  );
 
   return (
     <header className="sticky top-0 z-30 border-b bg-white/95 backdrop-blur-lg shadow-sm">

@@ -3,15 +3,22 @@ import './globals.css'
 import { SiteNav } from '@/components/site-nav'
 
 import { getConfig } from '@/lib/config'
-import { getQQAvatarUrl } from '@/lib/avatar-utils'
+import { getCreatorAvatarUrl } from '@/lib/avatar-utils'
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getConfig()
-  const qq = config.creator_qq_number || config.payment_qq_number
 
-  const icons = qq ? {
-    icon: getQQAvatarUrl(qq, 640),
-    apple: getQQAvatarUrl(qq, 640),
+  // 使用统一的头像逻辑：自定义 URL → QQ 头像 → 缺省值
+  const avatarUrl = getCreatorAvatarUrl(
+    config.creator_avatar,
+    config.creator_qq_number || config.payment_qq_number,
+    640
+  );
+
+  // 如果有有效头像(非默认占位符)，使用头像作为 favicon；否则使用默认图标
+  const icons = avatarUrl !== '/placeholder-user.jpg' ? {
+    icon: avatarUrl,
+    apple: avatarUrl,
   } : {
     icon: [
       {
