@@ -229,32 +229,19 @@ export async function updateDonation(
   }
 ) {
   try {
-    const updates = [];
-    const values: any[] = [];
-    let paramIndex = 1;
+    // 构建动态更新查询
+    const updates: any = {};
+    if (data.user_name !== undefined) updates.user_name = data.user_name;
+    if (data.user_email !== undefined) updates.user_email = data.user_email || null;
+    if (data.user_url !== undefined) updates.user_url = data.user_url || null;
 
-    if (data.user_name !== undefined) {
-      updates.push(`user_name = $${paramIndex++}`);
-      values.push(data.user_name);
-    }
-    if (data.user_email !== undefined) {
-      updates.push(`user_email = $${paramIndex++}`);
-      values.push(data.user_email || null);
-    }
-    if (data.user_url !== undefined) {
-      updates.push(`user_url = $${paramIndex++}`);
-      values.push(data.user_url || null);
-    }
-
-    if (updates.length === 0) {
+    if (Object.keys(updates).length === 0) {
       throw new Error('No fields to update');
     }
 
-    values.push(id);
-
     const result = await sql`
       UPDATE donations
-      SET ${sql.unsafe(updates.join(', '))}
+      SET ${sql(updates)}
       WHERE id = ${id}
       RETURNING *
     `;

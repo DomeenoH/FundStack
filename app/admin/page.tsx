@@ -599,7 +599,7 @@ export default function AdminPage() {
                           />
                         </td>
                         <td className="px-6 py-4">
-                          <img src={getUserAvatarUrl(donation.user_email, 40)} alt="avatar" className="w-10 h-10 rounded-full border border-gray-100 shadow-sm object-cover" />
+                          <img src={getUserAvatarUrl(donation.user_email, 40)} alt="avatar" className="w-10 h-10 rounded-full border border-gray-100 shadow-sm object-cover aspect-square" />
                         </td>
                         <td className="px-6 py-4">
                           <div className="font-semibold text-gray-900">{donation.user_name}</div>
