@@ -5,20 +5,24 @@ import { decrypt } from './lib/jwt';
 export async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    // Protect /admin routes
-    if (pathname.startsWith('/admin')) {
-        // Exclude login page and api routes (api routes handle their own auth or are public)
-        // Actually API routes needing auth should be checked. But let's focus on pages first.
-        // The requirement says: "intercept /admin routes".
-        // We should NOT block /admin/login
+    // Protect /admin routes and /api/admin routes
+    if (pathname.startsWith('/admin') || pathname.startsWith('/api/admin')) {
+        // Exclude login page
         if (pathname === '/admin/login') {
             return NextResponse.next();
         }
 
         const session = request.cookies.get('session')?.value;
 
-        if (!session) {
+        const unauthorizedResponse = () => {
+            if (pathname.startsWith('/api/') || pathname.includes('/api/admin')) {
+                return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+            }
             return NextResponse.redirect(new URL('/admin/login', request.url));
+        };
+
+        if (!session) {
+            return unauthorizedResponse();
         }
 
         try {
@@ -26,7 +30,7 @@ export async function middleware(request: NextRequest) {
             return NextResponse.next();
         } catch (error) {
             // Invalid session
-            return NextResponse.redirect(new URL('/admin/login', request.url));
+            return unauthorizedResponse();
         }
     }
 
@@ -34,5 +38,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/admin/:path*'],
+    matcher: ['/admin/:path*', '/api/admin/:path*'],
 };
