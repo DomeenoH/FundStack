@@ -1,4 +1,5 @@
 import { neon } from '@neondatabase/serverless';
+import { unstable_cache } from 'next/cache';
 
 const sql = neon(process.env.DATABASE_URL!);
 
@@ -115,29 +116,34 @@ export async function updateDonationStatus(
   }
 }
 
-export async function getStats() {
-  try {
-    const data = await sql`
-      SELECT
-        COUNT(*) FILTER (WHERE status != 'rejected') as total_count,
-        COUNT(CASE WHEN status = 'confirmed' THEN 1 END) as confirmed_count,
-        SUM(CASE WHEN status = 'confirmed' THEN amount ELSE 0 END) as confirmed_total,
-        SUM(CASE WHEN status != 'rejected' THEN amount ELSE 0 END) as total_amount,
-        AVG(CASE WHEN status = 'confirmed' THEN amount END) as avg_amount
-      FROM donations
-    `;
-    return data[0];
-  } catch (error) {
-    console.error('[投喂小站] Database error in getStats:', error);
-    return {
-      total_count: 0,
-      confirmed_count: 0,
-      confirmed_total: 0,
-      total_amount: 0,
-      avg_amount: 0
-    };
-  }
-}
+
+export const getStats = unstable_cache(
+  async () => {
+    try {
+      const data = await sql`
+        SELECT
+          COUNT(*) FILTER (WHERE status != 'rejected') as total_count,
+          COUNT(CASE WHEN status = 'confirmed' THEN 1 END) as confirmed_count,
+          SUM(CASE WHEN status = 'confirmed' THEN amount ELSE 0 END) as confirmed_total,
+          SUM(CASE WHEN status != 'rejected' THEN amount ELSE 0 END) as total_amount,
+          AVG(CASE WHEN status = 'confirmed' THEN amount END) as avg_amount
+        FROM donations
+      `;
+      return data[0];
+    } catch (error) {
+      console.error('[投喂小站] Database error in getStats:', error);
+      return {
+        total_count: 0,
+        confirmed_count: 0,
+        confirmed_total: 0,
+        total_amount: 0,
+        avg_amount: 0
+      };
+    }
+  },
+  ['donation-stats'],
+  { revalidate: 60, tags: ['donation-stats'] }
+);
 
 export async function checkRateLimit(ip: string): Promise<number> {
   try {
