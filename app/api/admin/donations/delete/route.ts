@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { deleteDonation, batchDeleteDonations } from '@/lib/db';
-import { verifyAdminAuth } from '../../auth';
+import { getSession } from '@/lib/auth';
 
 export async function DELETE(request: NextRequest) {
-    if (!verifyAdminAuth(request)) {
+    const session = await getSession();
+    if (!session) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

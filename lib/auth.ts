@@ -1,41 +1,31 @@
-export const adminConfig = {
-  password: process.env.ADMIN_PASSWORD || 'admin123',
-};
+import { encrypt, decrypt, adminPassword } from '@/lib/jwt';
+import { cookies } from 'next/headers';
 
-export function encodeCredentials(password: string): string {
-  // Use base64 encoding that works in both browser and server
-  if (typeof window !== 'undefined') {
-    return btoa(`admin:${password}`);
+export async function login(formData: FormData) {
+  const password = formData.get('password');
+
+  if (password !== adminPassword) {
+    throw new Error('密码错误');
   }
-  return Buffer.from(`admin:${password}`).toString('base64');
+
+  // Create the session
+  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+  const session = await encrypt({ user: 'admin', expires });
+
+  // Save the session in a cookie
+  (await cookies()).set('session', session, { expires, httpOnly: true, secure: process.env.NODE_ENV === 'production', sameSite: "strict" });
 }
 
-export function verifyCredentials(encodedToken: string, password: string): boolean {
-  try {
-    const expectedToken = encodeCredentials(password);
-    return encodedToken === expectedToken;
-  } catch {
-    return false;
-  }
+export async function logout() {
+  (await cookies()).set('session', '', { expires: new Date(0) });
 }
 
-/**
- * Verify authentication from Next.js request
- * Returns { isValid: boolean }
- */
-export async function verifyAuth(request: Request): Promise<{ isValid: boolean }> {
+export async function getSession() {
+  const session = (await cookies()).get('session')?.value;
+  if (!session) return null;
   try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || !authHeader.startsWith('Basic ')) {
-      return { isValid: false };
-    }
-
-    const encodedToken = authHeader.substring(6); // Remove 'Basic ' prefix
-    const isValid = verifyCredentials(encodedToken, adminConfig.password);
-
-    return { isValid };
+    return await decrypt(session);
   } catch (error) {
-    console.error('[投喂小站] Auth verification error:', error);
-    return { isValid: false };
+    return null;
   }
 }

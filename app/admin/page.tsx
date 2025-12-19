@@ -45,8 +45,6 @@ const PAYMENT_METHOD_LABELS = {
 };
 
 export default function AdminPage() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
   const [donations, setDonations] = useState<AdminDonation[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -75,73 +73,46 @@ export default function AdminPage() {
   const [deletingIds, setDeletingIds] = useState<number[]>([]);
   const [submittingDelete, setSubmittingDelete] = useState(false);
 
-  // Check for existing session on mount
+  // Load donations on mount
   useEffect(() => {
-    const checkSession = async () => {
-      const token = localStorage.getItem('adminToken');
-      if (token) {
-        setLoading(true);
-        try {
-          const response = await fetch('/api/admin/donations', {
-            headers: { 'Authorization': `Basic ${token}` }
-          });
+    const fetchDonations = async () => {
+      setLoading(true);
+      try {
+        // Note: API route at /api/admin/donations needs to be updated to use session cookie instead of Basic Auth
+        // For now, we assume the API route might still be checking Basic Auth which we need to fix next.
+        // But actually, the requirements said: "Remove Basic Auth logic" in `app/api/admin/auth.ts`
+        // So we should expect the API to be protected by Middleware or Session check as well?
+        // The middleware protects the page. The API route should also be protected.
+        // We will update the API route separately to verify session.
+        const response = await fetch('/api/admin/donations');
 
-          if (response.ok) {
-            setAuthenticated(true);
-            const data = await response.json();
-            setDonations(data.donations);
+        if (response.ok) {
+          const data = await response.json();
+          setDonations(data.donations);
 
-            // Check if there are any pending donations
-            const hasPending = data.donations.some((d: AdminDonation) => d.status === 'pending');
-            if (!hasPending) {
-              setFilterStatus('all');
-            }
-          } else {
-            // Token invalid or expired
-            localStorage.removeItem('adminToken');
+          // Check if there are any pending donations
+          const hasPending = data.donations.some((d: AdminDonation) => d.status === 'pending');
+          if (!hasPending) {
+            setFilterStatus('all');
           }
-        } catch (err) {
-          console.error('Session check error:', err);
-          // Don't clear token on network error, just let user try to login manually if they want
-        } finally {
-          setLoading(false);
         }
+      } catch (err) {
+        console.error('Fetch error:', err);
+        setError('获取数据失败');
+      } finally {
+        setLoading(false);
       }
     };
 
-    checkSession();
+    fetchDonations();
   }, []);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
+  const handleLogout = async () => {
     try {
-      const credentials = btoa(`admin:${password}`);
-      const response = await fetch('/api/admin/donations', {
-        headers: { 'Authorization': `Basic ${credentials}` }
-      });
-
-      if (response.ok) {
-        setAuthenticated(true);
-        localStorage.setItem('adminToken', credentials); // Store token
-        const data = await response.json();
-        setDonations(data.donations);
-
-        // Check if there are any pending donations
-        const hasPending = data.donations.some((d: AdminDonation) => d.status === 'pending');
-        if (!hasPending) {
-          setFilterStatus('all');
-        }
-      } else {
-        setError('密码错误');
-      }
-    } catch (err) {
-      console.error('[投喂小站] Login error:', err);
-      setError('登录失败。请重试。');
-    } finally {
-      setLoading(false);
+      await fetch('/api/auth/logout', { method: 'POST' });
+      window.location.href = '/admin/login';
+    } catch (error) {
+      console.error('Logout failed', error);
     }
   };
 
@@ -153,12 +124,9 @@ export default function AdminPage() {
     setActioningId(id);
     setError('');
     try {
-      const credentials = btoa(`admin:${password}`);
-
       const response = await fetch('/api/admin/donations', {
         method: 'PATCH',
         headers: {
-          'Authorization': `Basic ${credentials}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ id, status })
@@ -185,12 +153,10 @@ export default function AdminPage() {
     if (!replyContent.trim()) return;
     setSubmittingReply(true);
     try {
-      const credentials = btoa(`admin:${password}`);
       const response = await fetch(`/api/donations/${id}/reply`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Basic ${credentials}`
         },
         body: JSON.stringify({ content: replyContent })
       });
@@ -231,12 +197,10 @@ export default function AdminPage() {
     if (!editingDonation) return;
     setSubmittingEdit(true);
     try {
-      const credentials = btoa(`admin:${password}`);
       const response = await fetch('/api/admin/donations', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Basic ${credentials}`
         },
         body: JSON.stringify({
           id: editingDonation.id,
@@ -266,12 +230,10 @@ export default function AdminPage() {
     if (deletingIds.length === 0) return;
     setSubmittingDelete(true);
     try {
-      const credentials = btoa(`admin:${password}`);
       const response = await fetch('/api/admin/donations/delete', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Basic ${credentials}`
         },
         body: JSON.stringify({ ids: deletingIds })
       });
@@ -362,46 +324,6 @@ export default function AdminPage() {
     totalAmount: donations.filter(d => d.status === 'confirmed').reduce((acc, curr) => acc + curr.amount, 0)
   };
 
-  if (!authenticated) {
-    return (
-      <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md p-8 shadow-lg">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">管理面板</h1>
-            <p className="text-gray-500 mt-2">请输入管理员密码以继续</p>
-          </div>
-
-          {error && (
-            <Alert className="mb-6 bg-red-50 border-red-200">
-              <AlertDescription className="text-red-800">{error}</AlertDescription>
-            </Alert>
-          )}
-
-          <form onSubmit={handleLogin} className="space-y-4">
-            <Input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="管理员密码"
-              required
-              className="h-11"
-            />
-            <Button disabled={loading} className="w-full h-11 text-base">
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  正在验证...
-                </>
-              ) : (
-                '登录'
-              )}
-            </Button>
-          </form>
-        </Card>
-      </main>
-    );
-  }
-
   return (
     <TooltipProvider>
       <main className="min-h-screen bg-slate-50/50">
@@ -422,12 +344,7 @@ export default function AdminPage() {
               </Button>
               <Button
                 variant="outline"
-                onClick={() => {
-                  setAuthenticated(false);
-                  setPassword('');
-                  setDonations([]);
-                  localStorage.removeItem('adminToken');
-                }}
+                onClick={handleLogout}
                 className="text-gray-600"
               >
                 <LogOut className="mr-2 h-4 w-4" />

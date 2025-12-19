@@ -5,7 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyAuth } from '@/lib/auth';
+import { getSession } from '@/lib/auth';
 import { getSiteConfig, batchUpdateConfig } from '@/lib/db';
 import { clearConfigCache, DEFAULT_CONFIG, SiteConfig } from '@/lib/config';
 
@@ -15,8 +15,8 @@ export const dynamic = 'force-dynamic';
 export async function GET(request: NextRequest) {
     try {
         // Verify admin authentication
-        const authResult = await verifyAuth(request);
-        if (!authResult.isValid) {
+        const session = await getSession();
+        if (!session) {
             return NextResponse.json(
                 { success: false, error: 'Unauthorized' },
                 { status: 401 }
@@ -65,8 +65,8 @@ export async function GET(request: NextRequest) {
 export async function PUT(request: NextRequest) {
     try {
         // Verify admin authentication
-        const authResult = await verifyAuth(request);
-        if (!authResult.isValid) {
+        const session = await getSession();
+        if (!session) {
             return NextResponse.json(
                 { success: false, error: 'Unauthorized' },
                 { status: 401 }
