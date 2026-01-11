@@ -153,10 +153,12 @@ export default function AdminPage() {
     if (!replyContent.trim()) return;
     setSubmittingReply(true);
     try {
+      const token = localStorage.getItem('adminToken');
       const response = await fetch(`/api/donations/${id}/reply`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Basic ${token}`
         },
         body: JSON.stringify({ content: replyContent })
       });
